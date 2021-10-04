@@ -1,6 +1,6 @@
 package vn.alpaca.alpacajavatraininglast2021.services;
 
-public class PaymentService {
+public interface PaymentService {
 
     // 1. View all available payments
     // 2. View specific payments (apply searching)
