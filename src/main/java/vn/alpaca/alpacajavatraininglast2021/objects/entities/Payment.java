@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -14,16 +16,18 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Payment {
+public class Payment implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotNull
     private double amount;
 
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    private Date paymentDate;
+    private Date paymentDate = new Date();
 
     @ManyToOne
     @JoinColumn(name = "accountant_id")

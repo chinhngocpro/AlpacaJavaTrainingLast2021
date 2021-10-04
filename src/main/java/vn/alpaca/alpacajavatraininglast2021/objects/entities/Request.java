@@ -9,6 +9,8 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -18,20 +20,23 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @TypeDef(name = "list-array", typeClass = ListArrayType.class)
-public class Request {
+public class Request implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotBlank
     private String name;
 
+    @NotBlank
     private String description;
 
     @Type(type = "list-array")
     @Column(columnDefinition = "text[]")
     private List<String> receiptPhotos;
 
+    @NotBlank
     private String status = "PENDING";
 
     @ManyToOne

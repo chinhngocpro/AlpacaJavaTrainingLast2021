@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "analyzed_receipts")
@@ -13,20 +16,25 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AnalyzedReceipt {
+public class AnalyzedReceipt implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotNull
     private boolean isValid;
 
+    @NotNull
     private int hospitalId;
 
+    @NotNull
     private int accidentId;
 
+    @NotBlank
     private String name;
 
+    @NotNull
     private double amount;
 
     @ManyToOne

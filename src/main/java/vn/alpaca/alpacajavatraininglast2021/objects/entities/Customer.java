@@ -7,6 +7,9 @@ import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -16,31 +19,38 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Customer {
+public class Customer implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotBlank
     private String fullName;
 
+    @NotNull
     private boolean gender;
 
+    @NotBlank
     private String idCardNumber;
 
     @Type(type = "list-array")
     @Column(columnDefinition = "text[]")
     private List<String> phoneNumbers;
 
+    @NotBlank
     private String email;
 
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
 
+    @NotBlank
     private String address;
 
+    @NotBlank
     private String occupation;
 
+    @NotNull
     private boolean active;
 
     @OneToMany(mappedBy = "customer",

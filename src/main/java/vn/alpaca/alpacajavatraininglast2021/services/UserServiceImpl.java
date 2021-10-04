@@ -2,9 +2,9 @@ package vn.alpaca.alpacajavatraininglast2021.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.alpaca.alpacajavatraininglast2021.exceptions.ResourceNotFoundException;
 import vn.alpaca.alpacajavatraininglast2021.objects.entities.Role;
@@ -13,32 +13,26 @@ import vn.alpaca.alpacajavatraininglast2021.repositories.RoleRepository;
 import vn.alpaca.alpacajavatraininglast2021.repositories.UserRepository;
 
 import java.util.Collection;
-import java.util.Collections;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRepository userRepository,
-                           RoleRepository roleRepository) {
+                           RoleRepository roleRepository,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
-        User user = findUserByUsername(username);
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                Collections.singleton(
-                        new SimpleGrantedAuthority(user.getRole().getName())
-                )
-        );
+        return findUserByUsername(username);
     }
 
     @Override
@@ -105,6 +99,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User saveUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 

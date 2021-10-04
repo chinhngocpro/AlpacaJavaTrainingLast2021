@@ -9,6 +9,8 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -16,28 +18,34 @@ import java.util.List;
 @Table(name = "contracts")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @TypeDef(name = "list-array", typeClass = ListArrayType.class)
-public class Contract {
+public class Contract implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotNull
     private String contractCode;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    private Date validFrom;
+    private Date validFrom = new Date();
 
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date validTo;
 
+    @NotNull
     private Double maximumAmount;
 
+    @NotNull
     private Double remainingAmount;
 
+    @NotNull
     private boolean active;
 
     @Type(type = "list-array")

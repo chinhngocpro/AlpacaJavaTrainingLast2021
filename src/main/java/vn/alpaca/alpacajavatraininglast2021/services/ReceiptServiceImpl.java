@@ -70,8 +70,8 @@ public class ReceiptServiceImpl implements ReceiptService {
     }
 
     @Override
-    public AnalyzedReceipt saveInChargeReceipt(int userId,
-                                               AnalyzedReceipt receipt) {
+    public AnalyzedReceipt
+    saveInChargeReceipt(int userId, AnalyzedReceipt receipt) {
         if (receipt.getAnalyzer().getId() != userId) {
             throw new AccessDeniedException(); // TODO: implement exception message
         }

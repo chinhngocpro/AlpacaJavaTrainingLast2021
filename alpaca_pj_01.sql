@@ -5,7 +5,7 @@
 -- Dumped from database version 13.4
 -- Dumped by pg_dump version 13.4
 
--- Started on 2021-10-04 11:35:56
+-- Started on 2021-10-04 16:50:03
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -388,6 +388,10 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public."Users
 -- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: alpaca
 --
 
+INSERT INTO public.roles (id, name) VALUES (1, 'ROLE_ADMIN');
+INSERT INTO public.roles (id, name) VALUES (2, 'ROLE_EMPLOYEE');
+INSERT INTO public.roles (id, name) VALUES (3, 'ROLE_ANALYZER');
+INSERT INTO public.roles (id, name) VALUES (4, 'ROLE_ACCOUNTANT');
 
 
 --
@@ -396,6 +400,8 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public."Users
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: alpaca
 --
 
+INSERT INTO public.users (id, username, password, full_name, gender, id_card_number, phone_numbers, email, date_of_birth, address, role_id, active) VALUES (1, 'chienkieu', '$2a$10$PQU0c63wDRZhb1W0oFNwDeYa5u8Zz5k1loOL0WmTT3Ue.mG7SwKQy', 'Kieu Tan Chien', true, '264520061', '{0812638042,0344203330}', 'chien.kieu@alpaca.vn', '1997-11-13', '22 Nguyen Viet Xuan, Phuoc Dan, Ninh Phuocc, Ninh Thuan', 2, true);
+INSERT INTO public.users (id, username, password, full_name, gender, id_card_number, phone_numbers, email, date_of_birth, address, role_id, active) VALUES (7, 'alpaca_admin', '$2a$10$kz6CPo0EVWYKyK6Ld9sENOIURMt1fLkGrSIRtE7yWltr67Oia7AQO', 'Alpaca Admin', true, '123456789', '{}', 'admin@alpaca.vn', '2021-10-04', 'Tp.HCM', 1, true);
 
 
 --
@@ -422,7 +428,7 @@ SELECT pg_catalog.setval('public."Payment_id_seq"', 1, false);
 -- Name: Roles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alpaca
 --
 
-SELECT pg_catalog.setval('public."Roles_id_seq"', 1, false);
+SELECT pg_catalog.setval('public."Roles_id_seq"', 4, true);
 
 
 --
@@ -431,7 +437,7 @@ SELECT pg_catalog.setval('public."Roles_id_seq"', 1, false);
 -- Name: Users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alpaca
 --
 
-SELECT pg_catalog.setval('public."Users_id_seq"', 1, false);
+SELECT pg_catalog.setval('public."Users_id_seq"', 7, true);
 
 
 --
@@ -652,7 +658,7 @@ ALTER TABLE ONLY public.users
 GRANT ALL ON DATABASE alpaca_pj_01 TO alpaca;
 
 
--- Completed on 2021-10-04 11:35:57
+-- Completed on 2021-10-04 16:50:04
 
 --
 -- PostgreSQL database dump complete
