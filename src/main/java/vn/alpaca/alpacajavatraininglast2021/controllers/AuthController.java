@@ -1,4 +1,5 @@
 package vn.alpaca.alpacajavatraininglast2021.controllers;
 
-public class PackageHolder {
+
+public class AuthController {
 }
