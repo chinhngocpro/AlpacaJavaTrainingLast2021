@@ -9,12 +9,11 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "Contracts")
+@Table(name = "contracts")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @TypeDef(name = "list-array", typeClass = ListArrayType.class)
 public class Contract {
@@ -30,10 +29,10 @@ public class Contract {
     private Customer customer;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Calendar validFrom;
+    private Date validFrom;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Calendar validTo;
+    private Date validTo;
 
     private Double maximumAmount;
 

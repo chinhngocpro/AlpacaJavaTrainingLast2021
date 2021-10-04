@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -46,14 +46,26 @@ public class User {
 
     private String address;
 
+    private String active;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @OneToMany(mappedBy = "employeeInCharge")
+    @OneToMany(mappedBy = "employeeInCharge",
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH
+            })
     private List<Request> requests;
 
-    @OneToMany(mappedBy = "analyzer")
+    @OneToMany(mappedBy = "analyzer",
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH
+            })
     private List<AnalyzedReceipt> analyzedReceipts;
 
     @OneToMany(mappedBy = "accountant")

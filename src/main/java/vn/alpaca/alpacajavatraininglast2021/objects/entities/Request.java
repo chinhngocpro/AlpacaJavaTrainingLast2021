@@ -12,7 +12,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "Requests")
+@Table(name = "requests")
 @Getter
 @Setter
 @NoArgsConstructor

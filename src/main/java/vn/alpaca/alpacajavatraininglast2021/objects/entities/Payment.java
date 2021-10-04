@@ -6,11 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Calendar;
+import java.util.Date;
 
 @Entity
-@Table(name = "Payments")
+@Table(name = "payments")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,7 +23,7 @@ public class Payment {
     private double amount;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Calendar paymentDate;
+    private Date paymentDate;
 
     @ManyToOne
     @JoinColumn(name = "accountant_id")

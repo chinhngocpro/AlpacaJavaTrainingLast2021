@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "Customers")
+@Table(name = "customers")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -41,10 +41,20 @@ public class Customer {
 
     private String occupation;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer",
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH
+            })
     private List<Contract> contracts;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer",
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH
+            })
     private List<Request> requests;
 
     @Override
