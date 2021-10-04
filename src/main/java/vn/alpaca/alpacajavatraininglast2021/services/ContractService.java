@@ -18,7 +18,7 @@ public interface ContractService {
 
     Page<Contract> findActiveContracts(Pageable pageable);
 
-    Page<Contract> findContractsByKeyword(Object keyword, Pageable pageable);
+    Contract findContractsByContractCode(String contractCode);
 
     Contract findContractById(int id);
 

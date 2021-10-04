@@ -14,17 +14,18 @@ public interface CustomerService {
     Page<Customer> findAllCustomers(Pageable pageable);
 
     // 2. View specific customers (apply searching)
-    Page<Customer> findCustomersByKeyword(Object keyword, Pageable pageable);
 
     Customer findCustomerById(int id);
 
-    Customer findCustomerByNameContains(String fullName);
+    Collection<Customer> findCustomerByNameContains(String fullName);
+    Page<Customer>
+    findCustomerByNameContains(String fullName, Pageable pageable);
 
     Customer findCustomerByIdCard(String idCardNumber);
 
     // 3. Create new customer / Edit customer info
 
-    Customer saveCustomerInfo(Customer customer);
+    Customer saveCustomer(Customer customer);
 
     // 4. Activate/deactivate customer
     void activateCustomer(int customerId);
