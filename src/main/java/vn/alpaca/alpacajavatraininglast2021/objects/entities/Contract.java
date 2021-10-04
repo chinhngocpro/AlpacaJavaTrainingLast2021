@@ -38,6 +38,8 @@ public class Contract {
 
     private Double remainingAmount;
 
+    private boolean active;
+
     @Type(type = "list-array")
     @Column(columnDefinition = "integer[]")
     private List<Integer> acceptableHospitalIds;

@@ -5,7 +5,7 @@
 -- Dumped from database version 13.4
 -- Dumped by pg_dump version 13.4
 
--- Started on 2021-10-04 10:32:12
+-- Started on 2021-10-04 11:35:56
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -19,7 +19,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 3074 (class 1262 OID 16394)
+-- TOC entry 3075 (class 1262 OID 16394)
 -- Name: alpaca_pj_01; Type: DATABASE; Schema: -; Owner: postgres
 --
 
@@ -59,7 +59,8 @@ CREATE TABLE public.contracts (
     maximum_amount money NOT NULL,
     remaining_amount money NOT NULL,
     acceptable_hospital_ids integer[] NOT NULL,
-    acceptable_accident_ids integer[] NOT NULL
+    acceptable_accident_ids integer[] NOT NULL,
+    active boolean DEFAULT true NOT NULL
 );
 
 
@@ -82,7 +83,7 @@ CREATE SEQUENCE public."Contracts_id_seq"
 ALTER TABLE public."Contracts_id_seq" OWNER TO alpaca;
 
 --
--- TOC entry 3076 (class 0 OID 0)
+-- TOC entry 3077 (class 0 OID 0)
 -- Dependencies: 203
 -- Name: Contracts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: alpaca
 --
@@ -123,7 +124,7 @@ CREATE SEQUENCE public."Payment_id_seq"
 ALTER TABLE public."Payment_id_seq" OWNER TO postgres;
 
 --
--- TOC entry 3077 (class 0 OID 0)
+-- TOC entry 3078 (class 0 OID 0)
 -- Dependencies: 210
 -- Name: Payment_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -161,7 +162,7 @@ CREATE SEQUENCE public."Roles_id_seq"
 ALTER TABLE public."Roles_id_seq" OWNER TO alpaca;
 
 --
--- TOC entry 3078 (class 0 OID 0)
+-- TOC entry 3079 (class 0 OID 0)
 -- Dependencies: 204
 -- Name: Roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: alpaca
 --
@@ -209,7 +210,7 @@ CREATE SEQUENCE public."Users_id_seq"
 ALTER TABLE public."Users_id_seq" OWNER TO alpaca;
 
 --
--- TOC entry 3079 (class 0 OID 0)
+-- TOC entry 3080 (class 0 OID 0)
 -- Dependencies: 207
 -- Name: Users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: alpaca
 --
@@ -274,7 +275,7 @@ CREATE SEQUENCE public.customer_id_seq
 ALTER TABLE public.customer_id_seq OWNER TO alpaca;
 
 --
--- TOC entry 3080 (class 0 OID 0)
+-- TOC entry 3081 (class 0 OID 0)
 -- Dependencies: 200
 -- Name: customer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: alpaca
 --
@@ -318,7 +319,7 @@ ALTER TABLE ONLY public.customers ALTER COLUMN id SET DEFAULT nextval('public.cu
 
 
 --
--- TOC entry 2895 (class 2604 OID 16659)
+-- TOC entry 2896 (class 2604 OID 16659)
 -- Name: payments id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -326,7 +327,7 @@ ALTER TABLE ONLY public.payments ALTER COLUMN id SET DEFAULT nextval('public."Pa
 
 
 --
--- TOC entry 2890 (class 2604 OID 16514)
+-- TOC entry 2891 (class 2604 OID 16514)
 -- Name: roles id; Type: DEFAULT; Schema: public; Owner: alpaca
 --
 
@@ -334,7 +335,7 @@ ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public."Roles
 
 
 --
--- TOC entry 2891 (class 2604 OID 16524)
+-- TOC entry 2892 (class 2604 OID 16524)
 -- Name: users id; Type: DEFAULT; Schema: public; Owner: alpaca
 --
 
@@ -342,7 +343,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public."Users
 
 
 --
--- TOC entry 3066 (class 0 OID 16641)
+-- TOC entry 3067 (class 0 OID 16641)
 -- Dependencies: 209
 -- Data for Name: analyzed_receipts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -350,7 +351,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public."Users
 
 
 --
--- TOC entry 3059 (class 0 OID 16451)
+-- TOC entry 3060 (class 0 OID 16451)
 -- Dependencies: 202
 -- Data for Name: contracts; Type: TABLE DATA; Schema: public; Owner: alpaca
 --
@@ -358,7 +359,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public."Users
 
 
 --
--- TOC entry 3058 (class 0 OID 16399)
+-- TOC entry 3059 (class 0 OID 16399)
 -- Dependencies: 201
 -- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: alpaca
 --
@@ -366,7 +367,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public."Users
 
 
 --
--- TOC entry 3068 (class 0 OID 16656)
+-- TOC entry 3069 (class 0 OID 16656)
 -- Dependencies: 211
 -- Data for Name: payments; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -374,7 +375,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public."Users
 
 
 --
--- TOC entry 3065 (class 0 OID 16633)
+-- TOC entry 3066 (class 0 OID 16633)
 -- Dependencies: 208
 -- Data for Name: requests; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -382,7 +383,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public."Users
 
 
 --
--- TOC entry 3062 (class 0 OID 16511)
+-- TOC entry 3063 (class 0 OID 16511)
 -- Dependencies: 205
 -- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: alpaca
 --
@@ -390,7 +391,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public."Users
 
 
 --
--- TOC entry 3063 (class 0 OID 16519)
+-- TOC entry 3064 (class 0 OID 16519)
 -- Dependencies: 206
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: alpaca
 --
@@ -398,7 +399,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public."Users
 
 
 --
--- TOC entry 3081 (class 0 OID 0)
+-- TOC entry 3082 (class 0 OID 0)
 -- Dependencies: 203
 -- Name: Contracts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alpaca
 --
@@ -407,7 +408,7 @@ SELECT pg_catalog.setval('public."Contracts_id_seq"', 1, false);
 
 
 --
--- TOC entry 3082 (class 0 OID 0)
+-- TOC entry 3083 (class 0 OID 0)
 -- Dependencies: 210
 -- Name: Payment_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -416,7 +417,7 @@ SELECT pg_catalog.setval('public."Payment_id_seq"', 1, false);
 
 
 --
--- TOC entry 3083 (class 0 OID 0)
+-- TOC entry 3084 (class 0 OID 0)
 -- Dependencies: 204
 -- Name: Roles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alpaca
 --
@@ -425,7 +426,7 @@ SELECT pg_catalog.setval('public."Roles_id_seq"', 1, false);
 
 
 --
--- TOC entry 3084 (class 0 OID 0)
+-- TOC entry 3085 (class 0 OID 0)
 -- Dependencies: 207
 -- Name: Users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alpaca
 --
@@ -434,7 +435,7 @@ SELECT pg_catalog.setval('public."Users_id_seq"', 1, false);
 
 
 --
--- TOC entry 3085 (class 0 OID 0)
+-- TOC entry 3086 (class 0 OID 0)
 -- Dependencies: 200
 -- Name: customer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: alpaca
 --
@@ -443,7 +444,7 @@ SELECT pg_catalog.setval('public.customer_id_seq', 1, false);
 
 
 --
--- TOC entry 2915 (class 2606 OID 16648)
+-- TOC entry 2916 (class 2606 OID 16648)
 -- Name: analyzed_receipts AnalyzedReceipts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -452,7 +453,7 @@ ALTER TABLE ONLY public.analyzed_receipts
 
 
 --
--- TOC entry 2917 (class 2606 OID 16661)
+-- TOC entry 2918 (class 2606 OID 16661)
 -- Name: payments Payment_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -461,7 +462,7 @@ ALTER TABLE ONLY public.payments
 
 
 --
--- TOC entry 2913 (class 2606 OID 16640)
+-- TOC entry 2914 (class 2606 OID 16640)
 -- Name: requests Requests_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -470,7 +471,7 @@ ALTER TABLE ONLY public.requests
 
 
 --
--- TOC entry 2903 (class 2606 OID 16466)
+-- TOC entry 2904 (class 2606 OID 16466)
 -- Name: contracts contracts_pk; Type: CONSTRAINT; Schema: public; Owner: alpaca
 --
 
@@ -479,7 +480,7 @@ ALTER TABLE ONLY public.contracts
 
 
 --
--- TOC entry 2898 (class 2606 OID 16407)
+-- TOC entry 2899 (class 2606 OID 16407)
 -- Name: customers customer_pk; Type: CONSTRAINT; Schema: public; Owner: alpaca
 --
 
@@ -488,7 +489,7 @@ ALTER TABLE ONLY public.customers
 
 
 --
--- TOC entry 2906 (class 2606 OID 16517)
+-- TOC entry 2907 (class 2606 OID 16517)
 -- Name: roles roles_pk; Type: CONSTRAINT; Schema: public; Owner: alpaca
 --
 
@@ -497,7 +498,7 @@ ALTER TABLE ONLY public.roles
 
 
 --
--- TOC entry 2910 (class 2606 OID 16535)
+-- TOC entry 2911 (class 2606 OID 16535)
 -- Name: users users_pk; Type: CONSTRAINT; Schema: public; Owner: alpaca
 --
 
@@ -506,7 +507,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 2900 (class 1259 OID 16463)
+-- TOC entry 2901 (class 1259 OID 16463)
 -- Name: contracts_contract_code_uindex; Type: INDEX; Schema: public; Owner: alpaca
 --
 
@@ -514,7 +515,7 @@ CREATE UNIQUE INDEX contracts_contract_code_uindex ON public.contracts USING btr
 
 
 --
--- TOC entry 2901 (class 1259 OID 16464)
+-- TOC entry 2902 (class 1259 OID 16464)
 -- Name: contracts_id_uindex; Type: INDEX; Schema: public; Owner: alpaca
 --
 
@@ -522,7 +523,7 @@ CREATE UNIQUE INDEX contracts_id_uindex ON public.contracts USING btree (id);
 
 
 --
--- TOC entry 2899 (class 1259 OID 16536)
+-- TOC entry 2900 (class 1259 OID 16536)
 -- Name: customers_id_card_number_uindex; Type: INDEX; Schema: public; Owner: alpaca
 --
 
@@ -530,7 +531,7 @@ CREATE UNIQUE INDEX customers_id_card_number_uindex ON public.customers USING bt
 
 
 --
--- TOC entry 2904 (class 1259 OID 16515)
+-- TOC entry 2905 (class 1259 OID 16515)
 -- Name: roles_id_uindex; Type: INDEX; Schema: public; Owner: alpaca
 --
 
@@ -538,7 +539,7 @@ CREATE UNIQUE INDEX roles_id_uindex ON public.roles USING btree (id);
 
 
 --
--- TOC entry 2907 (class 1259 OID 16531)
+-- TOC entry 2908 (class 1259 OID 16531)
 -- Name: users_id_card_number_uindex; Type: INDEX; Schema: public; Owner: alpaca
 --
 
@@ -546,7 +547,7 @@ CREATE UNIQUE INDEX users_id_card_number_uindex ON public.users USING btree (id_
 
 
 --
--- TOC entry 2908 (class 1259 OID 16532)
+-- TOC entry 2909 (class 1259 OID 16532)
 -- Name: users_id_uindex; Type: INDEX; Schema: public; Owner: alpaca
 --
 
@@ -554,7 +555,7 @@ CREATE UNIQUE INDEX users_id_uindex ON public.users USING btree (id);
 
 
 --
--- TOC entry 2911 (class 1259 OID 16533)
+-- TOC entry 2912 (class 1259 OID 16533)
 -- Name: users_username_uindex; Type: INDEX; Schema: public; Owner: alpaca
 --
 
@@ -562,7 +563,7 @@ CREATE UNIQUE INDEX users_username_uindex ON public.users USING btree (username)
 
 
 --
--- TOC entry 2923 (class 2606 OID 16677)
+-- TOC entry 2924 (class 2606 OID 16677)
 -- Name: analyzed_receipts AnalyzedReceipts_analyzer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -571,7 +572,7 @@ ALTER TABLE ONLY public.analyzed_receipts
 
 
 --
--- TOC entry 2924 (class 2606 OID 16682)
+-- TOC entry 2925 (class 2606 OID 16682)
 -- Name: analyzed_receipts AnalyzedReceipts_request_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -580,7 +581,7 @@ ALTER TABLE ONLY public.analyzed_receipts
 
 
 --
--- TOC entry 2919 (class 2606 OID 16662)
+-- TOC entry 2920 (class 2606 OID 16662)
 -- Name: contracts Contracts_customer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: alpaca
 --
 
@@ -589,7 +590,7 @@ ALTER TABLE ONLY public.contracts
 
 
 --
--- TOC entry 2922 (class 2606 OID 16667)
+-- TOC entry 2923 (class 2606 OID 16667)
 -- Name: requests Requests_customer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -598,7 +599,7 @@ ALTER TABLE ONLY public.requests
 
 
 --
--- TOC entry 2921 (class 2606 OID 16672)
+-- TOC entry 2922 (class 2606 OID 16672)
 -- Name: users Users_role_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: alpaca
 --
 
@@ -607,7 +608,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 2918 (class 2606 OID 16543)
+-- TOC entry 2919 (class 2606 OID 16543)
 -- Name: contracts contracts_customers_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: alpaca
 --
 
@@ -616,7 +617,7 @@ ALTER TABLE ONLY public.contracts
 
 
 --
--- TOC entry 2925 (class 2606 OID 16702)
+-- TOC entry 2926 (class 2606 OID 16702)
 -- Name: payments payments_accountant_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -625,7 +626,7 @@ ALTER TABLE ONLY public.payments
 
 
 --
--- TOC entry 2926 (class 2606 OID 16721)
+-- TOC entry 2927 (class 2606 OID 16721)
 -- Name: payments payments_requests_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -634,7 +635,7 @@ ALTER TABLE ONLY public.payments
 
 
 --
--- TOC entry 2920 (class 2606 OID 16538)
+-- TOC entry 2921 (class 2606 OID 16538)
 -- Name: users users_roles_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: alpaca
 --
 
@@ -643,15 +644,15 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 3075 (class 0 OID 0)
--- Dependencies: 3074
+-- TOC entry 3076 (class 0 OID 0)
+-- Dependencies: 3075
 -- Name: DATABASE alpaca_pj_01; Type: ACL; Schema: -; Owner: postgres
 --
 
 GRANT ALL ON DATABASE alpaca_pj_01 TO alpaca;
 
 
--- Completed on 2021-10-04 10:32:13
+-- Completed on 2021-10-04 11:35:57
 
 --
 -- PostgreSQL database dump complete

@@ -41,6 +41,8 @@ public class Customer {
 
     private String occupation;
 
+    private boolean active;
+
     @OneToMany(mappedBy = "customer",
             cascade = {
                     CascadeType.PERSIST,
