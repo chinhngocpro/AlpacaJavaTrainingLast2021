@@ -1,7 +1,6 @@
 package vn.alpaca.alpacajavatraininglast2021.config;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
@@ -51,14 +50,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .cors()
-                    .and()
+                .and()
                 .csrf()
-                    .disable()
+                .disable()
                 .authorizeRequests()
-                    .antMatchers("/api/login")
-                        .permitAll()
-                    .anyRequest()
-                        .authenticated();
+                .antMatchers("/api/login")
+                .permitAll()
+                .anyRequest()
+                .authenticated();
+        
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 

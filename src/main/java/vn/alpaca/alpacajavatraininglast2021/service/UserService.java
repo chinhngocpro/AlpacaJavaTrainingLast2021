@@ -68,6 +68,14 @@ public class UserService implements UserDetailsService {
         return userRepository.findAllByGender(gender, pageable);
     }
 
+    public Collection<User> findUserByRoleName(String roleName) {
+        return userRepository.findAllByRoleName(roleName);
+    }
+
+    public Page<User> findUserByRoleName(String roleName, Pageable pageable) {
+        return userRepository.findAllByRoleName(roleName, pageable);
+    }
+
     public User findUserById(int id) {
         return userRepository.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
