@@ -1,0 +1,14 @@
+alpaca:
+    security:
+        jwt:
+            expiration: 84000000
+            secret: alpaca@@@alpaca@@@alpaca@@@alpaca@@@
+spring:
+    datasource:
+        password: alpaca@@@
+        url: jdbc:postgresql://localhost:5432/alpaca_pj_01
+        username: alpaca
+    jpa:
+        database-platform: org.hibernate.dialect.PostgreSQL94Dialect
+        hibernate:
+            ddl-auto: none
