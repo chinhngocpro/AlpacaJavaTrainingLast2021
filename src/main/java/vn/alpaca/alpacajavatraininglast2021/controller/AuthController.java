@@ -1,6 +1,5 @@
 package vn.alpaca.alpacajavatraininglast2021.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,20 +18,26 @@ import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 @RequestMapping("/api")
 public class AuthController {
 
-    @Autowired
-    AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtTokenProvider tokenProvider;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider tokenProvider;
+
+    public AuthController(AuthenticationManager authenticationManager,
+                          JwtTokenProvider tokenProvider) {
+        this.authenticationManager = authenticationManager;
+        this.tokenProvider = tokenProvider;
+    }
 
     @PostMapping("/login")
     public AbstractResponse login(@RequestBody LoginRequest form) {
         Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(form.getUsername(), form.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(
+                        form.getUsername(), form.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = tokenProvider.generateToken((User) authentication.getPrincipal());
+        String jwt = tokenProvider.generateToken(
+                (User) authentication.getPrincipal());
 
         return new SuccessResponse<>(jwt);
     }

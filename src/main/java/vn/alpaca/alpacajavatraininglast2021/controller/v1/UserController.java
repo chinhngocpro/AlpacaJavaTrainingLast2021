@@ -1,9 +1,6 @@
 package vn.alpaca.alpacajavatraininglast2021.controller.v1;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.UserDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
@@ -35,25 +32,29 @@ public class UserController {
     public SuccessResponse<Page<UserDTO>> getAllUsers(
             @RequestParam("page") Optional<Integer> pageNumber,
             @RequestParam("size") Optional<Integer> pageSize,
-            @RequestParam("sort-by") Optional<String> sortBy,
+            @RequestParam("name") Optional<String> name,
+            @RequestParam("active") Optional<Boolean> active,
             @RequestParam("role-name") Optional<String> roleName
     ) {
+        Sort sort = Sort.unsorted();
+
         Pageable pageable = Pageable.unpaged();
 
         if (pageNumber.isPresent()) {
             pageable = PageRequest.of(pageNumber.get(), pageSize.orElse(5));
         }
 
-        Page<UserDTO> userPage = new PageImpl<>(
+        Page<UserDTO> dtoPage = new PageImpl<>(
                 service.findAllUsers(pageable)
                         .map(mapper::convertToDTO)
                         .getContent()
         );
 
-        return new SuccessResponse<>(userPage);
+        return new SuccessResponse<>(dtoPage);
     }
 
-    @GetMapping(value = "/{userId}",
+    @GetMapping(
+            value = "/{userId}",
             consumes = "application/json",
             produces = "application/json"
     )
@@ -74,13 +75,15 @@ public class UserController {
     ) throws InvocationTargetException, IllegalAccessException {
         User user = new User();
         notNullUtil.copyProperties(user, userDTO);
+        System.out.println(user);
 
         UserDTO dto = mapper.convertToDTO(service.saveUser(user));
 
         return new SuccessResponse<>(dto);
     }
 
-    @PutMapping(value = "/{userId}",
+    @PutMapping(
+            value = "/{userId}",
             consumes = "application/json",
             produces = "application/json"
     )
@@ -96,7 +99,21 @@ public class UserController {
         return new SuccessResponse<>(dto);
     }
 
-    @PatchMapping(value = "/deactivate/{userId}",
+    @PatchMapping(
+            value = "/{userId}/activate",
+            consumes = "application/json",
+            produces = "application/json"
+    )
+    public SuccessResponse<Boolean> activateUser(
+            @PathVariable("userId") int id
+    ) {
+        service.activateUser(id);
+
+        return new SuccessResponse<>(true);
+    }
+
+    @PatchMapping(
+            value = "/{userId}/deactivate",
             consumes = "application/json",
             produces = "application/json"
     )
@@ -108,15 +125,4 @@ public class UserController {
         return new SuccessResponse<>(true);
     }
 
-    @PatchMapping(value = "/activate/{userId}",
-            consumes = "application/json",
-            produces = "application/json"
-    )
-    public SuccessResponse<Boolean> activateUser(
-            @PathVariable("userId") int id
-    ) {
-        service.activateUser(id);
-
-        return new SuccessResponse<>(true);
-    }
 }
