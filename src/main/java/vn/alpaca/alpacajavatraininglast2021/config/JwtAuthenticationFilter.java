@@ -39,12 +39,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 User user = userService.findUserById(id);
 
-                if (user == null) {
-                    throw new NullPointerException();
-                }
-
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(user, null);
+                        new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 authentication.setDetails(
                         new WebAuthenticationDetailsSource()
                                 .buildDetails(request));
