@@ -17,9 +17,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -99,9 +99,10 @@ public class User implements Serializable, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(
-                new SimpleGrantedAuthority(role.getName())
-        );
+        return role.getAuthorities().stream()
+                .map(authority -> new SimpleGrantedAuthority(
+                        authority.getPermissionName()))
+                .collect(Collectors.toSet());
     }
 
     @Override

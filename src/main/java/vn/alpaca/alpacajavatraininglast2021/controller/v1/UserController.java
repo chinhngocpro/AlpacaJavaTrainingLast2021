@@ -13,7 +13,6 @@ import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -36,7 +35,8 @@ public class UserController {
     public SuccessResponse<Page<UserDTO>> getAllUsers(
             @RequestParam("page") Optional<Integer> pageNumber,
             @RequestParam("size") Optional<Integer> pageSize,
-            @RequestParam("sort-by") Optional<String> sortBy
+            @RequestParam("sort-by") Optional<String> sortBy,
+            @RequestParam("role-name") Optional<String> roleName
     ) {
         Pageable pageable = Pageable.unpaged();
 
