@@ -1,6 +1,7 @@
 package vn.alpaca.alpacajavatraininglast2021.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
@@ -50,12 +51,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .cors()
                 .and()
+                .csrf()
+                .disable()
                 .authorizeRequests()
                 .antMatchers("/api/login").permitAll()
-                .anyRequest().authenticated();
-//                .and()
-//                .formLogin()
-//                .permitAll();
+                .anyRequest().permitAll();
 
         http.addFilterBefore(jwtAuthenticationFilter(),
                 UsernamePasswordAuthenticationFilter.class);

@@ -34,8 +34,6 @@ public class AuthController {
 
         String jwt = tokenProvider.generateToken((User) authentication.getPrincipal());
 
-        System.out.println(jwt);
-
         return new SuccessResponse<>(jwt);
     }
 }
