@@ -12,7 +12,6 @@ import vn.alpaca.alpacajavatraininglast2021.service.UserService;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
@@ -59,21 +58,63 @@ public class UserController {
     public SuccessResponse<UserDTO> getUserById(
             @PathVariable("userId") int id
     ) {
-        UserDTO user = mapper.convertToDTO(service.findUserById(id));
+        UserDTO dto = mapper.convertToDTO(service.findUserById(id));
 
-        return new SuccessResponse<>(user);
+        return new SuccessResponse<>(dto);
     }
 
-    @PostMapping(consumes = "application/json",  produces = "application/json")
+    @PostMapping(
+            consumes = "application/json",
+            produces = "application/json"
+    )
     public SuccessResponse<UserDTO> createNewUser(
             @RequestBody UserDTO userDTO
     ) throws InvocationTargetException, IllegalAccessException {
-        System.out.println(userDTO);
         User user = new User();
         notNullUtil.copyProperties(user, userDTO);
-        System.out.println(user);
 
-        return new SuccessResponse<>(null);
+        UserDTO dto = mapper.convertToDTO(service.saveUser(user));
+
+        return new SuccessResponse<>(dto);
     }
 
+    @PutMapping(value = "/{userId}",
+            consumes = "application/json",
+            produces = "application/json"
+    )
+    public SuccessResponse<UserDTO> updateUser(
+            @PathVariable("userId") int id,
+            @RequestBody UserDTO userDTO
+    ) throws InvocationTargetException, IllegalAccessException {
+        User user = service.findUserById(id);
+        notNullUtil.copyProperties(user, userDTO);
+
+        UserDTO dto = mapper.convertToDTO(user);
+
+        return new SuccessResponse<>(dto);
+    }
+
+    @PatchMapping(value = "/deactivate/{userId}",
+            consumes = "application/json",
+            produces = "application/json"
+    )
+    public SuccessResponse<Boolean> deactivateUser(
+            @PathVariable("userId") int id
+    ) {
+        service.deactivateUser(id);
+
+        return new SuccessResponse<>(true);
+    }
+
+    @PatchMapping(value = "/activate/{userId}",
+            consumes = "application/json",
+            produces = "application/json"
+    )
+    public SuccessResponse<Boolean> activateUser(
+            @PathVariable("userId") int id
+    ) {
+        service.activateUser(id);
+
+        return new SuccessResponse<>(true);
+    }
 }
