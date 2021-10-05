@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -20,6 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @TypeDef(name = "list-array", typeClass = ListArrayType.class)
+@Audited
 public class ClaimRequest implements Serializable {
 
     @Id
@@ -35,7 +37,7 @@ public class ClaimRequest implements Serializable {
     private int id;
 
     @NotBlank
-    private String name;
+    private String title;
 
     @NotBlank
     private String description;
@@ -65,7 +67,7 @@ public class ClaimRequest implements Serializable {
     public String toString() {
         return "Request{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
                 '}';

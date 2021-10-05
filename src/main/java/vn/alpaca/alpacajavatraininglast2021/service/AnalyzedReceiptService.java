@@ -6,59 +6,69 @@ import org.springframework.stereotype.Service;
 import vn.alpaca.alpacajavatraininglast2021.exception.AccessDeniedException;
 import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.AnalyzedReceipt;
-import vn.alpaca.alpacajavatraininglast2021.repository.ReceiptRepository;
+import vn.alpaca.alpacajavatraininglast2021.repository.AnalyzedReceiptRepository;
 
 import java.util.Collection;
 
 @Service
 public class AnalyzedReceiptService {
 
-    private final ReceiptRepository receiptRepository;
+    private final AnalyzedReceiptRepository analyzedReceiptRepository;
 
-    public AnalyzedReceiptService(ReceiptRepository receiptRepository) {
-        this.receiptRepository = receiptRepository;
+    public AnalyzedReceiptService(
+            AnalyzedReceiptRepository analyzedReceiptRepository) {
+        this.analyzedReceiptRepository = analyzedReceiptRepository;
     }
 
     public Collection<AnalyzedReceipt> findAllReceipts() {
-        return receiptRepository.findAll();
+        return analyzedReceiptRepository.findAll();
     }
 
     public Page<AnalyzedReceipt> findAllReceipts(Pageable pageable) {
-        return receiptRepository.findAll(pageable);
+        return analyzedReceiptRepository.findAll(pageable);
     }
 
     public Collection<AnalyzedReceipt> findValidReceipts() {
-        return receiptRepository.findAllByValidIsTrue();
+        return analyzedReceiptRepository.findAllByValidIsTrue();
     }
 
     public Page<AnalyzedReceipt> findValidReceipts(Pageable pageable) {
-        return receiptRepository.findAllByValidIsTrue(pageable);
+        return analyzedReceiptRepository.findAllByValidIsTrue(pageable);
     }
 
     public Collection<AnalyzedReceipt> findReceiptsByUserId(int userId) {
-        return receiptRepository.findAllByAnalyzerId(userId);
+        return analyzedReceiptRepository.findAllByAnalyzerId(userId);
     }
 
     public Page<AnalyzedReceipt>
     findReceiptsByUserId(int userId, Pageable pageable) {
-        return receiptRepository.findAllByAnalyzerId(userId, pageable);
+        return analyzedReceiptRepository.findAllByAnalyzerId(userId, pageable);
+    }
+
+    public Collection<AnalyzedReceipt> findReceiptsByTitle(String title) {
+        return analyzedReceiptRepository.findAllByTitle(title);
+    }
+
+    public Page<AnalyzedReceipt>
+    findReceiptsByTitle(String title, Pageable pageable) {
+        return analyzedReceiptRepository.findAllByTitle(title, pageable);
     }
 
     public AnalyzedReceipt findReceiptById(int id) {
-        return receiptRepository.findById(id)
+        return analyzedReceiptRepository.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
         // TODO: implement exception message
     }
 
     public AnalyzedReceipt findReceiptByClaimRequestId(int requestId) {
-        return receiptRepository.findByClaimRequestId(requestId)
+        return analyzedReceiptRepository.findByClaimRequestId(requestId)
                 .orElseThrow(ResourceNotFoundException::new);
         // TODO: implement exception message
     }
 
     public AnalyzedReceipt saveReceipt(
             AnalyzedReceipt receipt) {
-        return receiptRepository.save(receipt);
+        return analyzedReceiptRepository.save(receipt);
     }
 
     public AnalyzedReceipt
@@ -67,7 +77,7 @@ public class AnalyzedReceiptService {
             throw new AccessDeniedException(); // TODO: implement exception message
         }
 
-        return receiptRepository.save(receipt);
+        return analyzedReceiptRepository.save(receipt);
     }
 
     public void validateReceipt(int receiptId) {

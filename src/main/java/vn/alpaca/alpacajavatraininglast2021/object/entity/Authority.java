@@ -8,36 +8,28 @@ import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "authorities")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Audited
-public class Role implements Serializable {
+public class Authority {
 
     @Id
     @SequenceGenerator(
-            name = "roles_id_seq",
-            sequenceName = "roles_id_seq",
+            name = "authorities_id_seq",
+            sequenceName = "authorities_id_seq",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "roles_id_seq"
+            generator = "authorities_id_seq"
     )
     private int id;
-
-    @NotBlank
-    private String name;
-
-    @OneToMany(mappedBy = "role")
-    private List<User> users;
 
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
@@ -45,15 +37,10 @@ public class Role implements Serializable {
             CascadeType.REFRESH
     })
     @JoinTable(name = "roles_authorities",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "authority_id"))
-    private Set<Authority> authorities;
+            joinColumns = @JoinColumn(name = "authority_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 
-    @Override
-    public String toString() {
-        return "Role{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
+    @NotBlank
+    private String permissionName;
 }

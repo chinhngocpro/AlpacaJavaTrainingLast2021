@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Audited
 public class AnalyzedReceipt implements Serializable {
 
     @Id
@@ -40,7 +42,7 @@ public class AnalyzedReceipt implements Serializable {
     private int accidentId;
 
     @NotBlank
-    private String name;
+    private String title;
 
     @NotNull
     private double amount;
@@ -60,7 +62,7 @@ public class AnalyzedReceipt implements Serializable {
                 ", isValid=" + isValid +
                 ", hospitalId=" + hospitalId +
                 ", accidentId=" + accidentId +
-                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
                 ", amount=" + amount +
                 '}';
     }

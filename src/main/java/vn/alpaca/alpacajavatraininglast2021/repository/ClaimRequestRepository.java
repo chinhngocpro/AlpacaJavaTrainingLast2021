@@ -9,9 +9,9 @@ import java.util.Collection;
 
 public interface ClaimRequestRepository extends JpaRepository<ClaimRequest, Integer> {
 
-    Collection<ClaimRequest> findAllByNameContains(String name);
+    Collection<ClaimRequest> findAllByTitleContains(String name);
 
-    Page<ClaimRequest> findAllByNameContains(String name, Pageable pageable);
+    Page<ClaimRequest> findAllByTitleContains(String name, Pageable pageable);
 
     Collection<ClaimRequest> findAllByDescriptionContains(String description);
 

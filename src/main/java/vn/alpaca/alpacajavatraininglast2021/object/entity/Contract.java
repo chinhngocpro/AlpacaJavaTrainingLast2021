@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ import java.util.List;
 @Table(name = "contracts")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @TypeDef(name = "list-array", typeClass = ListArrayType.class)
+@Audited
 public class Contract implements Serializable {
 
     @Id
@@ -54,7 +56,7 @@ public class Contract implements Serializable {
     private Double remainingAmount;
 
     @NotNull
-    private boolean active;
+    private boolean active = true;
 
     @Type(type = "list-array")
     @Column(columnDefinition = "integer[]")

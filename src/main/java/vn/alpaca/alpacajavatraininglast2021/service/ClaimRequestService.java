@@ -26,13 +26,13 @@ public class ClaimRequestService {
         return requestRepository.findAll(pageable);
     }
 
-    public Collection<ClaimRequest> findRequestsByNameContains(String name) {
-        return requestRepository.findAllByNameContains(name);
+    public Collection<ClaimRequest> findRequestsByTitleContains(String title) {
+        return requestRepository.findAllByTitleContains(title);
     }
 
     public Page<ClaimRequest>
-    findRequestsByNameContains(String name, Pageable pageable) {
-        return requestRepository.findAllByNameContains(name, pageable);
+    findRequestsByTitleContains(String title, Pageable pageable) {
+        return requestRepository.findAllByTitleContains(title, pageable);
     }
 
     public Collection<ClaimRequest>
