@@ -43,7 +43,7 @@ public class Role implements Serializable {
             CascadeType.PERSIST,
             CascadeType.MERGE,
             CascadeType.REFRESH
-    })
+    }, fetch = FetchType.EAGER)
     @JoinTable(name = "roles_authorities",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
