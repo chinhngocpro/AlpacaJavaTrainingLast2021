@@ -25,6 +25,8 @@ public class UserDTO {
 
     private List<String> phoneNumbers;
 
+    private String email;
+
     private Date dateOfBirth;
 
     private String address;
