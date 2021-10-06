@@ -2,16 +2,14 @@ package vn.alpaca.alpacajavatraininglast2021.controller.v1;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.CustomerDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.CustomerMapper;
 import vn.alpaca.alpacajavatraininglast2021.service.CustomerService;
-import vn.alpaca.alpacajavatraininglast2021.util.DateUtil;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
-import vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.request.customer.CustomerForm;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
@@ -25,19 +23,13 @@ public class CustomerController {
     private final CustomerService service;
     private final CustomerMapper mapper;
     private final NullAwareBeanUtil notNullUtil;
-    private final DateUtil dateUtil;
-    private final RequestParamUtil paramUtil;
 
     public CustomerController(CustomerService service,
                               CustomerMapper mapper,
-                              NullAwareBeanUtil notNullUtil,
-                              DateUtil dateUtil,
-                              RequestParamUtil paramUtil) {
+                              NullAwareBeanUtil notNullUtil) {
         this.service = service;
         this.mapper = mapper;
         this.notNullUtil = notNullUtil;
-        this.dateUtil = dateUtil;
-        this.paramUtil = paramUtil;
     }
 
     @GetMapping(
@@ -46,41 +38,16 @@ public class CustomerController {
     )
     public SuccessResponse<Page<CustomerDTO>> getAllCustomers(
             @RequestParam("page") Optional<Integer> pageNumber,
-            @RequestParam("size") Optional<Integer> pageSize,
-            @RequestParam(value = "sort-by", required = false)
-                    Optional<String> sortBy,
-            @RequestParam(value = "full-name", required = false)
-                    Optional<String> fullName,
-            @RequestParam(value = "gender", required = false)
-                    Optional<Boolean> isMale,
-            @RequestParam(value = "id-card", required = false)
-                    Optional<String> idCardNumber,
-            @RequestParam(value = "email", required = false)
-                    Optional<String> email,
-            @RequestParam(value = "dob-from", required = false)
-                    Optional<String> dobFrom,
-            @RequestParam(value = "dob-to", required = false)
-                    Optional<String> dobTo,
-            @RequestParam(value = "address", required = false)
-                    Optional<String> address,
-            @RequestParam(value = "active", required = false)
-                    Optional<Boolean> active
+            @RequestParam("size") Optional<Integer> pageSize
     ) {
-        Sort sort = paramUtil.getSort(sortBy);
-        Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
+        Pageable pageable = Pageable.unpaged();
+
+        if (pageNumber.isPresent()) {
+            pageable = PageRequest.of(pageNumber.get(), pageSize.orElse(5));
+        }
 
         Page<CustomerDTO> dtoPage = new PageImpl<>(
-                service.findAllCustomers(
-                                fullName.orElse(null),
-                                isMale.orElse(null),
-                                idCardNumber.orElse(null),
-                                email.orElse(null),
-                                dateUtil.convertStringToDate(dobFrom.orElse(null)),
-                                dateUtil.convertStringToDate(dobTo.orElse(null)),
-                                address.orElse(null),
-                                active.orElse(null),
-                                pageable
-                        )
+                service.findAllCustomers(pageable)
                         .map(mapper::convertToDTO)
                         .getContent()
         );

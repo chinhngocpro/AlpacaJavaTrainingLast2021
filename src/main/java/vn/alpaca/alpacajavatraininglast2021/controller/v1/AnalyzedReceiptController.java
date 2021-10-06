@@ -18,7 +18,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/analyzed-receipts")
+@RequestMapping(value = "/api/v1/analyzed-receipts",
+        consumes = "application/json",
+        produces = "application/json"
+)
 public class AnalyzedReceiptController {
 
     private final AnalyzedReceiptService service;
@@ -33,10 +36,8 @@ public class AnalyzedReceiptController {
         this.notNullUtil = notNullUtil;
     }
 
-    @GetMapping(
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_READ')")
+    @GetMapping
     public SuccessResponse<Page<AnalyzedReceiptDTO>> getAllReceipts(
             @RequestParam("page") Optional<Integer> pageNumber,
             @RequestParam("size") Optional<Integer> pageSize
@@ -56,9 +57,7 @@ public class AnalyzedReceiptController {
         return new SuccessResponse<>(dtoPage);
     }
 
-    @GetMapping(value = "/{receiptId}",
-            consumes = "application/json",
-            produces = "application/json")
+    @GetMapping(value = "/{receiptId}")
     public SuccessResponse<AnalyzedReceiptDTO> getReceiptById(
             @PathVariable("receiptId") int id
     ) {
@@ -69,10 +68,7 @@ public class AnalyzedReceiptController {
     }
 
     @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_CREATE')")
-    @PostMapping(
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PostMapping
     public SuccessResponse<AnalyzedReceiptDTO> createNewReceipt(
             @RequestBody AnalyzedReceiptForm formData
     ) throws InvocationTargetException, IllegalAccessException {
@@ -86,10 +82,7 @@ public class AnalyzedReceiptController {
     }
 
     @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
-    @PutMapping(value = "/{receiptId}",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PutMapping(value = "/{receiptId}")
     public SuccessResponse<AnalyzedReceiptDTO> updateReceipt(
             @PathVariable("receiptId") int id,
             @RequestBody AnalyzedReceiptForm formData
@@ -103,10 +96,8 @@ public class AnalyzedReceiptController {
         return new SuccessResponse<>(dto);
     }
 
-    @PatchMapping(value = "/{receiptId}/validate",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
+    @PatchMapping(value = "/{receiptId}/validate")
     public SuccessResponse<Boolean> validateReceipt(
             @PathVariable("receiptId") int id
     ) {
@@ -115,10 +106,8 @@ public class AnalyzedReceiptController {
         return new SuccessResponse<>(true);
     }
 
-    @PatchMapping(value = "/{receiptId}/invalidate",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
+    @PatchMapping(value = "/{receiptId}/invalidate")
     public SuccessResponse<Boolean> invalidateReceipt(
             @PathVariable("receiptId") int id
     ) {

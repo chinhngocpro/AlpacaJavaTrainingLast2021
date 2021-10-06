@@ -15,7 +15,11 @@ import vn.alpaca.alpacajavatraininglast2021.wrapper.response.AbstractResponse;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping(
+        value = "/api",
+        consumes = "application/json",
+        produces = "application/json"
+)
 public class AuthController {
 
 
