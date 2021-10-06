@@ -1,4 +1,4 @@
-package vn.alpaca.alpacajavatraininglast2021.config;
+package vn.alpaca.alpacajavatraininglast2021.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -7,7 +7,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
-import vn.alpaca.alpacajavatraininglast2021.security.jwt.JwtTokenProvider;
+import vn.alpaca.alpacajavatraininglast2021.provider.JwtTokenProvider;
 import vn.alpaca.alpacajavatraininglast2021.service.UserService;
 
 import javax.servlet.FilterChain;

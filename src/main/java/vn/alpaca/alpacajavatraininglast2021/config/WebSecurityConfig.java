@@ -12,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import vn.alpaca.alpacajavatraininglast2021.interceptor.JwtAuthenticationFilter;
 import vn.alpaca.alpacajavatraininglast2021.service.UserService;
 
 @EnableWebSecurity

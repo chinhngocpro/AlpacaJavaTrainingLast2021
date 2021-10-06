@@ -7,7 +7,7 @@ public abstract class AbstractResponse {
     @JsonProperty("msg")
     String message;
 
-    @JsonProperty("errorCode")
+    @JsonProperty("error_code")
     int errorCode;
 
     public AbstractResponse(int errorCode) {
