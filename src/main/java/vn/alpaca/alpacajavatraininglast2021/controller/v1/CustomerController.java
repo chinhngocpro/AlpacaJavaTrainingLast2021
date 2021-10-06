@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.CustomerDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer;
@@ -17,7 +18,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/customers")
+@RequestMapping(
+        value = "/api/v1/customers",
+        consumes = "application/json",
+        produces = "application/json"
+)
 public class CustomerController {
 
     private final CustomerService service;
@@ -32,10 +37,8 @@ public class CustomerController {
         this.notNullUtil = notNullUtil;
     }
 
-    @GetMapping(
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
+    @GetMapping
     public SuccessResponse<Page<CustomerDTO>> getAllCustomers(
             @RequestParam("page") Optional<Integer> pageNumber,
             @RequestParam("size") Optional<Integer> pageSize
@@ -55,11 +58,7 @@ public class CustomerController {
         return new SuccessResponse<>(dtoPage);
     }
 
-    @GetMapping(
-            value = "/{customerId}",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @GetMapping(value = "/{customerId}")
     public SuccessResponse<CustomerDTO> getCustomerById(
             @PathVariable("customerId") int id
     ) {
@@ -70,10 +69,8 @@ public class CustomerController {
         return new SuccessResponse<>(dto);
     }
 
-    @PostMapping(
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('CUSTOMER_CREATE')")
+    @PostMapping
     public SuccessResponse<CustomerDTO> createNewCustomer(
             @RequestBody CustomerForm formData
     ) throws InvocationTargetException, IllegalAccessException {
@@ -86,11 +83,8 @@ public class CustomerController {
         return new SuccessResponse<>(dto);
     }
 
-    @PutMapping(
-            value = "/{customerId}",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('CUSTOMER_UPDATE')")
+    @PutMapping(value = "/{customerId}")
     public SuccessResponse<CustomerDTO> updateCustomer(
             @PathVariable("customerId") int id,
             @RequestBody CustomerForm formData
@@ -104,11 +98,8 @@ public class CustomerController {
         return new SuccessResponse<>(dto);
     }
 
-    @PatchMapping(
-            value = "/{customerId}/activate",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('CUSTOMER_UPDATE')")
+    @PatchMapping(value = "/{customerId}/activate")
     public SuccessResponse<Boolean> activateCustomer(
             @PathVariable("customerId") int id
     ) {
@@ -117,11 +108,8 @@ public class CustomerController {
         return new SuccessResponse<>(true);
     }
 
-    @PatchMapping(
-            value = "/{customerId}/deactivate",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('CUSTOMER_UPDATE')")
+    @PatchMapping(value = "/{customerId}/deactivate")
     public SuccessResponse<Boolean> deactivateCustomer(
             @PathVariable("customerId") int id
     ) {

@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.ContractDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Contract;
@@ -17,7 +18,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/contracts")
+@RequestMapping(
+        value = "/api/v1/contracts",
+        consumes = "application/json",
+        produces = "application/json"
+)
 public class ContractController {
 
     private final ContractService service;
@@ -32,10 +37,8 @@ public class ContractController {
         this.notNullUtil = notNullUtil;
     }
 
-    @GetMapping(
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('CONTRACT_READ')")
+    @GetMapping
     public SuccessResponse<Page<ContractDTO>> getAllContracts(
             @RequestParam("page") Optional<Integer> pageNumber,
             @RequestParam("size") Optional<Integer> pageSize
@@ -55,10 +58,7 @@ public class ContractController {
         return new SuccessResponse<>(dtoPage);
     }
 
-    @GetMapping(value = "/{contractId}",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @GetMapping(value = "/{contractId}")
     public SuccessResponse<ContractDTO> getContractById(
             @PathVariable("contractId") int id
     ) {
@@ -68,10 +68,8 @@ public class ContractController {
         return new SuccessResponse<>(dto);
     }
 
-    @PostMapping(
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('CONTRACT_CREATE')")
+    @PostMapping
     public SuccessResponse<ContractDTO> createNewContract(
             @RequestBody ContractForm formData
     ) throws InvocationTargetException, IllegalAccessException {
@@ -84,10 +82,8 @@ public class ContractController {
         return new SuccessResponse<>(dto);
     }
 
-    @PutMapping(value = "/{contractId}",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('CONTRACT_UPDATE')")
+    @PutMapping(value = "/{contractId}")
     public SuccessResponse<ContractDTO> updateContract(
             @PathVariable("contractId") int id,
             @RequestBody ContractForm formData
@@ -101,10 +97,8 @@ public class ContractController {
         return new SuccessResponse<>(dto);
     }
 
-    @PatchMapping(value = "/{contractId}/activate",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('CONTRACT_UPDATE')")
+    @PatchMapping(value = "/{contractId}/activate")
     public SuccessResponse<Boolean> activateContract(
             @PathVariable("contractId") int id
     ) {
@@ -114,10 +108,8 @@ public class ContractController {
     }
 
 
-    @PatchMapping(value = "/{contractId}/deactivate",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('CONTRACT_UPDATE')")
+    @PatchMapping(value = "/{contractId}/deactivate")
     public SuccessResponse<Boolean> deactivateContract(
             @PathVariable("contractId") int id
     ) {

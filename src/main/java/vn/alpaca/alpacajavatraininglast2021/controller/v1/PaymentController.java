@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.PaymentDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Payment;
@@ -17,7 +18,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/payments")
+@RequestMapping(
+        value = "/api/v1/payments",
+        consumes = "application/json",
+        produces = "application/json"
+)
 public class PaymentController {
 
     private final PaymentService service;
@@ -32,10 +37,8 @@ public class PaymentController {
         this.notNullUtil = notNullUtil;
     }
 
-    @GetMapping(
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('PAYMENT_READ')")
+    @GetMapping
     public SuccessResponse<Page<PaymentDTO>> getAllPayments(
             @RequestParam("page") Optional<Integer> pageNumber,
             @RequestParam("size") Optional<Integer> pageSize
@@ -56,10 +59,8 @@ public class PaymentController {
         return new SuccessResponse<>(dtoPage);
     }
 
-    @PostMapping(
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('PAYMENT_CREATE')")
+    @PostMapping
     public SuccessResponse<PaymentDTO> createNewPayment(
             @RequestBody PaymentForm formData
     ) throws InvocationTargetException, IllegalAccessException {
@@ -72,11 +73,8 @@ public class PaymentController {
         return new SuccessResponse<>(dto);
     }
 
-    @PutMapping(
-            value = "/{paymentId}",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('PAYMENT_UPDATE')")
+    @PutMapping(value = "/{paymentId}")
     public SuccessResponse<PaymentDTO> updatePayment(
             @PathVariable("paymentId") int id,
             @RequestBody PaymentForm formData

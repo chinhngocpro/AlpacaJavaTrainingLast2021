@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.ClaimRequestDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.ClaimRequest;
@@ -17,7 +18,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/claim-requests")
+@RequestMapping(
+        value = "/api/v1/claim-requests",
+        consumes = "application/json",
+        produces = "application/json"
+)
 public class ClaimRequestController {
 
     private final ClaimRequestService service;
@@ -32,10 +37,8 @@ public class ClaimRequestController {
         this.notNullUtil = notNullUtil;
     }
 
-    @GetMapping(
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('CLAIM_REQUEST_READ')")
+    @GetMapping
     public SuccessResponse<Page<ClaimRequestDTO>> getAllClaimRequest(
             @RequestParam("page") Optional<Integer> pageNumber,
             @RequestParam("size") Optional<Integer> pageSize
@@ -56,10 +59,8 @@ public class ClaimRequestController {
         return new SuccessResponse<>(dtoPage);
     }
 
-    @GetMapping(value = "/{requestId}",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+//    @PreAuthorize("hasAuthority('CLAIM_REQUEST_READ')")
+    @GetMapping(value = "/{requestId}")
     public SuccessResponse<ClaimRequestDTO> getClaimRequestById(
             @PathVariable("requestId") int id
     ) {
@@ -70,10 +71,8 @@ public class ClaimRequestController {
         return new SuccessResponse<>(dto);
     }
 
-    @PostMapping(
-            consumes = "application/json",
-            produces = "application/json"
-    )
+//    @PreAuthorize("hasAuthority('CLAIM_REQUEST_CREATE')")
+    @PostMapping
     public SuccessResponse<ClaimRequestDTO> createNewClaimRequest(
             @RequestBody ClaimRequestForm formData
     ) throws InvocationTargetException, IllegalAccessException {
@@ -86,10 +85,8 @@ public class ClaimRequestController {
         return new SuccessResponse<>(dto);
     }
 
-    @PutMapping(value = "/{requestId}",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+//    @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
+    @PutMapping(value = "/{requestId}")
     public SuccessResponse<ClaimRequestDTO> updateClaimRequest(
             @PathVariable("requestId") int id,
             @RequestBody ClaimRequestForm formData
@@ -103,10 +100,8 @@ public class ClaimRequestController {
         return new SuccessResponse<>(dto);
     }
 
-    @PatchMapping(value = "/{requestId}/close",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+//    @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
+    @PatchMapping(value = "/{requestId}/close")
     public SuccessResponse<Boolean> closeClaimRequest(
             @PathVariable("requestId") int id
     ) {
@@ -115,10 +110,8 @@ public class ClaimRequestController {
         return new SuccessResponse<>(true);
     }
 
-    @PatchMapping(value = "/{requestId}/process",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
+    @PatchMapping(value = "/{requestId}/process")
     public SuccessResponse<Boolean> processClaimRequest(
             @PathVariable("requestId") int id
     ) {
@@ -127,10 +120,8 @@ public class ClaimRequestController {
         return new SuccessResponse<>(true);
     }
 
-    @PatchMapping(value = "/{requestId}/reopen",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
+    @PatchMapping(value = "/{requestId}/reopen")
     public SuccessResponse<Boolean> reopenClaimRequest(
             @PathVariable("requestId") int id
     ) {
