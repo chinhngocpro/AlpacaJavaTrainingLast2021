@@ -1,4 +1,4 @@
-package vn.alpaca.alpacajavatraininglast2021.config;
+package vn.alpaca.alpacajavatraininglast2021.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
