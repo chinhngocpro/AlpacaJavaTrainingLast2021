@@ -17,7 +17,7 @@ public class ExampleController {
         return "Success!";
     }
 
-    @Secured({"USER_UPDATE"})
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
     @GetMapping("/test2")
     public String example1() {
         return "Success!2";
