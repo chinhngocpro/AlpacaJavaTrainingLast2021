@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import vn.alpaca.alpacajavatraininglast2021.constant.Authorities;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.AnalyzedReceiptDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.AnalyzedReceipt;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.AnalyzerReceiptMapper;

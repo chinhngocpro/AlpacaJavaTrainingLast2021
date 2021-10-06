@@ -13,7 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClaimRequestForm {
-    
+
+    private Integer customerId;
+
     private String title;
 
     private String description;
@@ -21,7 +23,5 @@ public class ClaimRequestForm {
     private List<String> receiptPhotos;
 
     private String status;
-
-    private CustomerDTO customer;
 
 }

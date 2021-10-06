@@ -15,9 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 public class ContractForm {
 
-    private String contractCode;
+    private Integer customerId;
 
-    private Customer customer;
+    private String contractCode;
 
     private Date validFrom;
 
@@ -27,7 +27,7 @@ public class ContractForm {
 
     private Double remainingAmount;
 
-    private boolean active;
+    private Boolean active;
 
     private List<Integer> acceptableHospitalIds;
 

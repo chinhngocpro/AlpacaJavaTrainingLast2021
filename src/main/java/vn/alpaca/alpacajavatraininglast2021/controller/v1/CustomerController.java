@@ -25,8 +25,8 @@ public class CustomerController {
     private final NullAwareBeanUtil notNullUtil;
 
     public CustomerController(CustomerService service,
-            CustomerMapper mapper,
-            NullAwareBeanUtil notNullUtil) {
+                              CustomerMapper mapper,
+                              NullAwareBeanUtil notNullUtil) {
         this.service = service;
         this.mapper = mapper;
         this.notNullUtil = notNullUtil;

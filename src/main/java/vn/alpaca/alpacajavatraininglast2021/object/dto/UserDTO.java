@@ -29,6 +29,4 @@ public class UserDTO {
 
     private boolean active;
 
-    private RoleDTO role;
-
 }

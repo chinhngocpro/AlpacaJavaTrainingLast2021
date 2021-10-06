@@ -21,7 +21,7 @@ public class UserForm {
 
     private String fullName;
 
-    private boolean gender;
+    private Boolean gender;
 
     private String idCardNumber;
 
@@ -33,8 +33,7 @@ public class UserForm {
 
     private String address;
 
-    private boolean active;
+    private Boolean active;
 
-//    private RoleDTO role;
-
+    private RoleDTO role;
 }

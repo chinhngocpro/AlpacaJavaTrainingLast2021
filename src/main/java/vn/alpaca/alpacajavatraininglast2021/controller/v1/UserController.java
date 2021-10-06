@@ -35,27 +35,58 @@ public class UserController {
             produces = "application/json"
     )
     public SuccessResponse<Page<UserDTO>> getAllUsers(
-            @RequestParam("page") Optional<Integer> pageNumber,
-            @RequestParam("size") Optional<Integer> pageSize,
-            @RequestParam("sort-by") Optional<String> sortBy,
-            @RequestParam("username") Optional<String> username,
-            @RequestParam("fullName") Optional<String> fullName,
-            @RequestParam("gender") Optional<Boolean> isMale,
-            @RequestParam("id-card") Optional<String> idCardNumber,
-            @RequestParam("email") Optional<String> email,
-            @RequestParam("dob-from") Optional<Date> dobFrom,
-            @RequestParam("dob-to") Optional<Date> dobTo,
-            @RequestParam("address") Optional<String> address,
-            @RequestParam("active") Optional<Boolean> active,
-            @RequestParam("role-name") Optional<String> roleName
+            @RequestParam(value = "page", required = false)
+                    Optional<Integer> pageNumber,
+            @RequestParam(value = "size", required = false)
+                    Optional<Integer> pageSize,
+            @RequestParam(value = "sort-by", required = false)
+                    Optional<String> sortBy,
+            @RequestParam(value = "username", required = false)
+                    Optional<String> username,
+            @RequestParam(value = "fullName", required = false)
+                    Optional<String> fullName,
+            @RequestParam(value = "gender", required = false)
+                    Optional<Boolean> isMale,
+            @RequestParam(value = "id-card", required = false)
+                    Optional<String> idCardNumber,
+            @RequestParam(value = "email", required = false)
+                    Optional<String> email,
+            @RequestParam(value = "dob-from", required = false)
+                    Optional<Date> dobFrom,
+            @RequestParam(value = "dob-to", required = false)
+                    Optional<Date> dobTo,
+            @RequestParam(value = "address", required = false)
+                    Optional<String> address,
+            @RequestParam(value = "active", required = false)
+                    Optional<Boolean> active,
+            @RequestParam(value = "role-name", required = false)
+                    Optional<String> roleName
     ) {
         Sort sort = Sort.unsorted();
-
+//        if (sortBy.isPresent()) {
+//            System.out.println(true);
+//            String[] values = sortBy.get().split(".");
+//            String criteria = values[0];
+//            String direction =
+//                   values.length > 1 ? values[1].toLowerCase() : "asc";
+//
+//            sort = Sort.by(
+//                    direction.equals("desc") ?
+//                            Sort.Direction.DESC :
+//                            Sort.Direction.ASC,
+//                    criteria
+//            );
+//        }
         Pageable pageable = Pageable.unpaged();
-
         if (pageNumber.isPresent()) {
-            pageable = PageRequest.of(pageNumber.get(), pageSize.orElse(5));
+            System.out.println(pageNumber.get());
+            pageable = PageRequest.of(
+                    pageNumber.get(),
+                    pageSize.orElse(5),
+                    sort
+            );
         }
+        System.out.println(pageable.isPaged());
 
         Page<UserDTO> dtoPage = new PageImpl<>(
                 service.findAllUsers(
@@ -100,7 +131,6 @@ public class UserController {
     ) throws InvocationTargetException, IllegalAccessException {
         User user = new User();
         notNullUtil.copyProperties(user, formData);
-        System.out.println(user);
 
         UserDTO dto = mapper.convertToDTO(service.saveUser(user));
 

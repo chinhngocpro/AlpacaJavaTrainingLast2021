@@ -19,7 +19,7 @@ public class ContractDTO {
 
     private String contractCode;
 
-    private Customer customer;
+    private CustomerDTO customer;
 
     private Date validFrom;
 

@@ -16,6 +16,6 @@ public class RoleDTO {
 
     private String name;
 
-    private Set<String> permissions = new HashSet<>();
+    private Set<AuthorityDTO> authorities = new HashSet<>();
 
 }
