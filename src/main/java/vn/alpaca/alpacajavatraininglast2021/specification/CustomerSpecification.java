@@ -50,14 +50,16 @@ public final class CustomerSpecification {
                 ObjectUtils.isEmpty(from) && ObjectUtils.isEmpty(to) ?
                         builder.conjunction() :
                         ObjectUtils.isEmpty(from) ?
-                                builder.lessThan(
+                                builder.lessThanOrEqualTo(
                                         root.get(Customer_.DATE_OF_BIRTH), to) :
                                 ObjectUtils.isEmpty(to) ?
-                                        builder.greaterThan(
-                                                root.get(Customer_.DATE_OF_BIRTH),
+                                        builder.greaterThanOrEqualTo(
+                                                root.get(
+                                                        Customer_.DATE_OF_BIRTH),
                                                 from) :
                                         builder.between(
-                                                root.get(Customer_.DATE_OF_BIRTH),
+                                                root.get(
+                                                        Customer_.DATE_OF_BIRTH),
                                                 from, to);
     }
 

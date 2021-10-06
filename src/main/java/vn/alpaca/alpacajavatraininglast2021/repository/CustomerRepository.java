@@ -9,13 +9,7 @@ import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer;
 import java.util.Collection;
 import java.util.Optional;
 
-public interface CustomerRepository
-        extends JpaRepository<Customer, Integer>,
+public interface CustomerRepository extends
+        JpaRepository<Customer, Integer>,
         JpaSpecificationExecutor<Customer> {
-
-    Collection<Customer> findByFullNameContains(String fullName);
-
-    Page<Customer> findByFullNameContains(String fullName, Pageable pageable);
-
-    Optional<Customer> findByIdCardNumber(String idCardNumber);
 }

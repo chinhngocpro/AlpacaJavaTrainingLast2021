@@ -2,8 +2,8 @@ package vn.alpaca.alpacajavatraininglast2021.controller.v1;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.ContractDTO;
@@ -11,6 +11,7 @@ import vn.alpaca.alpacajavatraininglast2021.object.entity.Contract;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.ContractMapper;
 import vn.alpaca.alpacajavatraininglast2021.service.ContractService;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
+import vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.request.contract.ContractForm;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
@@ -28,29 +29,57 @@ public class ContractController {
     private final ContractService service;
     private final ContractMapper mapper;
     private final NullAwareBeanUtil notNullUtil;
+    private final RequestParamUtil paramUtil;
 
-    public ContractController( ContractService service,
-            ContractMapper mapper,
-            NullAwareBeanUtil notNullUtil) {
+    public ContractController(ContractService service,
+                              ContractMapper mapper,
+                              NullAwareBeanUtil notNullUtil,
+                              RequestParamUtil paramUtil) {
         this.service = service;
         this.mapper = mapper;
         this.notNullUtil = notNullUtil;
+        this.paramUtil = paramUtil;
     }
 
     @PreAuthorize("hasAuthority('CONTRACT_READ')")
     @GetMapping
     public SuccessResponse<Page<ContractDTO>> getAllContracts(
-            @RequestParam("page") Optional<Integer> pageNumber,
-            @RequestParam("size") Optional<Integer> pageSize
+            @RequestParam(value = "page", required = false)
+                    Optional<Integer> pageNumber,
+            @RequestParam(value = "size", required = false)
+                    Optional<Integer> pageSize,
+            @RequestParam(value = "sort-by", required = false)
+                    Optional<String> sortBy,
+            @RequestParam(value = "contract-code", required = false)
+                    Optional<String> contractCode,
+            @RequestParam(value = "is-valid", required = false)
+                    Optional<Boolean> isValid,
+            @RequestParam(value = "max-amount", required = false)
+                    Optional<Double> maximumAmount,
+            @RequestParam(value = "remain-amount", required = false)
+                    Optional<Double> remainingAmount,
+            @RequestParam(value = "active", required = false)
+                    Optional<Boolean> active,
+            @RequestParam(value = "hospital-id", required = false)
+                    Optional<Integer> hospitalId,
+            @RequestParam(value = "accident-id", required = false)
+                    Optional<Integer> accidentId
     ) {
-        Pageable pageable = Pageable.unpaged();
+        Sort sort = paramUtil.getSort(sortBy);
 
-        if (pageNumber.isPresent()) {
-            pageable = PageRequest.of(pageNumber.get(), pageSize.orElse(5));
-        }
+        Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
 
         Page<ContractDTO> dtoPage = new PageImpl<>(
-                service.findAllContracts(pageable)
+                service.findAllContracts(
+                                contractCode.orElse(null),
+                                isValid.orElse(null),
+                                maximumAmount.orElse(null),
+                                remainingAmount.orElse(null),
+                                active.orElse(null),
+                                hospitalId.orElse(null),
+                                accidentId.orElse(null),
+                                pageable
+                        )
                         .map(mapper::convertToDTO)
                         .getContent()
         );
@@ -62,7 +91,7 @@ public class ContractController {
     public SuccessResponse<ContractDTO> getContractById(
             @PathVariable("contractId") int id
     ) {
-        ContractDTO dto  =
+        ContractDTO dto =
                 mapper.convertToDTO(service.findContractById(id));
 
         return new SuccessResponse<>(dto);

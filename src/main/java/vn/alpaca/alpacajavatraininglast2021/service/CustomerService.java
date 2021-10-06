@@ -24,7 +24,6 @@ public class CustomerService {
         this.spec = spec;
     }
 
-
     public Page<Customer> findAllCustomers(
             String fullName,
             Boolean isMale,

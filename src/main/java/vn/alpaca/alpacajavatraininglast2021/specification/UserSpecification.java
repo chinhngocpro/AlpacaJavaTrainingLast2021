@@ -61,10 +61,10 @@ public final class UserSpecification {
                 ObjectUtils.isEmpty(from) && ObjectUtils.isEmpty(to) ?
                         builder.conjunction() :
                         ObjectUtils.isEmpty(from) ?
-                                builder.lessThan(
+                                builder.lessThanOrEqualTo(
                                         root.get(User_.DATE_OF_BIRTH), to) :
                                 ObjectUtils.isEmpty(to) ?
-                                        builder.greaterThan(
+                                        builder.greaterThanOrEqualTo(
                                                 root.get(User_.DATE_OF_BIRTH),
                                                 from) :
                                         builder.between(

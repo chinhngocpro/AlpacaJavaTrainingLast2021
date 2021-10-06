@@ -70,7 +70,7 @@ public class UserService implements UserDetailsService {
                 .and(userSpec.isActive(active))
                 .and(userSpec.hasRoleName(roleName));
 
-        return userRepository.findAll(conditions, Pageable.unpaged());
+        return userRepository.findAll(conditions, pageable);
     }
 
 
