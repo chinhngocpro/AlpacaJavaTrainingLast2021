@@ -20,11 +20,10 @@ public interface RoleMapper {
     @BeforeMapping
     default void getPermissionList
             (@MappingTarget RoleDTO dto, Role role) {
-
         Set<String> authorities =
                 role.getAuthorities().stream()
-                                .map(Authority::getPermissionName)
-                                        .collect(Collectors.toSet());
+                        .map(Authority::getPermissionName)
+                        .collect(Collectors.toSet());
         dto.setPermissions(authorities);
     }
 }

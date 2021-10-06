@@ -35,6 +35,6 @@ public class UserForm {
 
     private boolean active;
 
-    private RoleDTO role;
+//    private RoleDTO role;
 
 }

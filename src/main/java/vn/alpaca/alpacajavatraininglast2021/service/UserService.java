@@ -2,6 +2,7 @@ package vn.alpaca.alpacajavatraininglast2021.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,8 +15,10 @@ import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
 import vn.alpaca.alpacajavatraininglast2021.repository.AuthorityRepository;
 import vn.alpaca.alpacajavatraininglast2021.repository.RoleRepository;
 import vn.alpaca.alpacajavatraininglast2021.repository.UserRepository;
+import vn.alpaca.alpacajavatraininglast2021.specification.UserSpecification;
 
 import java.util.Collection;
+import java.util.Date;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -23,15 +26,18 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final AuthorityRepository authorityRepository;
+    private final UserSpecification userSpec;
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository,
                        RoleRepository roleRepository,
                        AuthorityRepository authorityRepository,
+                       UserSpecification userSpec,
                        PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.authorityRepository = authorityRepository;
+        this.userSpec = userSpec;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -40,46 +46,50 @@ public class UserService implements UserDetailsService {
         return findUserByUsername(username);
     }
 
-    public Collection<User> findAllUsers() {
-        return userRepository.findAll();
-    }
+    public Page<User> findAllUsers(
+            String username,
+            String fullName,
+            boolean isMale,
+            String idCardNumber,
+            String email,
+            Date from,
+            Date to,
+            String address,
+            boolean active,
+            String roleName,
+            Pageable pageable
+    ) {
+        Specification<User> conditions =
+                Specification.where(userSpec.hasUsername(username))
+                        .and(userSpec.hasNameContaining(fullName))
+                        .and(userSpec.isMale(isMale))
+                        .and(userSpec.hasIdCardNumber(idCardNumber))
+                        .and(userSpec.hasEmailContaining(email))
+                        .and(userSpec.hasDobBetween(from, to))
+                        .and(userSpec.hasAddressContaining(address))
+                        .and(userSpec.isActive(active))
+                        .and(userSpec.hasRoleName(roleName));
 
-    public Page<User> findAllUsers(Pageable pageable) {
+        userRepository.findAll(conditions, pageable);
         return userRepository.findAll(pageable);
     }
 
-    public Collection<User> findActiveUsers() {
-        return userRepository.findAllByActiveIsTrue();
-    }
-
-    public Page<User> findActiveUsers(Pageable pageable) {
-        return userRepository.findAllByActiveIsTrue(pageable);
-    }
-
-    public Collection<User> findUsersByNameContains(String fullName) {
-        return userRepository.findAllByFullNameContains(fullName);
-    }
-
-    public Page<User>
-    findUsersByNameContains(String fullName, Pageable pageable) {
-        return userRepository.findAllByFullNameContains(fullName, pageable);
-    }
-
-    public Collection<User> findUsersByGender(boolean gender) {
-        return userRepository.findAllByGender(gender);
-    }
-
-    public Page<User> findUsersByGender(boolean gender, Pageable pageable) {
-        return userRepository.findAllByGender(gender, pageable);
-    }
-
-    public Collection<User> findUserByRoleName(String roleName) {
-        return userRepository.findAllByRoleName(roleName);
-    }
-
-    public Page<User> findUserByRoleName(String roleName, Pageable pageable) {
-        return userRepository.findAllByRoleName(roleName, pageable);
-    }
+//    public Page<User> findActiveUsers(Pageable pageable) {
+//        return userRepository.findAllByActiveIsTrue(pageable);
+//    }
+//
+//    public Page<User>
+//    findUsersByNameContains(String fullName, Pageable pageable) {
+//        return userRepository.findAllByFullNameContains(fullName, pageable);
+//    }
+//
+//    public Page<User> findUsersByGender(boolean gender, Pageable pageable) {
+//        return userRepository.findAllByGender(gender, pageable);
+//    }
+//
+//    public Page<User> findUserByRoleName(String roleName, Pageable pageable) {
+//        return userRepository.findAllByRoleName(roleName, pageable);
+//    }
 
     public User findUserById(int id) {
         return userRepository.findById(id)
@@ -93,11 +103,11 @@ public class UserService implements UserDetailsService {
         // TODO: implement exception message
     }
 
-    public User findUserByIdCard(String idCardNumber) {
-        return userRepository.findByIdCardNumber(idCardNumber)
-                .orElseThrow(ResourceNotFoundException::new);
-        // TODO: implement exception message
-    }
+//    public User findUserByIdCard(String idCardNumber) {
+//        return userRepository.findByIdCardNumber(idCardNumber)
+//                .orElseThrow(ResourceNotFoundException::new);
+//        // TODO: implement exception message
+//    }
 
     public User saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));

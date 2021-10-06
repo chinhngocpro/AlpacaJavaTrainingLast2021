@@ -11,6 +11,7 @@ import vn.alpaca.alpacajavatraininglast2021.wrapper.request.user.UserForm;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import java.util.Optional;
 
 @RestController
@@ -36,7 +37,15 @@ public class UserController {
     public SuccessResponse<Page<UserDTO>> getAllUsers(
             @RequestParam("page") Optional<Integer> pageNumber,
             @RequestParam("size") Optional<Integer> pageSize,
-            @RequestParam("name") Optional<String> name,
+            @RequestParam("sort-by") Optional<String> sortBy,
+            @RequestParam("username") Optional<String> username,
+            @RequestParam("fullName") Optional<String> fullName,
+            @RequestParam("gender") Optional<Boolean> isMale,
+            @RequestParam("id-card") Optional<String> idCardNumber,
+            @RequestParam("email") Optional<String> email,
+            @RequestParam("dob-from") Optional<Date> dobFrom,
+            @RequestParam("dob-to") Optional<Date> dobTo,
+            @RequestParam("address") Optional<String> address,
             @RequestParam("active") Optional<Boolean> active,
             @RequestParam("role-name") Optional<String> roleName
     ) {
@@ -49,7 +58,19 @@ public class UserController {
         }
 
         Page<UserDTO> dtoPage = new PageImpl<>(
-                service.findAllUsers(pageable)
+                service.findAllUsers(
+                                username.orElse(""),
+                                fullName.orElse(""),
+                                isMale.orElse(null),
+                                idCardNumber.orElse(""),
+                                email.orElse(""),
+                                dobFrom.orElse(new Date(Long.MIN_VALUE)),
+                                dobTo.orElse(new Date(Long.MAX_VALUE)),
+                                address.orElse(""),
+                                active.orElse(null),
+                                roleName.orElse(""),
+                                pageable
+                        )
                         .map(mapper::convertToDTO)
                         .getContent()
         );

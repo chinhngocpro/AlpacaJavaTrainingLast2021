@@ -16,19 +16,11 @@ public interface UserRepository
 
     Optional<User> findByUsername(String username);
 
-    Collection<User> findAllByActiveIsTrue();
-
     Page<User> findAllByActiveIsTrue(Pageable pageable);
-
-    Collection<User> findAllByFullNameContains(String fullName);
 
     Page<User> findAllByFullNameContains(String fullName, Pageable pageable);
 
-    Collection<User> findAllByGender(boolean gender);
-
     Page<User> findAllByGender(boolean gender, Pageable pageable);
-
-    Collection<User> findAllByRoleName(String roleName);
 
     Page<User> findAllByRoleName(String roleName, Pageable pageable);
 

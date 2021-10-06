@@ -2,6 +2,7 @@ package vn.alpaca.alpacajavatraininglast2021.object.dto;
 
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -15,6 +16,6 @@ public class RoleDTO {
 
     private String name;
 
-    private Set<String> permissions;
+    private Set<String> permissions = new HashSet<>();
 
 }
