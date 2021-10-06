@@ -10,6 +10,7 @@ import vn.alpaca.alpacajavatraininglast2021.object.entity.Contract;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.ContractMapper;
 import vn.alpaca.alpacajavatraininglast2021.service.ContractService;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
+import vn.alpaca.alpacajavatraininglast2021.wrapper.request.contract.ContractForm;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 import java.lang.reflect.InvocationTargetException;
@@ -72,10 +73,10 @@ public class ContractController {
             produces = "application/json"
     )
     public SuccessResponse<ContractDTO> createNewContract(
-            @RequestBody ContractDTO contractDTO
+            @RequestBody ContractForm formData
     ) throws InvocationTargetException, IllegalAccessException {
         Contract contract = new Contract();
-        notNullUtil.copyProperties(contract, contractDTO);
+        notNullUtil.copyProperties(contract, formData);
 
         ContractDTO dto =
                 mapper.convertToDTO(service.saveContract(contract));
@@ -89,10 +90,10 @@ public class ContractController {
     )
     public SuccessResponse<ContractDTO> updateContract(
             @PathVariable("contractId") int id,
-            @RequestBody ContractDTO contractDTO
+            @RequestBody ContractForm formData
     ) throws InvocationTargetException, IllegalAccessException {
         Contract contract = service.findContractById(id);
-        notNullUtil.copyProperties(contract, contractDTO);
+        notNullUtil.copyProperties(contract, formData);
 
         ContractDTO dto =
                 mapper.convertToDTO(service.saveContract(contract));

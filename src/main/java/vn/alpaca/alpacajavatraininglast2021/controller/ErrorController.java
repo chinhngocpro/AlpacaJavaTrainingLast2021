@@ -50,7 +50,7 @@ public class ErrorController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleGeneralException(
+    public ResponseEntity<ErrorResponse> handleException(
             Exception exception
     ) {
         ErrorResponse error = new ErrorResponse(

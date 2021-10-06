@@ -10,6 +10,7 @@ import vn.alpaca.alpacajavatraininglast2021.object.entity.ClaimRequest;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.ClaimRequestMapper;
 import vn.alpaca.alpacajavatraininglast2021.service.ClaimRequestService;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
+import vn.alpaca.alpacajavatraininglast2021.wrapper.request.claimrequest.ClaimRequestForm;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 import java.lang.reflect.InvocationTargetException;
@@ -74,10 +75,10 @@ public class ClaimRequestController {
             produces = "application/json"
     )
     public SuccessResponse<ClaimRequestDTO> createNewClaimRequest(
-            @RequestBody ClaimRequestDTO requestDTO
+            @RequestBody ClaimRequestForm formData
     ) throws InvocationTargetException, IllegalAccessException {
         ClaimRequest request = new ClaimRequest();
-        notNullUtil.copyProperties(request, requestDTO);
+        notNullUtil.copyProperties(request, formData);
 
         ClaimRequestDTO dto =
                 mapper.covertToDTO(service.saveRequest(request));
@@ -91,10 +92,10 @@ public class ClaimRequestController {
     )
     public SuccessResponse<ClaimRequestDTO> updateClaimRequest(
             @PathVariable("requestId") int id,
-            @RequestBody ClaimRequestDTO requestDTO
+            @RequestBody ClaimRequestForm formData
     ) throws InvocationTargetException, IllegalAccessException {
         ClaimRequest request = service.findRequestById(id);
-        notNullUtil.copyProperties(request, requestDTO);
+        notNullUtil.copyProperties(request, formData);
 
         ClaimRequestDTO dto =
                 mapper.covertToDTO(service.saveRequest(request));

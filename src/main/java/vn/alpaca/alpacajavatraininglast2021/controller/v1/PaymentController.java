@@ -10,6 +10,7 @@ import vn.alpaca.alpacajavatraininglast2021.object.entity.Payment;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.PaymentMapper;
 import vn.alpaca.alpacajavatraininglast2021.service.PaymentService;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
+import vn.alpaca.alpacajavatraininglast2021.wrapper.request.payment.PaymentForm;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 import java.lang.reflect.InvocationTargetException;
@@ -24,8 +25,8 @@ public class PaymentController {
     private final NullAwareBeanUtil notNullUtil;
 
     public PaymentController(PaymentService service,
-            PaymentMapper mapper,
-            NullAwareBeanUtil notNullUtil) {
+                             PaymentMapper mapper,
+                             NullAwareBeanUtil notNullUtil) {
         this.service = service;
         this.mapper = mapper;
         this.notNullUtil = notNullUtil;
@@ -60,10 +61,10 @@ public class PaymentController {
             produces = "application/json"
     )
     public SuccessResponse<PaymentDTO> createNewPayment(
-            @RequestBody PaymentDTO paymentDTO
+            @RequestBody PaymentForm formData
     ) throws InvocationTargetException, IllegalAccessException {
         Payment payment = new Payment();
-        notNullUtil.copyProperties(payment, paymentDTO);
+        notNullUtil.copyProperties(payment, formData);
 
         PaymentDTO dto =
                 mapper.convertToDTO(service.savePayment(payment));
@@ -78,10 +79,10 @@ public class PaymentController {
     )
     public SuccessResponse<PaymentDTO> updatePayment(
             @PathVariable("paymentId") int id,
-            @RequestBody PaymentDTO paymentDTO
+            @RequestBody PaymentForm formData
     ) throws InvocationTargetException, IllegalAccessException {
         Payment payment = service.findPaymentById(id);
-        notNullUtil.copyProperties(payment, paymentDTO);
+        notNullUtil.copyProperties(payment, formData);
 
         PaymentDTO dto =
                 mapper.convertToDTO(service.savePayment(payment));

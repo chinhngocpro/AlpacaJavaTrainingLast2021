@@ -10,6 +10,7 @@ import vn.alpaca.alpacajavatraininglast2021.object.entity.AnalyzedReceipt;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.AnalyzerReceiptMapper;
 import vn.alpaca.alpacajavatraininglast2021.service.AnalyzedReceiptService;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
+import vn.alpaca.alpacajavatraininglast2021.wrapper.request.analyzedreceipt.AnalyzedReceiptForm;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 import java.lang.reflect.InvocationTargetException;
@@ -71,10 +72,10 @@ public class AnalyzedReceiptController {
             produces = "application/json"
     )
     public SuccessResponse<AnalyzedReceiptDTO> createNewReceipt(
-            @RequestBody AnalyzedReceiptDTO receiptDTO
+            @RequestBody AnalyzedReceiptForm formData
     ) throws InvocationTargetException, IllegalAccessException {
         AnalyzedReceipt receipt = new AnalyzedReceipt();
-        notNullUtil.copyProperties(receipt, receiptDTO);
+        notNullUtil.copyProperties(receipt, formData);
 
         AnalyzedReceiptDTO dto =
                 mapper.convertToDTO(service.saveReceipt(receipt));
@@ -88,10 +89,10 @@ public class AnalyzedReceiptController {
     )
     public SuccessResponse<AnalyzedReceiptDTO> updateReceipt(
             @PathVariable("receiptId") int id,
-            @RequestBody AnalyzedReceiptDTO receiptDTO
+            @RequestBody AnalyzedReceiptForm formData
     ) throws InvocationTargetException, IllegalAccessException {
         AnalyzedReceipt receipt = service.findReceiptById(id);
-        notNullUtil.copyProperties(receipt, receiptDTO);
+        notNullUtil.copyProperties(receipt, formData);
 
         AnalyzedReceiptDTO dto =
                 mapper.convertToDTO(service.saveReceipt(receipt));

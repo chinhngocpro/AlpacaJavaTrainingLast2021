@@ -1,9 +1,10 @@
-package vn.alpaca.alpacajavatraininglast2021.object.dto;
+package vn.alpaca.alpacajavatraininglast2021.wrapper.request.payment;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.alpaca.alpacajavatraininglast2021.wrapper.request.user.UserForm;
 
 import java.util.Date;
 
@@ -11,14 +12,12 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentDTO {
-
-    private int id;
+public class PaymentForm {
 
     private double amount;
 
     private Date paymentDate;
 
-    private UserDTO accountantInCharge;
+    private UserForm accountantInCharge;
 
 }

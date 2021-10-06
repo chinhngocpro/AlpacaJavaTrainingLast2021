@@ -5,20 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentDTO {
+public class AuthorityDTO {
 
     private int id;
 
-    private double amount;
-
-    private Date paymentDate;
-
-    private UserDTO accountantInCharge;
-
+    private String permissionName;
 }

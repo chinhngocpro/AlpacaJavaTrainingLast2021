@@ -8,8 +8,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
+import vn.alpaca.alpacajavatraininglast2021.object.entity.Authority;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Role;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
+import vn.alpaca.alpacajavatraininglast2021.repository.AuthorityRepository;
 import vn.alpaca.alpacajavatraininglast2021.repository.RoleRepository;
 import vn.alpaca.alpacajavatraininglast2021.repository.UserRepository;
 
@@ -20,13 +22,16 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final AuthorityRepository authorityRepository;
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository,
                        RoleRepository roleRepository,
+                       AuthorityRepository authorityRepository,
                        PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.authorityRepository = authorityRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -137,6 +142,28 @@ public class UserService implements UserDetailsService {
 
     public void deleteRole(Role role) {
         roleRepository.delete(role);
+    }
+
+    public Page<Authority> findAllAuthorities(Pageable pageable) {
+        return authorityRepository.findAll(pageable);
+    }
+
+    public Authority findAuthorityById(int id) {
+        return authorityRepository.findById(id)
+                .orElseThrow(ResourceNotFoundException::new);
+        // TODO: Implement exception message
+    }
+
+    public Authority saveAuthority(Authority authority) {
+        return authorityRepository.save(authority);
+    }
+
+    public void deleteAuthority(int id) {
+        authorityRepository.deleteById(id);
+    }
+
+    public void deleteAuthority(Authority authority) {
+        authorityRepository.delete(authority);
     }
 
 }

@@ -10,6 +10,7 @@ import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.CustomerMapper;
 import vn.alpaca.alpacajavatraininglast2021.service.CustomerService;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
+import vn.alpaca.alpacajavatraininglast2021.wrapper.request.customer.CustomerForm;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 import java.lang.reflect.InvocationTargetException;
@@ -74,10 +75,10 @@ public class CustomerController {
             produces = "application/json"
     )
     public SuccessResponse<CustomerDTO> createNewCustomer(
-            @RequestBody CustomerDTO customerDTO
+            @RequestBody CustomerForm formData
     ) throws InvocationTargetException, IllegalAccessException {
         Customer customer = new Customer();
-        notNullUtil.copyProperties(customer, customerDTO);
+        notNullUtil.copyProperties(customer, formData);
 
         CustomerDTO dto =
                 mapper.convertToDTO(service.saveCustomer(customer));
@@ -92,10 +93,10 @@ public class CustomerController {
     )
     public SuccessResponse<CustomerDTO> updateCustomer(
             @PathVariable("customerId") int id,
-            @RequestBody CustomerDTO customerDTO
+            @RequestBody CustomerForm formData
     ) throws InvocationTargetException, IllegalAccessException {
         Customer customer = service.findCustomerById(id);
-        notNullUtil.copyProperties(customer, customerDTO);
+        notNullUtil.copyProperties(customer, formData);
 
         CustomerDTO dto =
                 mapper.convertToDTO(service.saveCustomer(customer));

@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequest {
+public class LoginForm {
     String username;
 
     String password;

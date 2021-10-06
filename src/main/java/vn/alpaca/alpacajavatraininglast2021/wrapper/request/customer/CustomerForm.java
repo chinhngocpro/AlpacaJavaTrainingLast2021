@@ -1,6 +1,9 @@
-package vn.alpaca.alpacajavatraininglast2021.object.dto;
+package vn.alpaca.alpacajavatraininglast2021.wrapper.request.customer;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
@@ -9,10 +12,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
-
-    private String username;
-
+public class CustomerForm {
+    
     private String fullName;
 
     private boolean gender;
@@ -27,8 +28,7 @@ public class UserDTO {
 
     private String address;
 
+    private String occupation;
+
     private boolean active;
-
-    private RoleDTO role;
-
 }

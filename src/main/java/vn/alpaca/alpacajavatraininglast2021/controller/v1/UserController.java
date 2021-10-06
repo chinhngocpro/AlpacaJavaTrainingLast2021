@@ -7,6 +7,7 @@ import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.UserMapper;
 import vn.alpaca.alpacajavatraininglast2021.service.UserService;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
+import vn.alpaca.alpacajavatraininglast2021.wrapper.request.user.UserForm;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 import java.lang.reflect.InvocationTargetException;
@@ -28,7 +29,10 @@ public class UserController {
         this.notNullUtil = notNullUtil;
     }
 
-    @GetMapping(consumes = "application/json", produces = "application/json")
+    @GetMapping(
+            consumes = "application/json",
+            produces = "application/json"
+    )
     public SuccessResponse<Page<UserDTO>> getAllUsers(
             @RequestParam("page") Optional<Integer> pageNumber,
             @RequestParam("size") Optional<Integer> pageSize,
@@ -71,10 +75,10 @@ public class UserController {
             produces = "application/json"
     )
     public SuccessResponse<UserDTO> createNewUser(
-            @RequestBody UserDTO userDTO
+            @RequestBody UserForm formData
     ) throws InvocationTargetException, IllegalAccessException {
         User user = new User();
-        notNullUtil.copyProperties(user, userDTO);
+        notNullUtil.copyProperties(user, formData);
         System.out.println(user);
 
         UserDTO dto = mapper.convertToDTO(service.saveUser(user));
@@ -89,10 +93,10 @@ public class UserController {
     )
     public SuccessResponse<UserDTO> updateUser(
             @PathVariable("userId") int id,
-            @RequestBody UserDTO userDTO
+            @RequestBody UserForm formData
     ) throws InvocationTargetException, IllegalAccessException {
         User user = service.findUserById(id);
-        notNullUtil.copyProperties(user, userDTO);
+        notNullUtil.copyProperties(user, formData);
 
         UserDTO dto = mapper.convertToDTO(user);
 
