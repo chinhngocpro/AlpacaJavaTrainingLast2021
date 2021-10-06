@@ -2,76 +2,68 @@ package vn.alpaca.alpacajavatraininglast2021.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Contract;
 import vn.alpaca.alpacajavatraininglast2021.repository.ContractRepository;
+import vn.alpaca.alpacajavatraininglast2021.specification.ContractSpecification;
 
-import java.util.Collection;
+import java.util.Date;
 
 @Service
 public class ContractService {
 
-    private final ContractRepository contractRepository;
+    private final ContractRepository repository;
+    private final ContractSpecification spec;
 
-    public ContractService(ContractRepository contractRepository) {
-        this.contractRepository = contractRepository;
+    public ContractService(ContractRepository repository,
+                           ContractSpecification spec) {
+        this.repository = repository;
+        this.spec = spec;
     }
 
-    public Collection<Contract> findAllContracts() {
-        return contractRepository.findAll();
-    }
+    public Page<Contract> findAllContracts(
+            String contractCode,
+            Boolean isValid,
+            Double maximumAmount,
+            Double remainingAmount,
+            Boolean active,
+            Integer hospitalId,
+            Integer accidentId,
+            Pageable pageable
+    ) {
+        Specification<Contract> conditions = Specification
+                .where(spec.hasContractCode(contractCode))
+                .and(spec.isValid(isValid))
+                .and(spec.hasMaximumAmountInRange(maximumAmount))
+                .and(spec.hasRemainingAmountInRange(remainingAmount))
+                .and(spec.isActive(active))
+                .and(spec.hasAcceptableHospital(hospitalId))
+                .and(spec.hasAcceptableAccident(accidentId));
 
-    public Page<Contract> findAllContracts(Pageable pageable) {
-        return contractRepository.findAll(pageable);
-    }
-
-    public Collection<Contract> findActiveContracts() {
-        return contractRepository.findAllByActiveIsTrue();
-    }
-
-    public Page<Contract> findActiveContracts(Pageable pageable) {
-        return contractRepository.findAllByActiveIsTrue(pageable);
-    }
-
-    public Contract findContractByContractCode(String contractCode) {
-        return contractRepository.findByContractCode(contractCode)
-                .orElseThrow(ResourceNotFoundException::new);
-        // TODO: implement exception message
+        return repository.findAll(conditions, pageable);
     }
 
     public Contract findContractById(int id) {
-        return contractRepository.findById(id)
-                .orElseThrow(ResourceNotFoundException::new);
-        // TODO: implement exception message
-    }
-
-    public Contract findContractByCustomerId(int customerId) {
-        return contractRepository.findByCustomerId(customerId)
+        return repository.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
         // TODO: implement exception message
     }
 
     public Contract saveContract(Contract contract) {
-        return contractRepository.save(contract);
+        return repository.save(contract);
     }
 
     public void activateContract(int contractId) {
-        // Option 1
         Contract contract = findContractById(contractId);
         contract.setActive(true);
         saveContract(contract);
-
-        // Option 2
-//        contractRepository.activate(contractId);
     }
 
     public void deactivateContract(int contractId) {
         Contract contract = findContractById(contractId);
         contract.setActive(false);
         saveContract(contract);
-
-        // Option 2
-//        contractRepository.deactivate(contractId);
     }
 }

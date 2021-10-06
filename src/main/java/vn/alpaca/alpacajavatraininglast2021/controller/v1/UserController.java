@@ -6,12 +6,13 @@ import vn.alpaca.alpacajavatraininglast2021.object.dto.UserDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.UserMapper;
 import vn.alpaca.alpacajavatraininglast2021.service.UserService;
+import vn.alpaca.alpacajavatraininglast2021.util.DateUtil;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
+import vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.request.user.UserForm;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
 import java.util.Optional;
 
 @RestController
@@ -21,13 +22,19 @@ public class UserController {
     private final UserService service;
     private final UserMapper mapper;
     private final NullAwareBeanUtil notNullUtil;
+    private final DateUtil dateUtil;
+    private final RequestParamUtil paramUtil;
 
     public UserController(UserService service,
                           UserMapper mapper,
-                          NullAwareBeanUtil notNullUtil) {
+                          NullAwareBeanUtil notNullUtil,
+                          DateUtil dateUtil,
+                          RequestParamUtil paramUtil) {
         this.service = service;
         this.mapper = mapper;
         this.notNullUtil = notNullUtil;
+        this.dateUtil = dateUtil;
+        this.paramUtil = paramUtil;
     }
 
     @GetMapping(
@@ -43,7 +50,7 @@ public class UserController {
                     Optional<String> sortBy,
             @RequestParam(value = "username", required = false)
                     Optional<String> username,
-            @RequestParam(value = "fullName", required = false)
+            @RequestParam(value = "full-name", required = false)
                     Optional<String> fullName,
             @RequestParam(value = "gender", required = false)
                     Optional<Boolean> isMale,
@@ -52,9 +59,9 @@ public class UserController {
             @RequestParam(value = "email", required = false)
                     Optional<String> email,
             @RequestParam(value = "dob-from", required = false)
-                    Optional<Date> dobFrom,
+                    Optional<String> dobFrom,
             @RequestParam(value = "dob-to", required = false)
-                    Optional<Date> dobTo,
+                    Optional<String> dobTo,
             @RequestParam(value = "address", required = false)
                     Optional<String> address,
             @RequestParam(value = "active", required = false)
@@ -62,44 +69,21 @@ public class UserController {
             @RequestParam(value = "role-name", required = false)
                     Optional<String> roleName
     ) {
-        Sort sort = Sort.unsorted();
-//        if (sortBy.isPresent()) {
-//            System.out.println(true);
-//            String[] values = sortBy.get().split(".");
-//            String criteria = values[0];
-//            String direction =
-//                   values.length > 1 ? values[1].toLowerCase() : "asc";
-//
-//            sort = Sort.by(
-//                    direction.equals("desc") ?
-//                            Sort.Direction.DESC :
-//                            Sort.Direction.ASC,
-//                    criteria
-//            );
-//        }
-        Pageable pageable = Pageable.unpaged();
-        if (pageNumber.isPresent()) {
-            System.out.println(pageNumber.get());
-            pageable = PageRequest.of(
-                    pageNumber.get(),
-                    pageSize.orElse(5),
-                    sort
-            );
-        }
-        System.out.println(pageable.isPaged());
+        Sort sort = paramUtil.getSort(sortBy);
+        Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
 
         Page<UserDTO> dtoPage = new PageImpl<>(
                 service.findAllUsers(
-                                username.orElse(""),
-                                fullName.orElse(""),
+                                username.orElse(null),
+                                fullName.orElse(null),
                                 isMale.orElse(null),
-                                idCardNumber.orElse(""),
-                                email.orElse(""),
-                                dobFrom.orElse(new Date(Long.MIN_VALUE)),
-                                dobTo.orElse(new Date(Long.MAX_VALUE)),
-                                address.orElse(""),
+                                idCardNumber.orElse(null),
+                                email.orElse(null),
+                                dateUtil.convertStringToDate(dobFrom.orElse(null)),
+                                dateUtil.convertStringToDate(dobTo.orElse(null)),
+                                address.orElse(null),
                                 active.orElse(null),
-                                roleName.orElse(""),
+                                roleName.orElse(null),
                                 pageable
                         )
                         .map(mapper::convertToDTO)
