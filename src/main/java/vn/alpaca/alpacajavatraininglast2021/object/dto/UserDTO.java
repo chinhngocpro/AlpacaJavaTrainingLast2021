@@ -27,6 +27,4 @@ public class UserDTO {
 
     private String address;
 
-    private boolean active;
-
 }

@@ -21,7 +21,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping(
         value = "/api/v1/contracts",
-        consumes = "application/json",
         produces = "application/json"
 )
 public class ContractController {
@@ -87,7 +86,7 @@ public class ContractController {
         return new SuccessResponse<>(dtoPage);
     }
 
-    @GetMapping(value = "/{contractId}")
+    @GetMapping("/{contractId}")
     public SuccessResponse<ContractDTO> getContractById(
             @PathVariable("contractId") int id
     ) {
@@ -98,7 +97,7 @@ public class ContractController {
     }
 
     @PreAuthorize("hasAuthority('CONTRACT_CREATE')")
-    @PostMapping
+    @PostMapping(consumes = "application/json")
     public SuccessResponse<ContractDTO> createNewContract(
             @RequestBody ContractForm formData
     ) throws InvocationTargetException, IllegalAccessException {

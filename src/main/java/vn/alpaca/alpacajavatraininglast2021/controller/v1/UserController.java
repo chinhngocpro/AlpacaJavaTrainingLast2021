@@ -1,6 +1,7 @@
 package vn.alpaca.alpacajavatraininglast2021.controller.v1;
 
 import org.springframework.data.domain.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.UserDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
@@ -16,7 +17,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping(
+        value = "/api/v1/users",
+        produces = "application/json"
+)
 public class UserController {
 
     private final UserService service;
@@ -35,12 +39,11 @@ public class UserController {
         this.notNullUtil = notNullUtil;
         this.dateUtil = dateUtil;
         this.paramUtil = paramUtil;
+
     }
 
-    @GetMapping(
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('USER_READ')")
+    @GetMapping
     public SuccessResponse<Page<UserDTO>> getAllUsers(
             @RequestParam(value = "page", required = false)
                     Optional<Integer> pageNumber,
@@ -93,11 +96,8 @@ public class UserController {
         return new SuccessResponse<>(dtoPage);
     }
 
-    @GetMapping(
-            value = "/{userId}",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('USER_READ')")
+    @GetMapping(value = "/{userId}")
     public SuccessResponse<UserDTO> getUserById(
             @PathVariable("userId") int id
     ) {
@@ -106,10 +106,8 @@ public class UserController {
         return new SuccessResponse<>(dto);
     }
 
-    @PostMapping(
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('USER_CREATE')")
+    @PostMapping(consumes = "application/json")
     public SuccessResponse<UserDTO> createNewUser(
             @RequestBody UserForm formData
     ) throws InvocationTargetException, IllegalAccessException {
@@ -121,10 +119,10 @@ public class UserController {
         return new SuccessResponse<>(dto);
     }
 
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
     @PutMapping(
             value = "/{userId}",
-            consumes = "application/json",
-            produces = "application/json"
+            consumes = "application/json"
     )
     public SuccessResponse<UserDTO> updateUser(
             @PathVariable("userId") int id,
@@ -138,11 +136,8 @@ public class UserController {
         return new SuccessResponse<>(dto);
     }
 
-    @PatchMapping(
-            value = "/{userId}/activate",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
+    @PatchMapping(value = "/{userId}/activate")
     public SuccessResponse<Boolean> activateUser(
             @PathVariable("userId") int id
     ) {
@@ -151,11 +146,8 @@ public class UserController {
         return new SuccessResponse<>(true);
     }
 
-    @PatchMapping(
-            value = "/{userId}/deactivate",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
+    @PatchMapping(value = "/{userId}/deactivate")
     public SuccessResponse<Boolean> deactivateUser(
             @PathVariable("userId") int id
     ) {

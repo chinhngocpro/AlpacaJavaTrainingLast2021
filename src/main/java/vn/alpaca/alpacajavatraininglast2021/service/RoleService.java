@@ -7,11 +7,9 @@ import org.springframework.stereotype.Service;
 import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Authority;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Role;
-import vn.alpaca.alpacajavatraininglast2021.repository.AuthorityRepository;
 import vn.alpaca.alpacajavatraininglast2021.repository.RoleRepository;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.request.role.RoleForm;
 
-import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -26,9 +24,6 @@ public class RoleService {
     @Autowired
     RoleService self;
 
-    public Collection<Role> findAllRoles() {
-        return roleRepository.findAll();
-    }
 
     public Page<Role> findAllRoles(Pageable pageable) {
         return roleRepository.findAll(pageable);
@@ -37,7 +32,7 @@ public class RoleService {
     public Role findRoleById(int id) {
         Optional<Role> role = roleRepository.findById(id);
 
-        return role.orElseThrow(() -> new ResourceNotFoundException());
+        return role.orElseThrow(ResourceNotFoundException::new);
     }
 
     public Role createNewRole(RoleForm form) {
@@ -45,10 +40,11 @@ public class RoleService {
 
         role.setName(form.getName());
 
-        if (form.getPermissions() != null) {
-            form.getPermissions().forEach(authorityId -> {
+        if (form.getAuthorityIds() != null) {
+            form.getAuthorityIds().forEach(authorityId -> {
                 try {
-                    Authority authority = authorityService.findById(authorityId);
+                    Authority authority =
+                            authorityService.findById(authorityId);
                     role.addAuthority(authority);
                 } catch (Exception e) {
                 }
@@ -65,11 +61,12 @@ public class RoleService {
             role.setName(form.getName());
         }
 
-        if (form.getPermissions() != null) {
+        if (form.getAuthorityIds() != null) {
             role.getAuthorities().clear();
-            form.getPermissions().forEach(authorityId -> {
+            form.getAuthorityIds().forEach(authorityId -> {
                 try {
-                    Authority authority = authorityService.findById(authorityId);
+                    Authority authority =
+                            authorityService.findById(authorityId);
                     role.addAuthority(authority);
                 } catch (Exception e) {
                 }

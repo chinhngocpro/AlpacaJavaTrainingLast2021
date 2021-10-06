@@ -2,62 +2,50 @@ package vn.alpaca.alpacajavatraininglast2021.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Payment;
 import vn.alpaca.alpacajavatraininglast2021.repository.PaymentRepository;
+import vn.alpaca.alpacajavatraininglast2021.specification.PaymentSpecification;
 
-import java.util.Collection;
 import java.util.Date;
 
 @Service
 public class PaymentService {
 
-    private final PaymentRepository paymentRepository;
+    private final PaymentRepository repository;
+    private final PaymentSpecification spec;
 
-    public PaymentService(PaymentRepository paymentRepository) {
-        this.paymentRepository = paymentRepository;
+    public PaymentService(PaymentRepository repository,
+                          PaymentSpecification spec) {
+        this.repository = repository;
+        this.spec = spec;
     }
 
-    public Collection<Payment> findAllPayments() {
-        return paymentRepository.findAll();
+
+    public Page<Payment> findAllPayments(
+            Double minAmount,
+            Double maxAmount,
+            Date fromDate,
+            Date toDate,
+            Pageable pageable
+    ) {
+        Specification<Payment> conditions = Specification
+                .where(spec.hasAmountBetween(minAmount, maxAmount))
+                .and(spec.hasDateBetween(fromDate, toDate));
+
+        return repository.findAll(conditions, pageable);
     }
 
-    public Page<Payment> findAllPayments(Pageable pageable) {
-        return paymentRepository.findAll(pageable);
-    }
-
-    public Collection<Payment> findPaymentsByUserId(int userId) {
-        return paymentRepository.findByAccountantId(userId);
-    }
-
-    public Page<Payment> findPaymentsByUserId(int userId, Pageable pageable) {
-        return paymentRepository.findByAccountantId(userId, pageable);
-    }
-
-    public Collection<Payment> findPaymentsByDateBetween(Date from, Date to) {
-        return paymentRepository.findAllByPaymentDateBetween(from, to);
-    }
-
-    public Page<Payment> findPaymentsByDateBetween(Date from, Date to,
-                                                   Pageable pageable) {
-        return paymentRepository
-                .findAllByPaymentDateBetween(from, to, pageable);
-    }
 
     public Payment findPaymentById(int id) {
-        return paymentRepository.findById(id)
-                .orElseThrow(ResourceNotFoundException::new);
-        // TODO: implement exception message
-    }
-
-    public Payment findPaymentByClaimRequestId(int requestId) {
-        return paymentRepository.findByClaimRequestId(requestId)
+        return repository.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
         // TODO: implement exception message
     }
 
     public Payment savePayment(Payment payment) {
-        return paymentRepository.save(payment);
+        return repository.save(payment);
     }
 }

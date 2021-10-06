@@ -28,6 +28,4 @@ public class CustomerDTO {
     private String address;
 
     private String occupation;
-
-    private boolean active;
 }

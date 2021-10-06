@@ -29,8 +29,6 @@ public class ContractDTO {
 
     private Double remainingAmount;
 
-    private boolean active;
-
     private List<Integer> acceptableHospitalIds;
 
     private List<Integer> acceptableAccidentIds;

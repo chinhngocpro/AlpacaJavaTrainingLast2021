@@ -19,7 +19,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/customers")
+@RequestMapping(
+        value = "/api/v1/customers",
+        produces = "application/json"
+)
 public class CustomerController {
 
     private final CustomerService service;
@@ -40,7 +43,7 @@ public class CustomerController {
         this.paramUtil = paramUtil;
     }
 
-    @GetMapping(produces = "application/json")
+    @GetMapping
     public SuccessResponse<Page<CustomerDTO>> getAllCustomers(
             @RequestParam(value = "page", required = false)
                     Optional<Integer> pageNumber,
@@ -87,10 +90,7 @@ public class CustomerController {
         return new SuccessResponse<>(dtoPage);
     }
 
-    @GetMapping(
-            value = "/{customerId}",
-            produces = "application/json"
-    )
+    @GetMapping("/{customerId}")
     public SuccessResponse<CustomerDTO> getCustomerById(
             @PathVariable("customerId") int id
     ) {
@@ -101,10 +101,7 @@ public class CustomerController {
         return new SuccessResponse<>(dto);
     }
 
-    @PostMapping(
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PostMapping(consumes = "application/json")
     public SuccessResponse<CustomerDTO> createNewCustomer(
             @RequestBody CustomerForm formData
     ) throws InvocationTargetException, IllegalAccessException {
@@ -119,8 +116,7 @@ public class CustomerController {
 
     @PutMapping(
             value = "/{customerId}",
-            consumes = "application/json",
-            produces = "application/json"
+            consumes = "application/json"
     )
     public SuccessResponse<CustomerDTO> updateCustomer(
             @PathVariable("customerId") int id,
@@ -135,11 +131,7 @@ public class CustomerController {
         return new SuccessResponse<>(dto);
     }
 
-    @PatchMapping(
-            value = "/{customerId}/activate",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PatchMapping(value = "/{customerId}/activate")
     public SuccessResponse<Boolean> activateCustomer(
             @PathVariable("customerId") int id
     ) {
@@ -148,11 +140,7 @@ public class CustomerController {
         return new SuccessResponse<>(true);
     }
 
-    @PatchMapping(
-            value = "/{customerId}/deactivate",
-            consumes = "application/json",
-            produces = "application/json"
-    )
+    @PatchMapping(value = "/{customerId}/deactivate")
     public SuccessResponse<Boolean> deactivateCustomer(
             @PathVariable("customerId") int id
     ) {

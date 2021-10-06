@@ -23,7 +23,7 @@ public final class ContractSpecification {
 
     public Specification<Contract> isValid(Boolean isValid) {
         return (root, query, builder) ->
-                isValid == null ?
+                ObjectUtils.isEmpty(isValid) ?
                         builder.conjunction() :
                         builder.lessThan(
                                 root.get(Contract_.VALID_TO),
@@ -53,7 +53,7 @@ public final class ContractSpecification {
 
     public Specification<Contract> isActive(Boolean active) {
         return (root, query, builder) ->
-                active == null ?
+                ObjectUtils.isEmpty(active) ?
                         builder.conjunction() :
                         builder.equal(
                                 root.get(Contract_.ACTIVE),

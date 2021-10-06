@@ -22,7 +22,6 @@ import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 )
 public class AuthController {
 
-
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
 

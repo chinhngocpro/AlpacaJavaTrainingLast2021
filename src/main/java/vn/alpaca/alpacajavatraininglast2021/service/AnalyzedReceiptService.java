@@ -2,73 +2,56 @@ package vn.alpaca.alpacajavatraininglast2021.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.alpaca.alpacajavatraininglast2021.exception.AccessDeniedException;
 import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.AnalyzedReceipt;
 import vn.alpaca.alpacajavatraininglast2021.repository.AnalyzedReceiptRepository;
+import vn.alpaca.alpacajavatraininglast2021.specification.AnalyzedReceiptSpecification;
 
 import java.util.Collection;
 
 @Service
 public class AnalyzedReceiptService {
 
-    private final AnalyzedReceiptRepository analyzedReceiptRepository;
+    private final AnalyzedReceiptRepository repository;
+    private final AnalyzedReceiptSpecification spec;
 
-    public AnalyzedReceiptService(
-            AnalyzedReceiptRepository analyzedReceiptRepository) {
-        this.analyzedReceiptRepository = analyzedReceiptRepository;
+    public AnalyzedReceiptService(AnalyzedReceiptRepository repository,
+                                  AnalyzedReceiptSpecification spec) {
+        this.repository = repository;
+        this.spec = spec;
     }
 
-    public Collection<AnalyzedReceipt> findAllReceipts() {
-        return analyzedReceiptRepository.findAll();
-    }
+    public Page<AnalyzedReceipt> findAllReceipts(
+            Boolean isValid,
+            String title,
+            Integer hospitalId,
+            Integer accidentId,
+            Double minAmount,
+            Double maxAmount,
+            Pageable pageable
+    ) {
 
-    public Page<AnalyzedReceipt> findAllReceipts(Pageable pageable) {
-        return analyzedReceiptRepository.findAll(pageable);
-    }
+        Specification<AnalyzedReceipt> conditions = Specification
+                .where(spec.isValid(isValid))
+                .and(spec.hasTitleContaining(title))
+                .and(spec.hasHospitalId(hospitalId))
+                .and(spec.hasAcccidentId(accidentId))
+                .and(spec.hasAmountBetween(minAmount, maxAmount));
 
-    public Collection<AnalyzedReceipt> findValidReceipts() {
-        return analyzedReceiptRepository.findAllByValidIsTrue();
-    }
-
-    public Page<AnalyzedReceipt> findValidReceipts(Pageable pageable) {
-        return analyzedReceiptRepository.findAllByValidIsTrue(pageable);
-    }
-
-    public Collection<AnalyzedReceipt> findReceiptsByUserId(int userId) {
-        return analyzedReceiptRepository.findAllByAnalyzerId(userId);
-    }
-
-    public Page<AnalyzedReceipt>
-    findReceiptsByUserId(int userId, Pageable pageable) {
-        return analyzedReceiptRepository.findAllByAnalyzerId(userId, pageable);
-    }
-
-    public Collection<AnalyzedReceipt> findReceiptsByTitle(String title) {
-        return analyzedReceiptRepository.findAllByTitle(title);
-    }
-
-    public Page<AnalyzedReceipt>
-    findReceiptsByTitle(String title, Pageable pageable) {
-        return analyzedReceiptRepository.findAllByTitle(title, pageable);
+        return repository.findAll(conditions, pageable);
     }
 
     public AnalyzedReceipt findReceiptById(int id) {
-        return analyzedReceiptRepository.findById(id)
+        return repository.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
         // TODO: implement exception message
     }
 
-    public AnalyzedReceipt findReceiptByClaimRequestId(int requestId) {
-        return analyzedReceiptRepository.findByClaimRequestId(requestId)
-                .orElseThrow(ResourceNotFoundException::new);
-        // TODO: implement exception message
-    }
-
-    public AnalyzedReceipt saveReceipt(
-            AnalyzedReceipt receipt) {
-        return analyzedReceiptRepository.save(receipt);
+    public AnalyzedReceipt saveReceipt(AnalyzedReceipt receipt) {
+        return repository.save(receipt);
     }
 
     public AnalyzedReceipt
@@ -77,7 +60,7 @@ public class AnalyzedReceiptService {
             throw new AccessDeniedException(); // TODO: implement exception message
         }
 
-        return analyzedReceiptRepository.save(receipt);
+        return repository.save(receipt);
     }
 
     public void validateReceipt(int receiptId) {

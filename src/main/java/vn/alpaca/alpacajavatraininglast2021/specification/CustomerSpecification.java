@@ -23,7 +23,7 @@ public final class CustomerSpecification {
 
     public Specification<Customer> isMale(Boolean isMale) {
         return (root, query, builder) ->
-                isMale == null ?
+                ObjectUtils.isEmpty(isMale) ?
                         builder.conjunction() :
                         builder.equal(root.get(Customer_.GENDER), isMale);
     }
@@ -72,7 +72,7 @@ public final class CustomerSpecification {
 
     public Specification<Customer> isActive(Boolean active) {
         return (root, query, builder) ->
-                active == null ?
+                ObjectUtils.isEmpty(active) ?
                         builder.conjunction() :
                         builder.equal(root.get(Customer_.ACTIVE), active);
     }

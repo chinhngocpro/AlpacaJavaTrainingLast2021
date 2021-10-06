@@ -34,7 +34,7 @@ public final class UserSpecification {
 
     public Specification<User> isMale(Boolean isMale) {
         return (root, query, builder) ->
-                isMale == null ?
+                ObjectUtils.isEmpty(isMale) ?
                         builder.conjunction() :
                         builder.equal(root.get(User_.GENDER), isMale);
     }
@@ -81,7 +81,7 @@ public final class UserSpecification {
 
     public Specification<User> isActive(Boolean active) {
         return (root, query, builder) ->
-                active == null ?
+                ObjectUtils.isEmpty(active) ?
                         builder.conjunction() :
                         builder.equal(root.get(User_.ACTIVE), active);
     }

@@ -15,8 +15,6 @@ public class AnalyzedReceiptDTO {
 
     private String title;
 
-    private boolean isValid;
-
     private int hospitalId;
 
     private int accidentId;
