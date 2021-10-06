@@ -24,12 +24,17 @@ public final class UserSpecification {
 
     public Specification<User> hasNameContaining(String fullName) {
         return (root, query, builder) ->
-                builder.like(root.get(User_.FULL_NAME), fullName);
+                ObjectUtils.isEmpty(fullName) ?
+                        builder.conjunction() :
+                        builder.like(
+                                root.get(User_.FULL_NAME),
+                                "%" + fullName + "%"
+                        );
     }
 
-    public Specification<User> isMale(boolean isMale) {
+    public Specification<User> isMale(Boolean isMale) {
         return (root, query, builder) ->
-                ObjectUtils.isEmpty(isMale) ?
+                isMale == null ?
                         builder.conjunction() :
                         builder.equal(root.get(User_.GENDER), isMale);
     }
@@ -74,9 +79,9 @@ public final class UserSpecification {
                         builder.like(root.get(User_.ADDRESS), address);
     }
 
-    public Specification<User> isActive(boolean active) {
+    public Specification<User> isActive(Boolean active) {
         return (root, query, builder) ->
-                ObjectUtils.isEmpty(active) ?
+                active == null ?
                         builder.conjunction() :
                         builder.equal(root.get(User_.ACTIVE), active);
     }

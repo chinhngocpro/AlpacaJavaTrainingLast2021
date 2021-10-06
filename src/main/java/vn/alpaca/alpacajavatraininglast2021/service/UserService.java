@@ -49,47 +49,30 @@ public class UserService implements UserDetailsService {
     public Page<User> findAllUsers(
             String username,
             String fullName,
-            boolean isMale,
+            Boolean isMale,
             String idCardNumber,
             String email,
             Date from,
             Date to,
             String address,
-            boolean active,
+            Boolean active,
             String roleName,
             Pageable pageable
     ) {
-        Specification<User> conditions =
-                Specification.where(userSpec.hasUsername(username))
-                        .and(userSpec.hasNameContaining(fullName))
-                        .and(userSpec.isMale(isMale))
-                        .and(userSpec.hasIdCardNumber(idCardNumber))
-                        .and(userSpec.hasEmailContaining(email))
-                        .and(userSpec.hasDobBetween(from, to))
-                        .and(userSpec.hasAddressContaining(address))
-                        .and(userSpec.isActive(active))
-                        .and(userSpec.hasRoleName(roleName));
+        Specification<User> conditions = Specification
+                .where(userSpec.hasUsername(username))
+                .and(userSpec.hasNameContaining(fullName))
+                .and(userSpec.isMale(isMale))
+                .and(userSpec.hasIdCardNumber(idCardNumber))
+                .and(userSpec.hasEmailContaining(email))
+                .and(userSpec.hasDobBetween(from, to))
+                .and(userSpec.hasAddressContaining(address))
+                .and(userSpec.isActive(active))
+                .and(userSpec.hasRoleName(roleName));
 
-        userRepository.findAll(conditions, pageable);
-        return userRepository.findAll(pageable);
+        return userRepository.findAll(conditions, Pageable.unpaged());
     }
 
-//    public Page<User> findActiveUsers(Pageable pageable) {
-//        return userRepository.findAllByActiveIsTrue(pageable);
-//    }
-//
-//    public Page<User>
-//    findUsersByNameContains(String fullName, Pageable pageable) {
-//        return userRepository.findAllByFullNameContains(fullName, pageable);
-//    }
-//
-//    public Page<User> findUsersByGender(boolean gender, Pageable pageable) {
-//        return userRepository.findAllByGender(gender, pageable);
-//    }
-//
-//    public Page<User> findUserByRoleName(String roleName, Pageable pageable) {
-//        return userRepository.findAllByRoleName(roleName, pageable);
-//    }
 
     public User findUserById(int id) {
         return userRepository.findById(id)
@@ -102,12 +85,6 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(ResourceNotFoundException::new);
         // TODO: implement exception message
     }
-
-//    public User findUserByIdCard(String idCardNumber) {
-//        return userRepository.findByIdCardNumber(idCardNumber)
-//                .orElseThrow(ResourceNotFoundException::new);
-//        // TODO: implement exception message
-//    }
 
     public User saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
