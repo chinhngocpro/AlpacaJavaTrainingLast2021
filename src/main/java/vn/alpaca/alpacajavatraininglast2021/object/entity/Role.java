@@ -1,14 +1,12 @@
 package vn.alpaca.alpacajavatraininglast2021.object.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -48,6 +46,13 @@ public class Role implements Serializable {
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
     private Set<Authority> authorities;
+
+    public void addAuthority(@NonNull Authority authority) {
+        if (authorities == null) {
+            authorities = new HashSet<>();
+        }
+        authorities.add(authority);
+    }
 
     @Override
     public String toString() {

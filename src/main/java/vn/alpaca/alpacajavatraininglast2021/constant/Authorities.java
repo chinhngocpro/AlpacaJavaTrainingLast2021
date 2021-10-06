@@ -6,10 +6,10 @@ public class Authorities {
     public static final String USER_UPDATE = "USER_UPDATE";
     public static final String USER_DELETE = "USER_DELETE";
 
-    public static final String ROLE_READ = "ROLE_READ";
-    public static final String ROLE_CREATE = "ROLE_CREATE";
-    public static final String ROLE_UPDATE = "ROLE_UPDATE";
-    public static final String ROLE_DELETE = "ROLE_DELETE";
+    public static final String SYSTEM_ROLE_READ = "SYSTEM_ROLE_READ";
+    public static final String SYSTEM_ROLE_CREATE = "SYSTEM_ROLE_CREATE";
+    public static final String SYSTEM_ROLE_UPDATE = "SYSTEM_ROLE_UPDATE";
+    public static final String SYSTEM_ROLE_DELETE = "SYSTEM_ROLE_DELETE";
 
     public static final String AUTHORITY_READ = "AUTHORITY_READ";
     public static final String AUTHORITY_CREATE = "AUTHORITY_CREATE";
