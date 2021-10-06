@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
 import vn.alpaca.alpacajavatraininglast2021.security.jwt.JwtTokenProvider;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.request.auth.LoginRequest;
+import vn.alpaca.alpacajavatraininglast2021.wrapper.request.auth.LoginForm;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.AbstractResponse;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
@@ -29,7 +29,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public AbstractResponse login(@RequestBody LoginRequest form) {
+    public AbstractResponse login(@RequestBody LoginForm form) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(
                         form.getUsername(), form.getPassword()));
