@@ -1,4 +1,4 @@
-package vn.alpaca.alpacajavatraininglast2021.security.jwt;
+package vn.alpaca.alpacajavatraininglast2021.provider;
 
 import io.jsonwebtoken.*;
 import lombok.NonNull;
