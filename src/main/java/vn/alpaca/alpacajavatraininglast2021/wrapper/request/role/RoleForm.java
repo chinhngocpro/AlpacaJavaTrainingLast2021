@@ -13,6 +13,6 @@ public class RoleForm {
 
     private String name;
 
-    private Set<String> permissions = new HashSet<>();
+    private Set<Integer> permissions;
 
 }
