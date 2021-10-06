@@ -86,6 +86,7 @@ public class AnalyzedReceiptController {
         return new SuccessResponse<>(dto);
     }
 
+    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
     @PutMapping(value = "/{receiptId}",
             consumes = "application/json",
             produces = "application/json"
