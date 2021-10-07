@@ -91,6 +91,20 @@ public class PaymentController {
         return new SuccessResponse<>(dtoPage);
     }
 
+    @PreAuthorize("hasAuthority('PAYMENT_READ')")
+    @GetMapping(
+            value = "/{paymentId}",
+            consumes = "application/json"
+    )
+    public SuccessResponse<PaymentDTO> getPaymentById(
+            @PathVariable("paymentId") int id
+    ) {
+        PaymentDTO dto =
+                mapper.convertToDTO(paymentService.findPaymentById(id));
+
+        return new SuccessResponse<>(dto);
+    }
+
     @PreAuthorize("hasAuthority('PAYMENT_CREATE')")
     @PostMapping(consumes = "application/json")
     public SuccessResponse<PaymentDTO> createNewPayment(
