@@ -11,19 +11,18 @@ import java.util.UUID;
 @Service
 public class FileService {
 
-    @Value( "${alpaca.resource.save.:C:/upload}" )
+    @Value( "${alpaca.resource.save:C:/upload}" )
     private String savePath;
 
     public String saveFile(MultipartFile file) {
         try {
-            String fileName = String.format("%s.%s", UUID.randomUUID(), FilenameUtils.getExtension(file.getName()));
+            String fileName = String.format("%s.%s", UUID.randomUUID(), FilenameUtils.getExtension(file.getOriginalFilename()));
             File f = new File(savePath, fileName);
             file.transferTo(f);
 
-            return f.getPath();
+            return fileName;
         } catch (Exception e) {
-            return null;
         }
-
+        return null;
     }
 }
