@@ -36,7 +36,7 @@ public class Contract implements Serializable {
     private int id;
 
     @NotNull
-    @Pattern(regexp = "^[a-zA-Z]{3}")
+    @Pattern(regexp = "^[a-zA-Z]{3}[0-9]{9}$")
     private String contractCode;
 
     @ManyToOne

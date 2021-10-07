@@ -21,3 +21,5 @@ server:
     error:
         include-message: always
         include-stacktrace: never
+        whitelabel:
+            enabled: false

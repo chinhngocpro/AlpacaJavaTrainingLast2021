@@ -52,6 +52,8 @@ public class ContractService {
     }
 
     public Contract saveContract(Contract contract) {
+        // To make sure Contract Code is always uppercase
+        contract.setContractCode(contract.getContractCode().toUpperCase());
         return repository.save(contract);
     }
 

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import vn.alpaca.alpacajavatraininglast2021.exception.AccessDeniedException;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
 
 import java.util.Date;
@@ -47,8 +48,7 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (MalformedJwtException | ExpiredJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
-            ex.printStackTrace();
+            return false;
         }
-        return false;
     }
 }

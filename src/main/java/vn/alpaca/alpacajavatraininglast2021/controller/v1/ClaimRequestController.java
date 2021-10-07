@@ -86,7 +86,6 @@ public class ClaimRequestController {
         return new SuccessResponse<>(dto);
     }
 
-    @PreAuthorize("hasAuthority('CLAIM_REQUEST_CREATE')")
     @PostMapping(consumes = "application/json")
     public SuccessResponse<ClaimRequestDTO> createNewClaimRequest(
             @RequestBody ClaimRequestForm formData
