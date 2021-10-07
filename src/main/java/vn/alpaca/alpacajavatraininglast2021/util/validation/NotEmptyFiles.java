@@ -1,15 +1,17 @@
 package vn.alpaca.alpacajavatraininglast2021.util.validation;
 
+
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
-@Constraint(validatedBy = ImageValidator.class)
+@Constraint(validatedBy = FilesValidator.class)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
-public @interface ValidImage {
-    String message() default "Invalid image file";
+public @interface NotEmptyFiles {
+
+    String message() default "File should not be empty";
 
     Class<?>[] groups() default {};
 
