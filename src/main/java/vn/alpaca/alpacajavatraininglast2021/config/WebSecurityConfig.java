@@ -59,7 +59,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .formLogin().disable()
                 .authorizeRequests()
-                    .antMatchers("/api/login", "/v2/api-docs")
+                    .antMatchers(
+                            "/v2/api-docs",
+                            "/api/login",
+                            "api/customer/**"
+                    )
                     .permitAll()
                 .anyRequest()
                     .permitAll();

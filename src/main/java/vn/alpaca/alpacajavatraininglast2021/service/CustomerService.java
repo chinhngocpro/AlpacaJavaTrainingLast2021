@@ -9,7 +9,6 @@ import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer;
 import vn.alpaca.alpacajavatraininglast2021.repository.CustomerRepository;
 import vn.alpaca.alpacajavatraininglast2021.specification.CustomerSpecification;
 
-import java.util.Collection;
 import java.util.Date;
 
 @Service
@@ -49,6 +48,12 @@ public class CustomerService {
 
     public Customer findCustomerById(int id) {
         return repository.findById(id)
+                .orElseThrow(ResourceNotFoundException::new);
+        // TODO: implement exception message
+    }
+
+    public Customer findCustomerByIdCardNumber(String idCardNumber) {
+        return repository.findByIdCardNumber(idCardNumber)
                 .orElseThrow(ResourceNotFoundException::new);
         // TODO: implement exception message
     }

@@ -19,6 +19,6 @@ public class PaymentDTO {
 
     private Date paymentDate;
 
-    private UserDTO accountantInCharge;
+    private UserDTO accountant;
 
 }

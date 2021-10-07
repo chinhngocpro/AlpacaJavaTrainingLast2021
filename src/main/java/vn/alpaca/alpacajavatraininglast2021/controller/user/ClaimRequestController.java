@@ -1,51 +1,35 @@
-package vn.alpaca.alpacajavatraininglast2021.controller.v1;
+package vn.alpaca.alpacajavatraininglast2021.controller.user;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.ClaimRequestDTO;
-import vn.alpaca.alpacajavatraininglast2021.object.entity.ClaimRequest;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.ClaimRequestMapper;
 import vn.alpaca.alpacajavatraininglast2021.service.ClaimRequestService;
-import vn.alpaca.alpacajavatraininglast2021.service.FileService;
-import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
 import vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.request.claimrequest.ClaimRequestForm;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(
-        value = "/api/v1/claim-requests",
+        value = "/api/user/claim-requests",
         produces = "application/json"
 )
 public class ClaimRequestController {
 
     private final ClaimRequestService service;
-    private final FileService fileService;
     private final ClaimRequestMapper mapper;
-    private final NullAwareBeanUtil notNullUtil;
     private final RequestParamUtil paramUtil;
 
     public ClaimRequestController(ClaimRequestService service,
-                                  FileService fileService,
                                   ClaimRequestMapper mapper,
-                                  NullAwareBeanUtil notNullUtil,
                                   RequestParamUtil paramUtil) {
         this.service = service;
-        this.fileService = fileService;
         this.mapper = mapper;
-        this.notNullUtil = notNullUtil;
         this.paramUtil = paramUtil;
     }
 
@@ -95,44 +79,6 @@ public class ClaimRequestController {
         return new SuccessResponse<>(dto);
     }
 
-    @PreAuthorize("hasAuthority('CLAIM_REQUEST_CREATE')")
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public SuccessResponse<ClaimRequestDTO> createNewClaimRequest(
-            @ModelAttribute("formData") ClaimRequestForm formData
-    ) throws InvocationTargetException, IllegalAccessException {
-        ClaimRequest request = new ClaimRequest();
-        notNullUtil.copyProperties(request, formData);
-
-        if (!ObjectUtils.isEmpty(formData.getReceiptPhotoFiles())) {
-            request.setReceiptPhotos(formData.getReceiptPhotoFiles().stream()
-                                        .map(fileService::saveFile)
-                                        .filter(s -> !ObjectUtils.isEmpty(s))
-                                        .collect(Collectors.toList()));
-        }
-
-        ClaimRequestDTO dto =
-                mapper.covertToDTO(service.saveRequest(request));
-
-        return new SuccessResponse<>(dto);
-    }
-
-    @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
-    @PutMapping(
-            value = "/{requestId}",
-            consumes = "application/json"
-    )
-    public SuccessResponse<ClaimRequestDTO> updateClaimRequest(
-            @PathVariable("requestId") int id,
-            @RequestBody ClaimRequestForm formData
-    ) throws InvocationTargetException, IllegalAccessException {
-        ClaimRequest request = service.findRequestById(id);
-        notNullUtil.copyProperties(request, formData);
-
-        ClaimRequestDTO dto =
-                mapper.covertToDTO(service.saveRequest(request));
-
-        return new SuccessResponse<>(dto);
-    }
 
     @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
     @PatchMapping(value = "/{requestId}/close")

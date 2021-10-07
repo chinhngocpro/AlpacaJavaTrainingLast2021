@@ -16,8 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ClaimRequestForm {
 
-    private Integer customerId;
-
     private String title;
 
     private String description;

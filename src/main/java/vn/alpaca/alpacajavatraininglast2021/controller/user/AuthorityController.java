@@ -1,4 +1,4 @@
-package vn.alpaca.alpacajavatraininglast2021.controller.v1;
+package vn.alpaca.alpacajavatraininglast2021.controller.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(
-        value = "/api/v1/authorities",
+        value = "/api/user/authorities",
         produces = MediaType.APPLICATION_JSON_VALUE
 )
 public class AuthorityController {

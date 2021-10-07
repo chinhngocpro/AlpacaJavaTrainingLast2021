@@ -41,6 +41,27 @@ public class ClaimRequestService {
         // TODO: implement exception message
     }
 
+    public Page<ClaimRequest>
+    findRequestsByCustomerIdCardNumber(
+            String idCardNumber,
+            String title,
+            String description,
+            String status,
+            Pageable pageable
+    ) {
+        Specification<ClaimRequest> conditions = Specification
+                .where(spec.hasTitleContaining(title))
+                .and(spec.hasDescriptionContaining(description))
+                .and(spec.hasStatus(status));
+
+        return repository.findAllByCustomerIdCardNumber(
+                idCardNumber,
+                conditions,
+                pageable
+        );
+    }
+
+
     public ClaimRequest saveRequest(ClaimRequest claimRequest) {
         return repository.save(claimRequest);
     }

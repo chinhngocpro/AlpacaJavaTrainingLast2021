@@ -1,4 +1,4 @@
-package vn.alpaca.alpacajavatraininglast2021.controller.v1;
+package vn.alpaca.alpacajavatraininglast2021.controller.user;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,7 +25,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(
-        value = "/api/v1/payments",
+        value = "/api/user/payments",
         produces = "application/json"
 )
 public class PaymentController {

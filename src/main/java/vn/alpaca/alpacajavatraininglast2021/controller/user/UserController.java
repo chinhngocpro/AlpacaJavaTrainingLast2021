@@ -1,4 +1,4 @@
-package vn.alpaca.alpacajavatraininglast2021.controller.v1;
+package vn.alpaca.alpacajavatraininglast2021.controller.user;
 
 import org.springframework.data.domain.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(
-        value = "/api/v1/users",
+        value = "/api/user/users",
         produces = "application/json"
 )
 public class UserController {

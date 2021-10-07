@@ -1,9 +1,10 @@
-package vn.alpaca.alpacajavatraininglast2021.controller.v1;
+package vn.alpaca.alpacajavatraininglast2021.controller.user;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.CustomerDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer;
@@ -20,7 +21,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(
-        value = "/api/v1/customers",
+        value = "/api/user/customers",
         produces = "application/json"
 )
 public class CustomerController {
@@ -43,6 +44,7 @@ public class CustomerController {
         this.paramUtil = paramUtil;
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
     @GetMapping
     public SuccessResponse<Page<CustomerDTO>> getAllCustomers(
             @RequestParam(value = "page", required = false)
@@ -90,6 +92,7 @@ public class CustomerController {
         return new SuccessResponse<>(dtoPage);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
     @GetMapping("/{customerId}")
     public SuccessResponse<CustomerDTO> getCustomerById(
             @PathVariable("customerId") int id
@@ -100,6 +103,7 @@ public class CustomerController {
         return new SuccessResponse<>(dto);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER_CREATE')")
     @PostMapping(consumes = "application/json")
     public SuccessResponse<CustomerDTO> createNewCustomer(
             @RequestBody CustomerForm formData
@@ -113,6 +117,7 @@ public class CustomerController {
         return new SuccessResponse<>(dto);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER_UPDATE')")
     @PutMapping(
             value = "/{customerId}",
             consumes = "application/json"
@@ -130,6 +135,7 @@ public class CustomerController {
         return new SuccessResponse<>(dto);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER_DELETE')")
     @PatchMapping(value = "/{customerId}/activate")
     public SuccessResponse<Boolean> activateCustomer(
             @PathVariable("customerId") int id

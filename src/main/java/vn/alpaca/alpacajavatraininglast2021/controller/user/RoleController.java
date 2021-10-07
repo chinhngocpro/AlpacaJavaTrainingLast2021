@@ -1,4 +1,4 @@
-package vn.alpaca.alpacajavatraininglast2021.controller.v1;
+package vn.alpaca.alpacajavatraininglast2021.controller.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,7 +11,6 @@ import vn.alpaca.alpacajavatraininglast2021.object.dto.RoleDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Role;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.RoleMapper;
 import vn.alpaca.alpacajavatraininglast2021.service.RoleService;
-import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.request.user.RoleForm;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
@@ -19,7 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(
-        value = "/api/v1/roles",
+        value = "/api/user/roles",
         produces = "application/json"
 )
 public class RoleController {

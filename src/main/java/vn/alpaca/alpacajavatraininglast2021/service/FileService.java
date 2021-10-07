@@ -22,7 +22,8 @@ public class FileService {
 
             return fileName;
         } catch (Exception e) {
+            return null;
         }
-        return null;
+
     }
 }

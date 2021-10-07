@@ -45,6 +45,16 @@ public class PaymentService {
         // TODO: implement exception message
     }
 
+    public Payment findPaymentByRequestIdAndCustomerIdCard(
+            int requestId,
+            String idCardNumber
+    ) {
+        return repository
+                .findByRequestIdAndCustomerIdCard(requestId, idCardNumber)
+                .orElseThrow(ResourceNotFoundException::new);
+        // TODO: implement exception message
+    }
+
     public Payment savePayment(Payment payment) {
         return repository.save(payment);
     }

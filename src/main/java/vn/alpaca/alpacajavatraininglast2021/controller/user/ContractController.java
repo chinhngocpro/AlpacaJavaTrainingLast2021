@@ -1,4 +1,4 @@
-package vn.alpaca.alpacajavatraininglast2021.controller.v1;
+package vn.alpaca.alpacajavatraininglast2021.controller.user;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -7,7 +7,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.ContractDTO;
-import vn.alpaca.alpacajavatraininglast2021.object.entity.ClaimRequest;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Contract;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.ContractMapper;
@@ -23,7 +22,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(
-        value = "/api/v1/contracts",
+        value = "/api/user/contracts",
         produces = "application/json"
 )
 public class ContractController {
@@ -92,6 +91,7 @@ public class ContractController {
         return new SuccessResponse<>(dtoPage);
     }
 
+    @PreAuthorize("hasAuthority('CONTRACT_READ')")
     @GetMapping("/{contractId}")
     public SuccessResponse<ContractDTO> getContractById(
             @PathVariable("contractId") int id

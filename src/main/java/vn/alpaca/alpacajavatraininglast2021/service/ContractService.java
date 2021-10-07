@@ -9,8 +9,6 @@ import vn.alpaca.alpacajavatraininglast2021.object.entity.Contract;
 import vn.alpaca.alpacajavatraininglast2021.repository.ContractRepository;
 import vn.alpaca.alpacajavatraininglast2021.specification.ContractSpecification;
 
-import java.util.Date;
-
 @Service
 public class ContractService {
 
@@ -48,6 +46,34 @@ public class ContractService {
     public Contract findContractById(int id) {
         return repository.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
+        // TODO: implement exception message
+    }
+
+    public Page<Contract> findContractsByCustomerIdCardNumber(
+            String idCardNumber,
+            String contractCode,
+            Boolean isValid,
+            Double maximumAmount,
+            Double remainingAmount,
+            Boolean active,
+            Integer hospitalId,
+            Integer accidentId,
+            Pageable pageable
+    ) {
+        Specification<Contract> conditions = Specification
+                .where(spec.hasContractCode(contractCode))
+                .and(spec.isValid(isValid))
+                .and(spec.hasMaximumAmountInRange(maximumAmount))
+                .and(spec.hasRemainingAmountInRange(remainingAmount))
+                .and(spec.isActive(active))
+                .and(spec.hasAcceptableHospital(hospitalId))
+                .and(spec.hasAcceptableAccident(accidentId));
+
+        return repository.findAllByCustomerIdCardNumber(
+                idCardNumber,
+                conditions,
+                pageable
+        );
         // TODO: implement exception message
     }
 
