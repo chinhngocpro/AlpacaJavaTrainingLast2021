@@ -47,6 +47,22 @@ public class ErrorController {
     }
 
     @ResponseStatus(
+            value = HttpStatus.UNAUTHORIZED,
+            reason = "You're not authorized to access this feature."
+    )
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(
+            org.springframework.security.access.AccessDeniedException exception
+    ) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                exception.getMessage()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
+    @ResponseStatus(
             value = HttpStatus.INTERNAL_SERVER_ERROR,
             reason = "Server can not response right now, " +
                     "please try another time!"
