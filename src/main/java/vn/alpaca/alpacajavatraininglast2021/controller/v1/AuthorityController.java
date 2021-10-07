@@ -31,7 +31,8 @@ public class AuthorityController {
 
     @PreAuthorize("hasAuthority('AUTHORITY_READ')")
     @GetMapping("/{id}")
-    public SuccessResponse<AuthorityDTO> getAuthority(@PathVariable("id") int id) {
+    public SuccessResponse<AuthorityDTO> getAuthority(
+            @PathVariable("id") int id) {
         Authority authority = authorityService.findById(id);
         AuthorityDTO dto = mapper.convertToDTO(authority);
         return new SuccessResponse<>(dto);
@@ -39,9 +40,13 @@ public class AuthorityController {
 
     @PreAuthorize("hasAuthority('AUTHORITY_READ')")
     @GetMapping
-    public SuccessResponse<Page<AuthorityDTO>> getAuthorities(@RequestParam("page") Optional<Integer> pageNumber, @RequestParam("size") Optional<Integer> pageSize) {
+    public SuccessResponse<Page<AuthorityDTO>> getAuthorities(
+            @RequestParam(value = "page", required = false)
+                    Optional<Integer> pageNumber,
+            @RequestParam(value = "size", required = false)
+                    Optional<Integer> pageSize
+    ) {
         Pageable pageable = Pageable.unpaged();
-
         if (pageNumber.isPresent()) {
             pageable = PageRequest.of(pageNumber.get(), pageSize.orElse(5));
         }

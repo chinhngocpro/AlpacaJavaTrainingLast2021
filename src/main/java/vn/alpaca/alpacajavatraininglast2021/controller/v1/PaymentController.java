@@ -7,9 +7,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.PaymentDTO;
+import vn.alpaca.alpacajavatraininglast2021.object.entity.ClaimRequest;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Payment;
+import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.PaymentMapper;
+import vn.alpaca.alpacajavatraininglast2021.service.ClaimRequestService;
 import vn.alpaca.alpacajavatraininglast2021.service.PaymentService;
+import vn.alpaca.alpacajavatraininglast2021.service.UserService;
 import vn.alpaca.alpacajavatraininglast2021.util.DateUtil;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
 import vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil;
@@ -26,18 +30,24 @@ import java.util.Optional;
 )
 public class PaymentController {
 
-    private final PaymentService service;
+    private final PaymentService paymentService;
+    private final UserService userService;
+    private final ClaimRequestService requestService;
     private final PaymentMapper mapper;
     private final NullAwareBeanUtil notNullUtil;
     private final DateUtil dateUtil;
     private final RequestParamUtil paramUtil;
 
-    public PaymentController(PaymentService service,
+    public PaymentController(PaymentService paymentService,
+                             UserService userService,
+                             ClaimRequestService requestService,
                              PaymentMapper mapper,
                              NullAwareBeanUtil notNullUtil,
                              DateUtil dateUtil,
                              RequestParamUtil paramUtil) {
-        this.service = service;
+        this.paymentService = paymentService;
+        this.userService = userService;
+        this.requestService = requestService;
         this.mapper = mapper;
         this.notNullUtil = notNullUtil;
         this.dateUtil = dateUtil;
@@ -67,7 +77,7 @@ public class PaymentController {
         Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
 
         Page<PaymentDTO> dtoPage = new PageImpl<>(
-                service.findAllPayments(
+                paymentService.findAllPayments(
                                 minAmount.orElse(null),
                                 maxAmount.orElse(null),
                                 dateUtil.convertStringToDate(fromDate.orElse(null)),
@@ -89,8 +99,16 @@ public class PaymentController {
         Payment payment = new Payment();
         notNullUtil.copyProperties(payment, formData);
 
+        User accountant =
+                userService.findUserById(formData.getAccountantId());
+        ClaimRequest claimRequest =
+                requestService.findRequestById(formData.getRequestId());
+
+        payment.setClaimRequest(claimRequest);
+        payment.setAccountant(accountant);
+
         PaymentDTO dto =
-                mapper.convertToDTO(service.savePayment(payment));
+                mapper.convertToDTO(paymentService.savePayment(payment));
 
         return new SuccessResponse<>(dto);
     }
@@ -104,11 +122,23 @@ public class PaymentController {
             @PathVariable("paymentId") int id,
             @RequestBody PaymentForm formData
     ) throws InvocationTargetException, IllegalAccessException {
-        Payment payment = service.findPaymentById(id);
+        Payment payment = paymentService.findPaymentById(id);
         notNullUtil.copyProperties(payment, formData);
 
+        if (formData.getAccountantId() != null) {
+            User accountant =
+                    userService.findUserById(formData.getAccountantId());
+            payment.setAccountant(accountant);
+        }
+
+        if (formData.getRequestId() != null) {
+            ClaimRequest claimRequest =
+                    requestService.findRequestById(formData.getRequestId());
+            payment.setClaimRequest(claimRequest);
+        }
+
         PaymentDTO dto =
-                mapper.convertToDTO(service.savePayment(payment));
+                mapper.convertToDTO(paymentService.savePayment(payment));
 
         return new SuccessResponse<>(dto);
     }

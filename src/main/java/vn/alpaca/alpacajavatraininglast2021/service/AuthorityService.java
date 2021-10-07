@@ -19,7 +19,7 @@ public class AuthorityService {
 
     public Authority findById(int id) {
         Optional<Authority> authority = authorityRepository.findById(id);
-        return authority.orElseThrow(() -> new ResourceNotFoundException());
+        return authority.orElseThrow(ResourceNotFoundException::new);
     }
 
     public Collection<Authority> findAll() {

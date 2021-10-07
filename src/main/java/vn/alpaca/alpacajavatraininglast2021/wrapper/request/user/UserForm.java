@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.alpaca.alpacajavatraininglast2021.object.dto.RoleDTO;
 
 import java.util.Date;
 import java.util.List;
@@ -35,5 +34,5 @@ public class UserForm {
 
     private Boolean active;
 
-    private RoleDTO role;
+    private Integer roleId;
 }

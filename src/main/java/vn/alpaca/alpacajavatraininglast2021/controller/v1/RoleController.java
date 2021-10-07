@@ -12,7 +12,7 @@ import vn.alpaca.alpacajavatraininglast2021.object.entity.Role;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.RoleMapper;
 import vn.alpaca.alpacajavatraininglast2021.service.RoleService;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.request.role.RoleForm;
+import vn.alpaca.alpacajavatraininglast2021.wrapper.request.user.RoleForm;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 import java.util.Optional;
@@ -29,9 +29,6 @@ public class RoleController {
 
     @Autowired
     RoleMapper roleMapper;
-
-    @Autowired
-    NullAwareBeanUtil notNullUtil;
 
     @PreAuthorize("hasAuthority('SYSTEM_ROLE_READ')")
     @GetMapping

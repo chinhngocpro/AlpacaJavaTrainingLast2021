@@ -1,4 +1,4 @@
-package vn.alpaca.alpacajavatraininglast2021.wrapper.request.role;
+package vn.alpaca.alpacajavatraininglast2021.wrapper.request.user;
 
 import lombok.*;
 

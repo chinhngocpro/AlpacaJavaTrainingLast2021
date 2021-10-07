@@ -8,7 +8,7 @@ import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Authority;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Role;
 import vn.alpaca.alpacajavatraininglast2021.repository.RoleRepository;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.request.role.RoleForm;
+import vn.alpaca.alpacajavatraininglast2021.wrapper.request.user.RoleForm;
 
 import java.util.Optional;
 

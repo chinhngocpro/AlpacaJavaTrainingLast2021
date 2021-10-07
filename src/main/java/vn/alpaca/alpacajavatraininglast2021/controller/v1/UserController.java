@@ -4,8 +4,10 @@ import org.springframework.data.domain.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.UserDTO;
+import vn.alpaca.alpacajavatraininglast2021.object.entity.Role;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.UserMapper;
+import vn.alpaca.alpacajavatraininglast2021.service.RoleService;
 import vn.alpaca.alpacajavatraininglast2021.service.UserService;
 import vn.alpaca.alpacajavatraininglast2021.util.DateUtil;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
@@ -23,18 +25,21 @@ import java.util.Optional;
 )
 public class UserController {
 
-    private final UserService service;
+    private final UserService userService;
+    private final RoleService roleService;
     private final UserMapper mapper;
     private final NullAwareBeanUtil notNullUtil;
     private final DateUtil dateUtil;
     private final RequestParamUtil paramUtil;
 
-    public UserController(UserService service,
+    public UserController(UserService userService,
+                          RoleService roleService,
                           UserMapper mapper,
                           NullAwareBeanUtil notNullUtil,
                           DateUtil dateUtil,
                           RequestParamUtil paramUtil) {
-        this.service = service;
+        this.userService = userService;
+        this.roleService = roleService;
         this.mapper = mapper;
         this.notNullUtil = notNullUtil;
         this.dateUtil = dateUtil;
@@ -76,7 +81,7 @@ public class UserController {
         Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
 
         Page<UserDTO> dtoPage = new PageImpl<>(
-                service.findAllUsers(
+                userService.findAllUsers(
                                 username.orElse(null),
                                 fullName.orElse(null),
                                 isMale.orElse(null),
@@ -101,7 +106,7 @@ public class UserController {
     public SuccessResponse<UserDTO> getUserById(
             @PathVariable("userId") int id
     ) {
-        UserDTO dto = mapper.convertToDTO(service.findUserById(id));
+        UserDTO dto = mapper.convertToDTO(userService.findUserById(id));
 
         return new SuccessResponse<>(dto);
     }
@@ -113,8 +118,17 @@ public class UserController {
     ) throws InvocationTargetException, IllegalAccessException {
         User user = new User();
         notNullUtil.copyProperties(user, formData);
+        System.out.println(user);
 
-        UserDTO dto = mapper.convertToDTO(service.saveUser(user));
+        if (formData.getRoleId() != null) {
+            Role userRole = roleService.findRoleById(formData.getRoleId());
+            System.out.println(userRole);
+            user.setRole(userRole);
+        }
+
+        User savedUser = userService.saveUser(user);
+        System.out.println(savedUser);
+        UserDTO dto = mapper.convertToDTO(savedUser);
 
         return new SuccessResponse<>(dto);
     }
@@ -128,8 +142,13 @@ public class UserController {
             @PathVariable("userId") int id,
             @RequestBody UserForm formData
     ) throws InvocationTargetException, IllegalAccessException {
-        User user = service.findUserById(id);
+        User user = userService.findUserById(id);
         notNullUtil.copyProperties(user, formData);
+
+        if (formData.getRoleId() != null) {
+            Role userRole = roleService.findRoleById(formData.getRoleId());
+            user.setRole(userRole);
+        }
 
         UserDTO dto = mapper.convertToDTO(user);
 
@@ -141,7 +160,7 @@ public class UserController {
     public SuccessResponse<Boolean> activateUser(
             @PathVariable("userId") int id
     ) {
-        service.activateUser(id);
+        userService.activateUser(id);
 
         return new SuccessResponse<>(true);
     }
@@ -151,7 +170,7 @@ public class UserController {
     public SuccessResponse<Boolean> deactivateUser(
             @PathVariable("userId") int id
     ) {
-        service.deactivateUser(id);
+        userService.deactivateUser(id);
 
         return new SuccessResponse<>(true);
     }

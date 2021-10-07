@@ -79,6 +79,7 @@ public class AnalyzedReceiptController {
         return new SuccessResponse<>(dtoPage);
     }
 
+    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_READ')")
     @GetMapping(value = "/{receiptId}")
     public SuccessResponse<AnalyzedReceiptDTO> getReceiptById(
             @PathVariable("receiptId") int id
