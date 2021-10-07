@@ -94,7 +94,6 @@ public class CustomerController {
     public SuccessResponse<CustomerDTO> getCustomerById(
             @PathVariable("customerId") int id
     ) {
-
         CustomerDTO dto =
                 mapper.convertToDTO(service.findCustomerById(id));
 

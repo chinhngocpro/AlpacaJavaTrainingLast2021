@@ -33,7 +33,7 @@ public class AnalyzedReceipt implements Serializable {
     private int id;
 
     @NotNull
-    private boolean isValid;
+    private boolean isValid = true;
 
     @NotNull
     private int hospitalId;

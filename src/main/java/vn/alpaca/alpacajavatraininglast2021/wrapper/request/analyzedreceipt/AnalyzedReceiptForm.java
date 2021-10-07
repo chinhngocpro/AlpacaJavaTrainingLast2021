@@ -13,8 +13,6 @@ public class AnalyzedReceiptForm {
 
     private String title;
 
-    private Boolean isValid;
-
     private Integer hospitalId;
 
     private Integer accidentId;

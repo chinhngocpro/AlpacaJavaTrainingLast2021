@@ -99,10 +99,10 @@ public class PaymentController {
         Payment payment = new Payment();
         notNullUtil.copyProperties(payment, formData);
 
-        User accountant =
-                userService.findUserById(formData.getAccountantId());
-        ClaimRequest claimRequest =
-                requestService.findRequestById(formData.getRequestId());
+        User accountant = userService
+                .findUserById(formData.getAccountantId());
+        ClaimRequest claimRequest = requestService
+                .findRequestById(formData.getRequestId());
 
         payment.setClaimRequest(claimRequest);
         payment.setAccountant(accountant);
@@ -126,14 +126,14 @@ public class PaymentController {
         notNullUtil.copyProperties(payment, formData);
 
         if (formData.getAccountantId() != null) {
-            User accountant =
-                    userService.findUserById(formData.getAccountantId());
+            User accountant = userService
+                    .findUserById(formData.getAccountantId());
             payment.setAccountant(accountant);
         }
 
         if (formData.getRequestId() != null) {
-            ClaimRequest claimRequest =
-                    requestService.findRequestById(formData.getRequestId());
+            ClaimRequest claimRequest = requestService
+                    .findRequestById(formData.getRequestId());
             payment.setClaimRequest(claimRequest);
         }
 

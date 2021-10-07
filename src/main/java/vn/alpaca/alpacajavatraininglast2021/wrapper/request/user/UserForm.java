@@ -32,7 +32,5 @@ public class UserForm {
 
     private String address;
 
-    private Boolean active;
-
     private Integer roleId;
 }

@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer;
 
 import java.util.Date;
 import java.util.List;
@@ -26,8 +25,6 @@ public class ContractForm {
     private Double maximumAmount;
 
     private Double remainingAmount;
-
-    private Boolean active;
 
     private List<Integer> acceptableHospitalIds;
 

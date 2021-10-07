@@ -106,6 +106,7 @@ public class UserController {
     public SuccessResponse<UserDTO> getUserById(
             @PathVariable("userId") int id
     ) {
+        System.out.println(userService.findUserById(id));
         UserDTO dto = mapper.convertToDTO(userService.findUserById(id));
 
         return new SuccessResponse<>(dto);
@@ -118,16 +119,13 @@ public class UserController {
     ) throws InvocationTargetException, IllegalAccessException {
         User user = new User();
         notNullUtil.copyProperties(user, formData);
-        System.out.println(user);
 
         if (formData.getRoleId() != null) {
             Role userRole = roleService.findRoleById(formData.getRoleId());
-            System.out.println(userRole);
             user.setRole(userRole);
         }
 
         User savedUser = userService.saveUser(user);
-        System.out.println(savedUser);
         UserDTO dto = mapper.convertToDTO(savedUser);
 
         return new SuccessResponse<>(dto);
@@ -150,7 +148,8 @@ public class UserController {
             user.setRole(userRole);
         }
 
-        UserDTO dto = mapper.convertToDTO(user);
+        User savedUser = userService.saveUser(user);
+        UserDTO dto = mapper.convertToDTO(savedUser);
 
         return new SuccessResponse<>(dto);
     }

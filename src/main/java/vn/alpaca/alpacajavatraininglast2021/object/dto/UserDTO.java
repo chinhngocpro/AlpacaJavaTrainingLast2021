@@ -9,7 +9,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class UserDTO {
+
+    private int id;
 
     private String username;
 
@@ -26,5 +29,7 @@ public class UserDTO {
     private Date dateOfBirth;
 
     private String address;
+
+    private RoleDTO role;
 
 }

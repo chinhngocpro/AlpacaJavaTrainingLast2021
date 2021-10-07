@@ -11,6 +11,7 @@ import org.hibernate.envers.Audited;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import vn.alpaca.alpacajavatraininglast2021.util.validation.ValidEmail;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -69,10 +70,11 @@ public class User implements Serializable, UserDetails {
     private Date dateOfBirth;
 
     @NotBlank
+    @ValidEmail
     private String address;
 
     @NotNull
-    private boolean active;
+    private boolean active = true;
 
     @ManyToOne
     @JoinColumn(name = "role_id")

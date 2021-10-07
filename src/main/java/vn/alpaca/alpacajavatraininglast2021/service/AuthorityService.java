@@ -8,7 +8,6 @@ import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Authority;
 import vn.alpaca.alpacajavatraininglast2021.repository.AuthorityRepository;
 
-import java.util.Collection;
 import java.util.Optional;
 
 @Service
@@ -20,10 +19,6 @@ public class AuthorityService {
     public Authority findById(int id) {
         Optional<Authority> authority = authorityRepository.findById(id);
         return authority.orElseThrow(ResourceNotFoundException::new);
-    }
-
-    public Collection<Authority> findAll() {
-        return authorityRepository.findAll();
     }
 
     public Page<Authority> findAll(Pageable pageable) {

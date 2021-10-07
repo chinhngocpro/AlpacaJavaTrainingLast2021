@@ -7,9 +7,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.ContractDTO;
+import vn.alpaca.alpacajavatraininglast2021.object.entity.ClaimRequest;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Contract;
+import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.ContractMapper;
 import vn.alpaca.alpacajavatraininglast2021.service.ContractService;
+import vn.alpaca.alpacajavatraininglast2021.service.CustomerService;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
 import vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.request.contract.ContractForm;
@@ -25,16 +28,19 @@ import java.util.Optional;
 )
 public class ContractController {
 
-    private final ContractService service;
+    private final ContractService contractService;
+    private final CustomerService customerService;
     private final ContractMapper mapper;
     private final NullAwareBeanUtil notNullUtil;
     private final RequestParamUtil paramUtil;
 
-    public ContractController(ContractService service,
+    public ContractController(ContractService contractService,
+                              CustomerService customerService,
                               ContractMapper mapper,
                               NullAwareBeanUtil notNullUtil,
                               RequestParamUtil paramUtil) {
-        this.service = service;
+        this.contractService = contractService;
+        this.customerService = customerService;
         this.mapper = mapper;
         this.notNullUtil = notNullUtil;
         this.paramUtil = paramUtil;
@@ -69,7 +75,7 @@ public class ContractController {
         Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
 
         Page<ContractDTO> dtoPage = new PageImpl<>(
-                service.findAllContracts(
+                contractService.findAllContracts(
                                 contractCode.orElse(null),
                                 isValid.orElse(null),
                                 maximumAmount.orElse(null),
@@ -91,7 +97,7 @@ public class ContractController {
             @PathVariable("contractId") int id
     ) {
         ContractDTO dto =
-                mapper.convertToDTO(service.findContractById(id));
+                mapper.convertToDTO(contractService.findContractById(id));
 
         return new SuccessResponse<>(dto);
     }
@@ -104,8 +110,12 @@ public class ContractController {
         Contract contract = new Contract();
         notNullUtil.copyProperties(contract, formData);
 
+        Customer customer = customerService
+                .findCustomerById(formData.getCustomerId());
+        contract.setCustomer(customer);
+
         ContractDTO dto =
-                mapper.convertToDTO(service.saveContract(contract));
+                mapper.convertToDTO(contractService.saveContract(contract));
 
         return new SuccessResponse<>(dto);
     }
@@ -116,11 +126,18 @@ public class ContractController {
             @PathVariable("contractId") int id,
             @RequestBody ContractForm formData
     ) throws InvocationTargetException, IllegalAccessException {
-        Contract contract = service.findContractById(id);
+
+        Contract contract = contractService.findContractById(id);
         notNullUtil.copyProperties(contract, formData);
 
+        if (formData.getCustomerId() != null) {
+            Customer customer = customerService
+                    .findCustomerById(formData.getCustomerId());
+            contract.setCustomer(customer);
+        }
+
         ContractDTO dto =
-                mapper.convertToDTO(service.saveContract(contract));
+                mapper.convertToDTO(contractService.saveContract(contract));
 
         return new SuccessResponse<>(dto);
     }
@@ -130,7 +147,7 @@ public class ContractController {
     public SuccessResponse<Boolean> activateContract(
             @PathVariable("contractId") int id
     ) {
-        service.activateContract(id);
+        contractService.activateContract(id);
 
         return new SuccessResponse<>(true);
     }
@@ -141,7 +158,7 @@ public class ContractController {
     public SuccessResponse<Boolean> deactivateContract(
             @PathVariable("contractId") int id
     ) {
-        service.deactivateContract(id);
+        contractService.deactivateContract(id);
 
         return new SuccessResponse<>(true);
     }

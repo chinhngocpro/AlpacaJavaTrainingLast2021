@@ -12,3 +12,7 @@ spring:
         database-platform: org.hibernate.dialect.PostgreSQL94Dialect
         hibernate:
             ddl-auto: update
+server:
+    error:
+        include-message: always
+        include-stacktrace: never
