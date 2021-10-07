@@ -1,4 +1,6 @@
 alpaca:
+    resource:
+        save: 'D:/upload'
     security:
         jwt:
             expiration: 84000000
