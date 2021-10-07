@@ -7,14 +7,17 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.List;
 
-public class ImageValidator
-        implements ConstraintValidator<ValidImage, MultipartFile> {
+public class ImagesValidator
+        implements ConstraintValidator<ValidImages, List<MultipartFile>> {
 
     @Override
-    public boolean isValid(MultipartFile file,
+    public boolean isValid(List<MultipartFile> files,
                            ConstraintValidatorContext context) {
-        String contentType = file.getContentType();
-        return isSupportedContentType(contentType);
+        for (MultipartFile file : files) {
+            String contentType = file.getContentType();
+            if (!isSupportedContentType(contentType)) return false;
+        }
+        return true;
     }
 
     private boolean isSupportedContentType(String contentType) {

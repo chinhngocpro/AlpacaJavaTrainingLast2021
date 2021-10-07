@@ -11,6 +11,7 @@ import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +36,7 @@ public class Contract implements Serializable {
     private int id;
 
     @NotNull
+    @Pattern(regexp = "^[a-zA-Z]{3}")
     private String contractCode;
 
     @ManyToOne
