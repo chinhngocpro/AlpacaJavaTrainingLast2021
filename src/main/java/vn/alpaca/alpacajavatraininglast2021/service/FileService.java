@@ -22,8 +22,8 @@ public class FileService {
 
             return f.getPath();
         } catch (Exception e) {
-
+            return null;
         }
-        return null;
+
     }
 }
