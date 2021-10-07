@@ -119,14 +119,22 @@ public class ClaimRequestController {
     @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
     @PutMapping(
             value = "/{requestId}",
-            consumes = "application/json"
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
     public SuccessResponse<ClaimRequestDTO> updateClaimRequest(
             @PathVariable("requestId") int id,
-            @RequestBody ClaimRequestForm formData
+            @ModelAttribute("formData") ClaimRequestForm formData
     ) throws InvocationTargetException, IllegalAccessException {
         ClaimRequest request = service.findRequestById(id);
         notNullUtil.copyProperties(request, formData);
+
+        if (!ObjectUtils.isEmpty(formData.getReceiptPhotoFiles())) {
+            request.getReceiptPhotos().clear();
+            request.setReceiptPhotos(formData.getReceiptPhotoFiles().stream()
+                    .map(fileService::saveFile)
+                    .filter(s -> !ObjectUtils.isEmpty(s))
+                    .collect(Collectors.toList()));
+        }
 
         ClaimRequestDTO dto =
                 mapper.covertToDTO(service.saveRequest(request));
