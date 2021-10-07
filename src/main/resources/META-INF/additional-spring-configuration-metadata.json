@@ -9,6 +9,11 @@
       "name": "alpaca.security.jwt.expiration",
       "type": "java.lang.Long",
       "description": "Description for alpaca.security.jwt.expiration."
+    },
+    {
+      "name": "alpaca.resource.save",
+      "type": "java.lang.String",
+      "description": "Description for alpaca.resource.save."
     }
   ]
 }
