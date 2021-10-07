@@ -4,6 +4,11 @@ alpaca:
             expiration: 84000000
             secret: alpaca@@@alpaca@@@alpaca@@@alpaca@@@
 spring:
+    servlet:
+        multipart:
+            max-file-size: 5MB
+            file-size-threshold: 5MB
+            max-request-size: 50MB
     datasource:
         password: alpaca@@@
         url: jdbc:postgresql://localhost:5432/alpaca_pj_01
