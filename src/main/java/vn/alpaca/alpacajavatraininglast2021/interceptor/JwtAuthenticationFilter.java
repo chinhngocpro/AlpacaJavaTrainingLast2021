@@ -7,6 +7,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import vn.alpaca.alpacajavatraininglast2021.exception.AccessDeniedException;
+import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
 import vn.alpaca.alpacajavatraininglast2021.provider.JwtTokenProvider;
 import vn.alpaca.alpacajavatraininglast2021.service.UserService;
@@ -51,7 +52,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .setAuthentication(authentication);
             }
         } catch (Exception e) {
-            throw new AccessDeniedException();
         }
 
         filterChain.doFilter(request, response);
