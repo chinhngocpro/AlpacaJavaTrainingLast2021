@@ -6,8 +6,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import vn.alpaca.alpacajavatraininglast2021.exception.AccessDeniedException;
-import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
 import vn.alpaca.alpacajavatraininglast2021.provider.JwtTokenProvider;
 import vn.alpaca.alpacajavatraininglast2021.service.UserService;

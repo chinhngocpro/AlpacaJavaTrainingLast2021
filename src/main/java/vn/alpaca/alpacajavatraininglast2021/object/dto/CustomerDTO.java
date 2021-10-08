@@ -1,6 +1,9 @@
 package vn.alpaca.alpacajavatraininglast2021.object.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;

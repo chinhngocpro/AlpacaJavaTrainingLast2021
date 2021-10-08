@@ -3,7 +3,6 @@ package vn.alpaca.alpacajavatraininglast2021.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Authority;

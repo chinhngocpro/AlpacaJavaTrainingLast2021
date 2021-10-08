@@ -10,8 +10,6 @@ import vn.alpaca.alpacajavatraininglast2021.object.entity.AnalyzedReceipt;
 import vn.alpaca.alpacajavatraininglast2021.repository.AnalyzedReceiptRepository;
 import vn.alpaca.alpacajavatraininglast2021.specification.AnalyzedReceiptSpecification;
 
-import java.util.Collection;
-
 @Service
 public class AnalyzedReceiptService {
 
