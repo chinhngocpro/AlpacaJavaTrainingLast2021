@@ -45,14 +45,24 @@ public class PaymentService {
         // TODO: implement exception message
     }
 
-    public Payment findPaymentByRequestIdAndCustomerIdCard(
+    public Page<Payment> findPaymentsByRequestIdAndCustomerIdCard(
             int requestId,
-            String idCardNumber
+            String idCardNumber,
+            Double minAmount,
+            Double maxAmount,
+            Date fromDate,
+            Date toDate,
+            Pageable pageable
     ) {
-        return repository
-                .findByRequestIdAndCustomerIdCard(requestId, idCardNumber)
-                .orElseThrow(ResourceNotFoundException::new);
-        // TODO: implement exception message
+        Specification<Payment> conditions = Specification
+                .where(spec.hasAmountBetween(minAmount, maxAmount))
+                .and(spec.hasDateBetween(fromDate, toDate));
+
+        return repository.findAllByRequestIdAndCustomerIdCard(
+                requestId,
+                idCardNumber,
+                pageable
+        );
     }
 
     public Payment savePayment(Payment payment) {

@@ -36,7 +36,7 @@ public class AnalyzedReceiptService {
                 .where(spec.isValid(isValid))
                 .and(spec.hasTitleContaining(title))
                 .and(spec.hasHospitalId(hospitalId))
-                .and(spec.hasAcccidentId(accidentId))
+                .and(spec.hasAccidentId(accidentId))
                 .and(spec.hasAmountBetween(minAmount, maxAmount));
 
         return repository.findAll(conditions, pageable);

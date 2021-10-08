@@ -13,12 +13,12 @@ import vn.alpaca.alpacajavatraininglast2021.object.dto.CustomerDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.PaymentDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.ClaimRequest;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer;
-import vn.alpaca.alpacajavatraininglast2021.object.entity.Payment;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.ClaimRequestMapper;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.ContractMapper;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.CustomerMapper;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.PaymentMapper;
 import vn.alpaca.alpacajavatraininglast2021.service.*;
+import vn.alpaca.alpacajavatraininglast2021.util.DateUtil;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
 import vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.request.claimrequest.ClaimRequestForm;
@@ -42,6 +42,7 @@ public class CustomerFeatureController {
     private final ClaimRequestMapper requestMapper;
     private final PaymentMapper paymentMapper;
     private final NullAwareBeanUtil notNullUtil;
+    private final DateUtil dateUtil;
     private final RequestParamUtil paramUtil;
 
     public CustomerFeatureController(
@@ -55,6 +56,7 @@ public class CustomerFeatureController {
             ClaimRequestMapper requestMapper,
             PaymentMapper paymentMapper,
             NullAwareBeanUtil notNullUtil,
+            DateUtil dateUtil,
             RequestParamUtil paramUtil
     ) {
         this.customerService = customerService;
@@ -67,6 +69,7 @@ public class CustomerFeatureController {
         this.requestMapper = requestMapper;
         this.paymentMapper = paymentMapper;
         this.notNullUtil = notNullUtil;
+        this.dateUtil = dateUtil;
         this.paramUtil = paramUtil;
     }
 
@@ -81,8 +84,8 @@ public class CustomerFeatureController {
         return new SuccessResponse<>(dto);
     }
 
-    @GetMapping("/contract")
-    public SuccessResponse<Page<ContractDTO>> getContractByCustomerId(
+    @GetMapping("/contracts")
+    public SuccessResponse<Page<ContractDTO>> getContractsByCustomerId(
             @PathVariable("idCardNumber") String idCardNumber,
             @RequestParam(value = "page", required = false)
                     Optional<Integer> pageNumber,
@@ -128,7 +131,7 @@ public class CustomerFeatureController {
         return new SuccessResponse<>(dtoPage);
     }
 
-    @GetMapping(value = "/claim-request")
+    @GetMapping(value = "/claim-requests")
     public SuccessResponse<Page<ClaimRequestDTO>> getClaimRequestsInfo(
             @PathVariable("idCardNumber") String idCardNumber,
             @RequestParam(value = "page", required = false)
@@ -162,24 +165,48 @@ public class CustomerFeatureController {
         return new SuccessResponse<>(dtoPage);
     }
 
-    @GetMapping(value = "/payment/{requestId}")
-    public SuccessResponse<PaymentDTO> getPaymentByRequestId(
+    @GetMapping(value = "/payments/{requestId}")
+    public SuccessResponse<Page<PaymentDTO>> getPaymentByRequestId(
             @PathVariable("idCardNumber") String idCardNumber,
-            @PathVariable("requestId") int requestId
+            @PathVariable("requestId") int requestId,
+            @RequestParam(value = "page", required = false)
+                    Optional<Integer> pageNumber,
+            @RequestParam(value = "size", required = false)
+                    Optional<Integer> pageSize,
+            @RequestParam(value = "sort-by", required = false)
+                    Optional<String> sortBy,
+            @RequestParam(value = "min-amount", required = false)
+                    Optional<Double> minAmount,
+            @RequestParam(value = "max-amount", required = false)
+                    Optional<Double> maxAmount,
+            @RequestParam(value = "from-date", required = false)
+                    Optional<String> fromDate,
+            @RequestParam(value = "to-date", required = false)
+                    Optional<String> toDate
     ) {
-        Payment payment = paymentService
-                .findPaymentByRequestIdAndCustomerIdCard(
-                        requestId,
-                        idCardNumber
-                );
+        Sort sort = paramUtil.getSort(sortBy);
+        Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
 
-        PaymentDTO dto = paymentMapper.convertToDTO(payment);
+        Page<PaymentDTO> dtoPage = new PageImpl<>(
+                paymentService
+                        .findPaymentsByRequestIdAndCustomerIdCard(
+                                requestId,
+                                idCardNumber,
+                                minAmount.orElse(null),
+                                maxAmount.orElse(null),
+                                dateUtil.convertStringToDate(fromDate.orElse(null)),
+                                dateUtil.convertStringToDate(toDate.orElse(null)),
+                                pageable
+                        )
+                        .map(paymentMapper::convertToDTO)
+                        .getContent()
+        );
 
-        return new SuccessResponse<>(dto);
+        return new SuccessResponse<>(dtoPage);
     }
 
     @PostMapping(
-            value = "/claim-request",
+            value = "/claim-requests",
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
     public SuccessResponse<ClaimRequestDTO> createNewClaimRequest(

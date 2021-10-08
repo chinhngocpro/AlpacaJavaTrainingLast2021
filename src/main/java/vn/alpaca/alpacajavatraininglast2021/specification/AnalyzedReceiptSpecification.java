@@ -66,7 +66,7 @@ public final class AnalyzedReceiptSpecification {
     }
 
     public Specification<AnalyzedReceipt>
-    hasAcccidentId(Integer accidentId) {
+    hasAccidentId(Integer accidentId) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(accidentId) ?
                         builder.conjunction() :

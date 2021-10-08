@@ -6,8 +6,5 @@ import vn.alpaca.alpacajavatraininglast2021.object.entity.Role;
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
-
     RoleDTO convertToDTO(Role role);
-
-
 }

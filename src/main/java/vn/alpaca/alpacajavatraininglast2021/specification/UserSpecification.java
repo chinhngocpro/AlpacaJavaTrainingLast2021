@@ -87,10 +87,14 @@ public final class UserSpecification {
     }
 
     public Specification<User> hasRoleName(String roleName) {
+        String UpperCaseRoleName = roleName.toUpperCase();
         return (root, query, builder) ->
-                ObjectUtils.isEmpty(roleName) ?
+                ObjectUtils.isEmpty(UpperCaseRoleName) ?
                         builder.conjunction() :
-                        builder.like(root.get(Role_.NAME), roleName);
+                        builder.equal(
+                          root.get(User_.ROLE).get(Role_.NAME),
+                                UpperCaseRoleName
+                        );
     }
 
 }

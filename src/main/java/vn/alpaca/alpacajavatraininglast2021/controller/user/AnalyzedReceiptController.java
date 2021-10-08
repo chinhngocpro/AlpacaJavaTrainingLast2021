@@ -8,8 +8,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.AnalyzedReceiptDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.AnalyzedReceipt;
+import vn.alpaca.alpacajavatraininglast2021.object.entity.ClaimRequest;
+import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.AnalyzerReceiptMapper;
 import vn.alpaca.alpacajavatraininglast2021.service.AnalyzedReceiptService;
+import vn.alpaca.alpacajavatraininglast2021.service.ClaimRequestService;
+import vn.alpaca.alpacajavatraininglast2021.service.UserService;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
 import vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.request.analyzedreceipt.AnalyzedReceiptForm;
@@ -25,16 +29,24 @@ import java.util.Optional;
 )
 public class AnalyzedReceiptController {
 
-    private final AnalyzedReceiptService service;
+    private final AnalyzedReceiptService receiptService;
+    private final ClaimRequestService requestService;
+    private final UserService userService;
     private final AnalyzerReceiptMapper mapper;
     private final NullAwareBeanUtil notNullUtil;
     private final RequestParamUtil paramUtil;
 
-    public AnalyzedReceiptController(AnalyzedReceiptService service,
-                                     AnalyzerReceiptMapper mapper,
-                                     NullAwareBeanUtil notNullUtil,
-                                     RequestParamUtil paramUtil) {
-        this.service = service;
+    public AnalyzedReceiptController(
+            AnalyzedReceiptService receiptService,
+            ClaimRequestService requestService,
+            UserService userService,
+            AnalyzerReceiptMapper mapper,
+            NullAwareBeanUtil notNullUtil,
+            RequestParamUtil paramUtil
+    ) {
+        this.receiptService = receiptService;
+        this.requestService = requestService;
+        this.userService = userService;
         this.mapper = mapper;
         this.notNullUtil = notNullUtil;
         this.paramUtil = paramUtil;
@@ -66,14 +78,14 @@ public class AnalyzedReceiptController {
         Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
 
         Page<AnalyzedReceiptDTO> dtoPage = new PageImpl<>(
-                service.findAllReceipts(
-                            isValid.orElse(null),
-                            title.orElse(null),
-                            hospitalId.orElse(null),
-                            accidentId.orElse(null),
-                            minAmount.orElse(null),
-                            maxAmount.orElse(null),
-                            pageable
+                receiptService.findAllReceipts(
+                                isValid.orElse(null),
+                                title.orElse(null),
+                                hospitalId.orElse(null),
+                                accidentId.orElse(null),
+                                minAmount.orElse(null),
+                                maxAmount.orElse(null),
+                                pageable
                         )
                         .map(mapper::convertToDTO)
                         .getContent()
@@ -88,7 +100,7 @@ public class AnalyzedReceiptController {
             @PathVariable("receiptId") int id
     ) {
         AnalyzedReceiptDTO dto =
-                mapper.convertToDTO(service.findReceiptById(id));
+                mapper.convertToDTO(receiptService.findReceiptById(id));
 
         return new SuccessResponse<>(dto);
     }
@@ -101,8 +113,16 @@ public class AnalyzedReceiptController {
         AnalyzedReceipt receipt = new AnalyzedReceipt();
         notNullUtil.copyProperties(receipt, formData);
 
+        ClaimRequest request = requestService
+                .findRequestById(formData.getClaimRequestId());
+        User analyzer = userService
+                .findUserById(formData.getAnalyzerId());
+
+        receipt.setClaimRequest(request);
+        receipt.setAnalyzer(analyzer);
+
         AnalyzedReceiptDTO dto =
-                mapper.convertToDTO(service.saveReceipt(receipt));
+                mapper.convertToDTO(receiptService.saveReceipt(receipt));
 
         return new SuccessResponse<>(dto);
     }
@@ -116,11 +136,23 @@ public class AnalyzedReceiptController {
             @PathVariable("receiptId") int id,
             @RequestBody AnalyzedReceiptForm formData
     ) throws InvocationTargetException, IllegalAccessException {
-        AnalyzedReceipt receipt = service.findReceiptById(id);
+        AnalyzedReceipt receipt = receiptService.findReceiptById(id);
         notNullUtil.copyProperties(receipt, formData);
 
+        if (formData.getClaimRequestId() != null) {
+            ClaimRequest request = requestService
+                    .findRequestById(formData.getClaimRequestId());
+            receipt.setClaimRequest(request);
+        }
+
+        if (formData.getAnalyzerId() != null) {
+            User analyzer = userService
+                    .findUserById(formData.getAnalyzerId());
+            receipt.setAnalyzer(analyzer);
+        }
+
         AnalyzedReceiptDTO dto =
-                mapper.convertToDTO(service.saveReceipt(receipt));
+                mapper.convertToDTO(receiptService.saveReceipt(receipt));
 
         return new SuccessResponse<>(dto);
     }
@@ -130,7 +162,7 @@ public class AnalyzedReceiptController {
     public SuccessResponse<Boolean> validateReceipt(
             @PathVariable("receiptId") int id
     ) {
-        service.validateReceipt(id);
+        receiptService.validateReceipt(id);
 
         return new SuccessResponse<>(true);
     }
@@ -140,7 +172,7 @@ public class AnalyzedReceiptController {
     public SuccessResponse<Boolean> invalidateReceipt(
             @PathVariable("receiptId") int id
     ) {
-        service.invalidateReceipt(id);
+        receiptService.invalidateReceipt(id);
 
         return new SuccessResponse<>(true);
     }

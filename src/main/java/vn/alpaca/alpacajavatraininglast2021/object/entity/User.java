@@ -14,8 +14,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import vn.alpaca.alpacajavatraininglast2021.util.validation.ValidEmail;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -57,6 +59,7 @@ public class User implements Serializable, UserDetails {
     private boolean gender;
 
     @NotBlank
+    @Size(min = 9, max = 12)
     private String idCardNumber;
 
     @Type(type = "list-array")
@@ -64,13 +67,13 @@ public class User implements Serializable, UserDetails {
     private List<String> phoneNumbers;
 
     @NotBlank
+    @ValidEmail
     private String email;
 
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
 
     @NotBlank
-    @ValidEmail
     private String address;
 
     @NotNull

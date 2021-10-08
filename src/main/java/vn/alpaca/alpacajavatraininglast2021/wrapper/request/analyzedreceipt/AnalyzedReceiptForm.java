@@ -11,6 +11,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AnalyzedReceiptForm {
 
+    private Integer claimRequestId;
+
+    private Integer analyzerId;
+
     private String title;
 
     private Integer hospitalId;

@@ -47,7 +47,6 @@ public class UserController {
         this.notNullUtil = notNullUtil;
         this.dateUtil = dateUtil;
         this.paramUtil = paramUtil;
-
     }
 
     @PreAuthorize("hasAuthority('USER_READ')")

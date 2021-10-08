@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import vn.alpaca.alpacajavatraininglast2021.exception.AccessDeniedException;
 import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
 import vn.alpaca.alpacajavatraininglast2021.wrapper.response.ErrorResponse;
@@ -13,6 +14,22 @@ import java.sql.SQLException;
 
 @ControllerAdvice
 public class ErrorController {
+
+    @ResponseStatus(
+            value = HttpStatus.NOT_FOUND,
+            reason = "This endpoint does not exist."
+    )
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleNoHandlerFoundException(
+            NoHandlerFoundException exception
+    ) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                exception.getMessage()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
 
     @ResponseStatus(
             value = HttpStatus.NOT_FOUND,
@@ -31,22 +48,6 @@ public class ErrorController {
     }
 
     @ResponseStatus(
-            value = HttpStatus.FORBIDDEN,
-            reason = "You're not authorized to access this resource."
-    )
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleForbiddenException(
-            AccessDeniedException exception
-    ) {
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.FORBIDDEN.value(),
-                exception.getMessage()
-        );
-
-        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
-    }
-
-    @ResponseStatus(
             value = HttpStatus.UNAUTHORIZED,
             reason = "You're not authorized to access this feature."
     )
@@ -56,6 +57,22 @@ public class ErrorController {
     ) {
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.UNAUTHORIZED.value(),
+                exception.getMessage()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ResponseStatus(
+            value = HttpStatus.FORBIDDEN,
+            reason = "You don't have permission to access this resource."
+    )
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleForbiddenException(
+            AccessDeniedException exception
+    ) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.FORBIDDEN.value(),
                 exception.getMessage()
         );
 

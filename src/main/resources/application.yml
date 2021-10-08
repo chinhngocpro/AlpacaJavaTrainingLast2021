@@ -1,27 +1,33 @@
 alpaca:
-    resource:
-        save: 'D:/upload'
-    security:
-        jwt:
-            expiration: 84000000
-            secret: alpaca@@@alpaca@@@alpaca@@@alpaca@@@
+  resource:
+    save: 'D:/upload'
+  security:
+    jwt:
+      expiration: 84000000
+      secret: alpaca@@@alpaca@@@alpaca@@@alpaca@@@
 spring:
-    servlet:
-        multipart:
-            max-file-size: 5MB
-            file-size-threshold: 5MB
-            max-request-size: 50MB
-    datasource:
-        password: alpaca@@@
-        url: jdbc:postgresql://localhost:5432/alpaca_pj_01
-        username: alpaca
-    jpa:
-        database-platform: org.hibernate.dialect.PostgreSQL94Dialect
-        hibernate:
-            ddl-auto: update
+  main:
+    banner-mode: off
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      file-size-threshold: 5MB
+      max-request-size: 50MB
+  datasource:
+    password: alpaca@@@
+    url: jdbc:postgresql://localhost:5432/alpaca_pj_01
+    username: alpaca
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL94Dialect
+    hibernate:
+      ddl-auto: update
 server:
-    error:
-        include-message: always
-        include-stacktrace: never
-        whitelabel:
-            enabled: false
+  error:
+    include-message: always
+    include-stacktrace: never
+    whitelabel:
+      enabled: false
