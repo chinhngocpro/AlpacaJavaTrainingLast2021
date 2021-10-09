@@ -8,11 +8,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.ClaimRequestDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.ClaimRequestMapper;
+import vn.alpaca.alpacajavatraininglast2021.object.request.claimrequest.ClaimRequestFilter;
+import vn.alpaca.alpacajavatraininglast2021.object.response.SuccessResponse;
 import vn.alpaca.alpacajavatraininglast2021.service.ClaimRequestService;
-import vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 import java.util.Optional;
+
+import static vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil.getPageable;
+import static vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil.getSort;
 
 @RestController
 @RequestMapping(
@@ -23,14 +26,11 @@ public class ClaimRequestController {
 
     private final ClaimRequestService service;
     private final ClaimRequestMapper mapper;
-    private final RequestParamUtil paramUtil;
 
     public ClaimRequestController(ClaimRequestService service,
-                                  ClaimRequestMapper mapper,
-                                  RequestParamUtil paramUtil) {
+                                  ClaimRequestMapper mapper) {
         this.service = service;
         this.mapper = mapper;
-        this.paramUtil = paramUtil;
     }
 
     @PreAuthorize("hasAuthority('CLAIM_REQUEST_READ')")
@@ -42,25 +42,13 @@ public class ClaimRequestController {
                     Optional<Integer> pageSize,
             @RequestParam(value = "sort-by", required = false)
                     Optional<String> sortBy,
-            @RequestParam(value = "title", required = false)
-                    Optional<String> title,
-            @RequestParam(value = "description", required = false)
-                    Optional<String> description,
-            @RequestParam(value = "status", required = false)
-                    Optional<String> status
+            @RequestBody ClaimRequestFilter filter
     ) {
-
-        Sort sort = paramUtil.getSort(sortBy);
-
-        Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
+        Sort sort = getSort(sortBy);
+        Pageable pageable = getPageable(pageNumber, pageSize, sort);
 
         Page<ClaimRequestDTO> dtoPage = new PageImpl<>(
-                service.findAllRequests(
-                                title.orElse(null),
-                                description.orElse(null),
-                                status.orElse(null),
-                                pageable
-                        )
+                service.findAllRequests(filter, pageable)
                         .map(mapper::covertToDTO)
                         .getContent()
         );

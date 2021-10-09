@@ -2,85 +2,117 @@ package vn.alpaca.alpacajavatraininglast2021.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
+import org.springframework.util.ObjectUtils;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.ClaimRequest;
+import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer;
+import vn.alpaca.alpacajavatraininglast2021.object.exception.AccessDeniedException;
+import vn.alpaca.alpacajavatraininglast2021.object.exception.ResourceNotFoundException;
+import vn.alpaca.alpacajavatraininglast2021.object.mapper.ClaimRequestMapper;
+import vn.alpaca.alpacajavatraininglast2021.object.request.claimrequest.ClaimRequestFilter;
+import vn.alpaca.alpacajavatraininglast2021.object.request.claimrequest.ClaimRequestForm;
 import vn.alpaca.alpacajavatraininglast2021.repository.ClaimRequestRepository;
-import vn.alpaca.alpacajavatraininglast2021.specification.ClaimRequestSpecification;
+import vn.alpaca.alpacajavatraininglast2021.repository.CustomerRepository;
+
+import java.util.stream.Collectors;
+
+import static vn.alpaca.alpacajavatraininglast2021.specification.ClaimRequestSpecification.getClaimRequestSpecification;
 
 @Service
 public class ClaimRequestService {
 
-    private final ClaimRequestRepository repository;
-    private final ClaimRequestSpecification spec;
+    private final ClaimRequestRepository requestRepository;
+    private final CustomerRepository customerRepository;
+    private final FileService fileService;
+    private final ClaimRequestMapper requestMapper;
 
-    public ClaimRequestService(ClaimRequestRepository repository,
-                               ClaimRequestSpecification spec) {
-        this.repository = repository;
-        this.spec = spec;
+
+    public ClaimRequestService(
+            ClaimRequestRepository requestRepository,
+            CustomerRepository customerRepository,
+            FileService fileService,
+            ClaimRequestMapper requestMapper
+    ) {
+        this.requestRepository = requestRepository;
+        this.customerRepository = customerRepository;
+        this.fileService = fileService;
+        this.requestMapper = requestMapper;
     }
 
     public Page<ClaimRequest> findAllRequests(
-            String title,
-            String description,
-            String status,
+            ClaimRequestFilter filter,
             Pageable pageable
     ) {
-        Specification<ClaimRequest> conditions = Specification
-                .where(spec.hasTitleContaining(title))
-                .and(spec.hasDescriptionContaining(description))
-                .and(spec.hasStatus(status));
-
-        return repository.findAll(conditions, pageable);
+        return requestRepository.findAll(
+                getClaimRequestSpecification(filter),
+                pageable
+        );
     }
 
     public ClaimRequest findRequestById(int id) {
-        return repository.findById(id)
-                .orElseThrow(ResourceNotFoundException::new);
-        // TODO: implement exception message
+        return requestRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Claim request id not found."
+                ));
     }
 
     public Page<ClaimRequest>
     findRequestsByCustomerIdCardNumber(
             String idCardNumber,
-            String title,
-            String description,
-            String status,
+            ClaimRequestFilter filter,
             Pageable pageable
     ) {
-        Specification<ClaimRequest> conditions = Specification
-                .where(spec.hasTitleContaining(title))
-                .and(spec.hasDescriptionContaining(description))
-                .and(spec.hasStatus(status));
+        customerRepository.findByIdCardNumber(idCardNumber)
+                .orElseThrow(() -> new AccessDeniedException(
+                        "Customer identity does not exist."
+                ));
 
-        return repository.findAllByCustomerIdCardNumber(
+        return requestRepository.findAllByCustomerIdCardNumber(
                 idCardNumber,
-                conditions,
+                getClaimRequestSpecification(filter),
                 pageable
         );
     }
 
 
-    public ClaimRequest saveRequest(ClaimRequest claimRequest) {
-        return repository.save(claimRequest);
+    public ClaimRequest
+    saveRequest(String idCardNumber, ClaimRequestForm formData) {
+        Customer customer = customerRepository.findByIdCardNumber(idCardNumber)
+                .orElseThrow(() -> new AccessDeniedException(
+                        "Customer identity does not exist."
+                ));
+        if (!customer.isActive()) {
+            throw new AccessDeniedException("This customer is disabled.");
+        }
+
+        ClaimRequest request = requestMapper.convertToEntity(formData);
+
+        if (!ObjectUtils.isEmpty(formData.getReceiptPhotoFiles())) {
+            request.setReceiptPhotos(formData.getReceiptPhotoFiles().stream()
+                    .map(fileService::saveFile)
+                    .filter(s -> !ObjectUtils.isEmpty(s))
+                    .collect(Collectors.toList()));
+        }
+
+        request.setCustomer(customer);
+        return requestRepository.save(request);
     }
 
     public void closeRequest(int requestId) {
         ClaimRequest claimRequest = findRequestById(requestId);
         claimRequest.setStatus("CLOSED");
-        saveRequest(claimRequest);
+        requestRepository.save(claimRequest);
     }
 
     public void processRequest(int requestId) {
         ClaimRequest claimRequest = findRequestById(requestId);
         claimRequest.setStatus("PROCESSING");
-        saveRequest(claimRequest);
+        requestRepository.save(claimRequest);
     }
 
     public void reopenRequest(int requestId) {
         ClaimRequest claimRequest = findRequestById(requestId);
         claimRequest.setStatus("PENDING");
-        saveRequest(claimRequest);
+        requestRepository.save(claimRequest);
     }
 }

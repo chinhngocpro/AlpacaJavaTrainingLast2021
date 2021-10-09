@@ -5,11 +5,25 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.AnalyzedReceipt;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.AnalyzedReceipt_;
+import vn.alpaca.alpacajavatraininglast2021.object.request.analyzedreceipt.AnalyzedReceiptFilter;
 
-@Component
 public final class AnalyzedReceiptSpecification {
 
-    public Specification<AnalyzedReceipt> isValid(Boolean isValid) {
+    public static Specification<AnalyzedReceipt> getAnalyzedReceiptSpecification(
+            AnalyzedReceiptFilter filter) {
+        return Specification
+                .where(isValid(filter.getIsValid()))
+                .and(hasTitleContaining(filter.getTitle()))
+                .and(hasHospitalId(filter.getHospitalId())
+                        .and(hasAccidentId(filter.getAccidentId()))
+                        .and(hasAmountBetween(
+                                        filter.getMinAmount(),
+                                        filter.getMaxAmount()
+                                )
+                        ));
+    }
+
+    private static Specification<AnalyzedReceipt> isValid(Boolean isValid) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(isValid) ?
                         builder.conjunction() :
@@ -19,7 +33,7 @@ public final class AnalyzedReceiptSpecification {
                         );
     }
 
-    public Specification<AnalyzedReceipt>
+    private static Specification<AnalyzedReceipt>
     hasTitleContaining(String title) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(title) ?
@@ -30,7 +44,7 @@ public final class AnalyzedReceiptSpecification {
                         );
     }
 
-    public Specification<AnalyzedReceipt>
+    private static Specification<AnalyzedReceipt>
     hasAmountBetween(Double min, Double max) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(min) && ObjectUtils.isEmpty(max) ?
@@ -54,7 +68,7 @@ public final class AnalyzedReceiptSpecification {
                                         );
     }
 
-    public Specification<AnalyzedReceipt>
+    private static Specification<AnalyzedReceipt>
     hasHospitalId(Integer hospitalId) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(hospitalId) ?
@@ -65,7 +79,7 @@ public final class AnalyzedReceiptSpecification {
                         );
     }
 
-    public Specification<AnalyzedReceipt>
+    private static Specification<AnalyzedReceipt>
     hasAccidentId(Integer accidentId) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(accidentId) ?

@@ -32,20 +32,15 @@ public class AnalyzedReceipt implements Serializable {
     )
     private int id;
 
-    @NotNull
     private boolean isValid = true;
 
-    @NotNull
-    private int hospitalId;
-
-    @NotNull
-    private int accidentId;
-
-    @NotBlank
     private String title;
 
-    @NotNull
     private double amount;
+
+    private int hospitalId;
+
+    private int accidentId;
 
     @ManyToOne
     @JoinColumn(name = "analyzer_id")
@@ -60,10 +55,10 @@ public class AnalyzedReceipt implements Serializable {
         return "AnalyzedReceipt{" +
                 "id=" + id +
                 ", isValid=" + isValid +
-                ", hospitalId=" + hospitalId +
-                ", accidentId=" + accidentId +
                 ", title='" + title + '\'' +
                 ", amount=" + amount +
+                ", hospitalId=" + hospitalId +
+                ", accidentId=" + accidentId +
                 '}';
     }
 }

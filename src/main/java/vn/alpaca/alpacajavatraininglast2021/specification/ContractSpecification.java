@@ -5,13 +5,25 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Contract;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Contract_;
+import vn.alpaca.alpacajavatraininglast2021.object.request.contract.ContractFilter;
 
 import java.util.Date;
 
-@Component
 public final class ContractSpecification {
 
-    public Specification<Contract> hasContractCode(String contractCode) {
+    public static Specification<Contract>
+    getContractSpecification(ContractFilter filter) {
+        return Specification
+                .where(hasContractCode(filter.getContractCode()))
+                .and(isValid(filter.getIsValid()))
+                .and(hasMaximumAmountInRange(filter.getMaximumAmount()))
+                .and(hasRemainingAmountInRange(filter.getRemainingAmount()))
+                .and(isActive(filter.getActive()))
+                .and(hasAcceptableHospital(filter.getHospitalId()))
+                .and(hasAcceptableAccident(filter.getAccidentId()));
+    }
+
+    private static Specification<Contract> hasContractCode(String contractCode) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(contractCode) ?
                         builder.conjunction() :
@@ -21,7 +33,7 @@ public final class ContractSpecification {
                         );
     }
 
-    public Specification<Contract> isValid(Boolean isValid) {
+    private static Specification<Contract> isValid(Boolean isValid) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(isValid) ?
                         builder.conjunction() :
@@ -31,7 +43,7 @@ public final class ContractSpecification {
                         );
     }
 
-    public Specification<Contract> hasMaximumAmountInRange(Double amount) {
+    private static Specification<Contract> hasMaximumAmountInRange(Double amount) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(amount) ?
                         builder.conjunction() :
@@ -41,7 +53,7 @@ public final class ContractSpecification {
                         );
     }
 
-    public Specification<Contract> hasRemainingAmountInRange(Double amount) {
+    private static Specification<Contract> hasRemainingAmountInRange(Double amount) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(amount) ?
                         builder.conjunction() :
@@ -51,7 +63,7 @@ public final class ContractSpecification {
                         );
     }
 
-    public Specification<Contract> isActive(Boolean active) {
+    private static Specification<Contract> isActive(Boolean active) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(active) ?
                         builder.conjunction() :
@@ -61,7 +73,7 @@ public final class ContractSpecification {
                         );
     }
 
-    public Specification<Contract> hasAcceptableHospital(Integer hospitalId) {
+    private static Specification<Contract> hasAcceptableHospital(Integer hospitalId) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(hospitalId) ?
                         builder.conjunction() :
@@ -71,7 +83,7 @@ public final class ContractSpecification {
                         );
     }
 
-    public Specification<Contract> hasAcceptableAccident(Integer accidentId) {
+    private static Specification<Contract> hasAcceptableAccident(Integer accidentId) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(accidentId) ?
                         builder.conjunction() :

@@ -19,4 +19,6 @@ public interface ContractRepository extends
                                   Specification<Contract> specification,
                                   Pageable pageable
     );
+
+    boolean existsByContractCode(String contractCode);
 }

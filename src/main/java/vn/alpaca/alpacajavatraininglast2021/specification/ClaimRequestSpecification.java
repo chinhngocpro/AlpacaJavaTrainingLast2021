@@ -5,11 +5,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.ClaimRequest;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.ClaimRequest_;
+import vn.alpaca.alpacajavatraininglast2021.object.request.claimrequest.ClaimRequestFilter;
 
-@Component
 public final class ClaimRequestSpecification {
 
-    public Specification<ClaimRequest>
+    public static Specification<ClaimRequest>
+    getClaimRequestSpecification(ClaimRequestFilter filter) {
+        return Specification
+                .where(hasTitleContaining(filter.getTitle()))
+                .and(hasDescriptionContaining(filter.getDescription()))
+                .and(hasStatus(filter.getStatus()));
+    }
+
+    private static Specification<ClaimRequest>
     hasTitleContaining(String title) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(title) ?
@@ -20,7 +28,7 @@ public final class ClaimRequestSpecification {
                         );
     }
 
-    public Specification<ClaimRequest>
+    private static Specification<ClaimRequest>
     hasDescriptionContaining(String description) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(description) ?
@@ -31,7 +39,7 @@ public final class ClaimRequestSpecification {
                         );
     }
 
-    public Specification<ClaimRequest>
+    private static Specification<ClaimRequest>
     hasStatus(String status) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(status) ?

@@ -36,17 +36,14 @@ public class ClaimRequest implements Serializable {
     )
     private int id;
 
-    @NotBlank
     private String title;
 
-    @NotBlank
     private String description;
 
     @Type(type = "list-array")
     @Column(columnDefinition = "text[]")
     private List<String> receiptPhotos;
 
-    @NotBlank
     private String status = "PENDING";
 
     @ManyToOne

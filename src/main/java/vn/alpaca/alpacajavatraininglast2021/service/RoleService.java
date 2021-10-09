@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
+import vn.alpaca.alpacajavatraininglast2021.object.exception.ResourceNotFoundException;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Authority;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Role;
 import vn.alpaca.alpacajavatraininglast2021.repository.RoleRepository;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.request.user.RoleForm;
+import vn.alpaca.alpacajavatraininglast2021.object.request.role.RoleForm;
 
 import java.util.Optional;
 
@@ -31,7 +31,9 @@ public class RoleService {
     public Role findRoleById(int id) {
         Optional<Role> role = roleRepository.findById(id);
 
-        return role.orElseThrow(ResourceNotFoundException::new);
+        return role.orElseThrow(() -> new ResourceNotFoundException(
+                "There's no role match with id: " + id
+        ));
     }
 
     public Role createNewRole(RoleForm form) {

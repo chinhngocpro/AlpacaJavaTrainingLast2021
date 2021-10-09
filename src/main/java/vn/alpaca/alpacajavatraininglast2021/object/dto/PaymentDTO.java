@@ -19,6 +19,8 @@ public class PaymentDTO {
 
     private Date paymentDate;
 
-    private UserDTO accountant;
+    private int claimRequestId;
+
+    private int accountantId;
 
 }

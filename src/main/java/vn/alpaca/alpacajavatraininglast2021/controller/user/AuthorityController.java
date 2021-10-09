@@ -1,18 +1,15 @@
 package vn.alpaca.alpacajavatraininglast2021.controller.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.AuthorityDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Authority;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.AuthorityMapper;
+import vn.alpaca.alpacajavatraininglast2021.object.response.SuccessResponse;
 import vn.alpaca.alpacajavatraininglast2021.service.AuthorityService;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
+import static vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil.*;
 
 import java.util.Optional;
 
@@ -23,11 +20,15 @@ import java.util.Optional;
 )
 public class AuthorityController {
 
-    @Autowired
-    AuthorityService authorityService;
+    private final AuthorityService authorityService;
 
-    @Autowired
-    AuthorityMapper mapper;
+    private final AuthorityMapper mapper;
+
+    public AuthorityController(AuthorityService authorityService,
+                               AuthorityMapper mapper) {
+        this.authorityService = authorityService;
+        this.mapper = mapper;
+    }
 
     @PreAuthorize("hasAuthority('AUTHORITY_READ')")
     @GetMapping("/{id}")
@@ -44,12 +45,12 @@ public class AuthorityController {
             @RequestParam(value = "page", required = false)
                     Optional<Integer> pageNumber,
             @RequestParam(value = "size", required = false)
-                    Optional<Integer> pageSize
+                    Optional<Integer> pageSize,
+            @RequestParam(value = "sort-by", required = false)
+                    Optional<String> sortBy
     ) {
-        Pageable pageable = Pageable.unpaged();
-        if (pageNumber.isPresent()) {
-            pageable = PageRequest.of(pageNumber.get(), pageSize.orElse(5));
-        }
+        Sort sort = getSort(sortBy);
+        Pageable pageable = getPageable(pageNumber, pageSize, sort);
 
         Page<AuthorityDTO> dtoPage = new PageImpl<>(
                 authorityService.findAll(pageable)

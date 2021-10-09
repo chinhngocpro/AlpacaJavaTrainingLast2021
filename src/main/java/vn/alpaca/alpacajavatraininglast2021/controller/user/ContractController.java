@@ -10,15 +10,18 @@ import vn.alpaca.alpacajavatraininglast2021.object.dto.ContractDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Contract;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.ContractMapper;
+import vn.alpaca.alpacajavatraininglast2021.object.request.contract.ContractFilter;
+import vn.alpaca.alpacajavatraininglast2021.object.request.contract.ContractForm;
+import vn.alpaca.alpacajavatraininglast2021.object.response.SuccessResponse;
 import vn.alpaca.alpacajavatraininglast2021.service.ContractService;
 import vn.alpaca.alpacajavatraininglast2021.service.CustomerService;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
-import vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.request.contract.ContractForm;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
+
+import static vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil.getPageable;
+import static vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil.getSort;
 
 @RestController
 @RequestMapping(
@@ -30,19 +33,13 @@ public class ContractController {
     private final ContractService contractService;
     private final CustomerService customerService;
     private final ContractMapper mapper;
-    private final NullAwareBeanUtil notNullUtil;
-    private final RequestParamUtil paramUtil;
 
     public ContractController(ContractService contractService,
                               CustomerService customerService,
-                              ContractMapper mapper,
-                              NullAwareBeanUtil notNullUtil,
-                              RequestParamUtil paramUtil) {
+                              ContractMapper mapper) {
         this.contractService = contractService;
         this.customerService = customerService;
         this.mapper = mapper;
-        this.notNullUtil = notNullUtil;
-        this.paramUtil = paramUtil;
     }
 
     @PreAuthorize("hasAuthority('CONTRACT_READ')")
@@ -54,36 +51,14 @@ public class ContractController {
                     Optional<Integer> pageSize,
             @RequestParam(value = "sort-by", required = false)
                     Optional<String> sortBy,
-            @RequestParam(value = "contract-code", required = false)
-                    Optional<String> contractCode,
-            @RequestParam(value = "is-valid", required = false)
-                    Optional<Boolean> isValid,
-            @RequestParam(value = "max-amount", required = false)
-                    Optional<Double> maximumAmount,
-            @RequestParam(value = "remain-amount", required = false)
-                    Optional<Double> remainingAmount,
-            @RequestParam(value = "active", required = false)
-                    Optional<Boolean> active,
-            @RequestParam(value = "hospital-id", required = false)
-                    Optional<Integer> hospitalId,
-            @RequestParam(value = "accident-id", required = false)
-                    Optional<Integer> accidentId
+            @RequestBody ContractFilter filter
     ) {
-        Sort sort = paramUtil.getSort(sortBy);
+        Sort sort = getSort(sortBy);
 
-        Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
+        Pageable pageable = getPageable(pageNumber, pageSize, sort);
 
         Page<ContractDTO> dtoPage = new PageImpl<>(
-                contractService.findAllContracts(
-                                contractCode.orElse(null),
-                                isValid.orElse(null),
-                                maximumAmount.orElse(null),
-                                remainingAmount.orElse(null),
-                                active.orElse(null),
-                                hospitalId.orElse(null),
-                                accidentId.orElse(null),
-                                pageable
-                        )
+                contractService.findAllContracts(filter, pageable)
                         .map(mapper::convertToDTO)
                         .getContent()
         );
@@ -106,9 +81,8 @@ public class ContractController {
     @PostMapping(consumes = "application/json")
     public SuccessResponse<ContractDTO> createNewContract(
             @RequestBody ContractForm formData
-    ) throws InvocationTargetException, IllegalAccessException {
-        Contract contract = new Contract();
-        notNullUtil.copyProperties(contract, formData);
+    ) {
+        Contract contract = mapper.convertToEntity(formData);
 
         Customer customer = customerService
                 .findCustomerById(formData.getCustomerId());
@@ -126,9 +100,8 @@ public class ContractController {
             @PathVariable("contractId") int id,
             @RequestBody ContractForm formData
     ) throws InvocationTargetException, IllegalAccessException {
-
         Contract contract = contractService.findContractById(id);
-        notNullUtil.copyProperties(contract, formData);
+        NullAwareBeanUtil.getInstance().copyProperties(contract, formData);
 
         if (formData.getCustomerId() != null) {
             Customer customer = customerService

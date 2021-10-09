@@ -23,6 +23,4 @@ public class ClaimRequestDTO {
 
     private String status;
 
-    private CustomerDTO customer;
-
 }

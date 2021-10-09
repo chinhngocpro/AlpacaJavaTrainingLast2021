@@ -35,7 +35,6 @@ public class Contract implements Serializable {
     )
     private int id;
 
-    @NotNull
     @Pattern(regexp = "^[a-zA-Z]{3}[0-9]{9}$")
     private String contractCode;
 
@@ -43,21 +42,16 @@ public class Contract implements Serializable {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date validFrom = new Date();
 
-    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date validTo;
 
-    @NotNull
     private Double maximumAmount;
 
-    @NotNull
     private Double remainingAmount;
 
-    @NotNull
     private boolean active = true;
 
     @Type(type = "list-array")

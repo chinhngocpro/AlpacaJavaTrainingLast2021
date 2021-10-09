@@ -9,15 +9,17 @@ import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.CustomerDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.CustomerMapper;
+import vn.alpaca.alpacajavatraininglast2021.object.request.customer.CustomerFilter;
+import vn.alpaca.alpacajavatraininglast2021.object.request.customer.CustomerForm;
+import vn.alpaca.alpacajavatraininglast2021.object.response.SuccessResponse;
 import vn.alpaca.alpacajavatraininglast2021.service.CustomerService;
-import vn.alpaca.alpacajavatraininglast2021.util.DateUtil;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
-import vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.request.customer.CustomerForm;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
+
+import static vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil.getPageable;
+import static vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil.getSort;
 
 @RestController
 @RequestMapping(
@@ -28,20 +30,11 @@ public class CustomerController {
 
     private final CustomerService service;
     private final CustomerMapper mapper;
-    private final NullAwareBeanUtil notNullUtil;
-    private final DateUtil dateUtil;
-    private final RequestParamUtil paramUtil;
 
     public CustomerController(CustomerService service,
-                              CustomerMapper mapper,
-                              NullAwareBeanUtil notNullUtil,
-                              DateUtil dateUtil,
-                              RequestParamUtil paramUtil) {
+                              CustomerMapper mapper) {
         this.service = service;
         this.mapper = mapper;
-        this.notNullUtil = notNullUtil;
-        this.dateUtil = dateUtil;
-        this.paramUtil = paramUtil;
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER_READ')")
@@ -53,36 +46,14 @@ public class CustomerController {
                     Optional<Integer> pageSize,
             @RequestParam(value = "sort-by", required = false)
                     Optional<String> sortBy,
-            @RequestParam(value = "full-name", required = false)
-                    Optional<String> fullName,
-            @RequestParam(value = "gender", required = false)
-                    Optional<Boolean> isMale,
-            @RequestParam(value = "id-card", required = false)
-                    Optional<String> idCardNumber,
-            @RequestParam(value = "email", required = false)
-                    Optional<String> email,
-            @RequestParam(value = "dob-from", required = false)
-                    Optional<String> dobFrom,
-            @RequestParam(value = "dob-to", required = false)
-                    Optional<String> dobTo,
-            @RequestParam(value = "address", required = false)
-                    Optional<String> address,
-            @RequestParam(value = "active", required = false)
-                    Optional<Boolean> active
+            @RequestBody CustomerFilter filter
     ) {
-        Sort sort = paramUtil.getSort(sortBy);
-        Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
+        Sort sort = getSort(sortBy);
+        Pageable pageable = getPageable(pageNumber, pageSize, sort);
 
         Page<CustomerDTO> dtoPage = new PageImpl<>(
                 service.findAllCustomers(
-                                fullName.orElse(null),
-                                isMale.orElse(null),
-                                idCardNumber.orElse(null),
-                                email.orElse(null),
-                                dateUtil.convertStringToDate(dobFrom.orElse(null)),
-                                dateUtil.convertStringToDate(dobTo.orElse(null)),
-                                address.orElse(null),
-                                active.orElse(null),
+                                filter,
                                 pageable
                         )
                         .map(mapper::convertToDTO)
@@ -107,9 +78,8 @@ public class CustomerController {
     @PostMapping(consumes = "application/json")
     public SuccessResponse<CustomerDTO> createNewCustomer(
             @RequestBody CustomerForm formData
-    ) throws InvocationTargetException, IllegalAccessException {
-        Customer customer = new Customer();
-        notNullUtil.copyProperties(customer, formData);
+    ) {
+        Customer customer = mapper.convertToEntity(formData);
 
         CustomerDTO dto =
                 mapper.convertToDTO(service.saveCustomer(customer));
@@ -127,7 +97,7 @@ public class CustomerController {
             @RequestBody CustomerForm formData
     ) throws InvocationTargetException, IllegalAccessException {
         Customer customer = service.findCustomerById(id);
-        notNullUtil.copyProperties(customer, formData);
+        NullAwareBeanUtil.getInstance().copyProperties(customer, formData);
 
         CustomerDTO dto =
                 mapper.convertToDTO(service.saveCustomer(customer));

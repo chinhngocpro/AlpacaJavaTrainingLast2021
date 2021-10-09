@@ -5,13 +5,25 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer_;
+import vn.alpaca.alpacajavatraininglast2021.object.request.customer.CustomerFilter;
 
 import java.util.Date;
 
-@Component
 public final class CustomerSpecification {
 
-    public Specification<Customer> hasNameContaining(String fullName) {
+    public static Specification<Customer>
+    getCustomerSpecification(CustomerFilter filter) {
+        return Specification
+                .where(hasNameContaining(filter.getFullName()))
+                .and(isMale(filter.getGender()))
+                .and(hasIdCardNumber(filter.getIdCardNumber()))
+                .and(hasEmailContaining(filter.getEmail()))
+                .and(hasDobBetween(filter.getDobFrom(), filter.getDobTo()))
+                .and(hasAddressContaining(filter.getAddress()))
+                .and(isActive(filter.getActive()));
+    }
+
+    private static Specification<Customer> hasNameContaining(String fullName) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(fullName) ?
                         builder.conjunction() :
@@ -21,14 +33,14 @@ public final class CustomerSpecification {
                         );
     }
 
-    public Specification<Customer> isMale(Boolean isMale) {
+    private static Specification<Customer> isMale(Boolean isMale) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(isMale) ?
                         builder.conjunction() :
                         builder.equal(root.get(Customer_.GENDER), isMale);
     }
 
-    public Specification<Customer> hasIdCardNumber(String idCardNumber) {
+    private static Specification<Customer> hasIdCardNumber(String idCardNumber) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(idCardNumber) ?
                         builder.conjunction() :
@@ -38,14 +50,14 @@ public final class CustomerSpecification {
                         );
     }
 
-    public Specification<Customer> hasEmailContaining(String email) {
+    private static Specification<Customer> hasEmailContaining(String email) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(email) ?
                         builder.conjunction() :
                         builder.like(root.get(Customer_.EMAIL), email);
     }
 
-    public Specification<Customer> hasDobBetween(Date from, Date to) {
+    private static Specification<Customer> hasDobBetween(Date from, Date to) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(from) && ObjectUtils.isEmpty(to) ?
                         builder.conjunction() :
@@ -63,14 +75,14 @@ public final class CustomerSpecification {
                                                 from, to);
     }
 
-    public Specification<Customer> hasAddressContaining(String address) {
+    private static Specification<Customer> hasAddressContaining(String address) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(address) ?
                         builder.conjunction() :
                         builder.like(root.get(Customer_.ADDRESS), address);
     }
 
-    public Specification<Customer> isActive(Boolean active) {
+    private static Specification<Customer> isActive(Boolean active) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(active) ?
                         builder.conjunction() :

@@ -4,42 +4,32 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import vn.alpaca.alpacajavatraininglast2021.exception.AccessDeniedException;
-import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.AnalyzedReceipt;
+import vn.alpaca.alpacajavatraininglast2021.object.exception.AccessDeniedException;
+import vn.alpaca.alpacajavatraininglast2021.object.exception.ResourceNotFoundException;
+import vn.alpaca.alpacajavatraininglast2021.object.request.analyzedreceipt.AnalyzedReceiptFilter;
 import vn.alpaca.alpacajavatraininglast2021.repository.AnalyzedReceiptRepository;
-import vn.alpaca.alpacajavatraininglast2021.specification.AnalyzedReceiptSpecification;
+
+import static vn.alpaca.alpacajavatraininglast2021.specification.AnalyzedReceiptSpecification.*;
 
 @Service
 public class AnalyzedReceiptService {
 
     private final AnalyzedReceiptRepository repository;
-    private final AnalyzedReceiptSpecification spec;
 
-    public AnalyzedReceiptService(AnalyzedReceiptRepository repository,
-                                  AnalyzedReceiptSpecification spec) {
+    public AnalyzedReceiptService(AnalyzedReceiptRepository repository) {
         this.repository = repository;
-        this.spec = spec;
     }
 
     public Page<AnalyzedReceipt> findAllReceipts(
-            Boolean isValid,
-            String title,
-            Integer hospitalId,
-            Integer accidentId,
-            Double minAmount,
-            Double maxAmount,
+            AnalyzedReceiptFilter filter,
             Pageable pageable
     ) {
 
-        Specification<AnalyzedReceipt> conditions = Specification
-                .where(spec.isValid(isValid))
-                .and(spec.hasTitleContaining(title))
-                .and(spec.hasHospitalId(hospitalId))
-                .and(spec.hasAccidentId(accidentId))
-                .and(spec.hasAmountBetween(minAmount, maxAmount));
-
-        return repository.findAll(conditions, pageable);
+        return repository.findAll(
+                getAnalyzedReceiptSpecification(filter),
+                pageable
+        );
     }
 
     public AnalyzedReceipt findReceiptById(int id) {
@@ -62,8 +52,7 @@ public class AnalyzedReceiptService {
     }
 
     public void validateReceipt(int receiptId) {
-        AnalyzedReceipt
-                receipt = findReceiptById(receiptId);
+        AnalyzedReceipt receipt = findReceiptById(receiptId);
         receipt.setValid(true);
         saveReceipt(receipt);
     }

@@ -5,13 +5,26 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Payment;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Payment_;
+import vn.alpaca.alpacajavatraininglast2021.object.request.payment.PaymentFilter;
 
 import java.util.Date;
 
-@Component
 public final class PaymentSpecification {
 
-    public Specification<Payment>
+    public static Specification<Payment>
+    getPaymentSpecification(PaymentFilter filter) {
+        return Specification
+                .where(hasAmountBetween(
+                        filter.getMinAmount(),
+                        filter.getMaxAmount()
+                ))
+                .and(hasDateBetween(
+                        filter.getFromDate(),
+                        filter.getToDate()
+                ));
+    }
+
+    private static Specification<Payment>
     hasAmountBetween(Double min, Double max) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(min) && ObjectUtils.isEmpty(max) ?
@@ -33,7 +46,7 @@ public final class PaymentSpecification {
                                         );
     }
 
-    public Specification<Payment>
+    private static Specification<Payment>
     hasDateBetween(Date from, Date to) {
         return (root, query, builder) ->
                 ObjectUtils.isEmpty(from) && ObjectUtils.isEmpty(to) ?

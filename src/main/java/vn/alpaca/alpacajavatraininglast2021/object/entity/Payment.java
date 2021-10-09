@@ -32,10 +32,8 @@ public class Payment implements Serializable {
     )
     private int id;
 
-    @NotNull
     private double amount;
 
-    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date paymentDate = new Date();
 

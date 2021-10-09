@@ -11,14 +11,14 @@ import vn.alpaca.alpacajavatraininglast2021.object.entity.ClaimRequest;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Payment;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.PaymentMapper;
+import vn.alpaca.alpacajavatraininglast2021.object.request.payment.PaymentFilter;
+import vn.alpaca.alpacajavatraininglast2021.object.request.payment.PaymentForm;
+import vn.alpaca.alpacajavatraininglast2021.object.response.SuccessResponse;
 import vn.alpaca.alpacajavatraininglast2021.service.ClaimRequestService;
 import vn.alpaca.alpacajavatraininglast2021.service.PaymentService;
 import vn.alpaca.alpacajavatraininglast2021.service.UserService;
-import vn.alpaca.alpacajavatraininglast2021.util.DateUtil;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
 import vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.request.payment.PaymentForm;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
@@ -34,24 +34,15 @@ public class PaymentController {
     private final UserService userService;
     private final ClaimRequestService requestService;
     private final PaymentMapper mapper;
-    private final NullAwareBeanUtil notNullUtil;
-    private final DateUtil dateUtil;
-    private final RequestParamUtil paramUtil;
 
     public PaymentController(PaymentService paymentService,
                              UserService userService,
                              ClaimRequestService requestService,
-                             PaymentMapper mapper,
-                             NullAwareBeanUtil notNullUtil,
-                             DateUtil dateUtil,
-                             RequestParamUtil paramUtil) {
+                             PaymentMapper mapper) {
         this.paymentService = paymentService;
         this.userService = userService;
         this.requestService = requestService;
         this.mapper = mapper;
-        this.notNullUtil = notNullUtil;
-        this.dateUtil = dateUtil;
-        this.paramUtil = paramUtil;
     }
 
     @PreAuthorize("hasAuthority('PAYMENT_READ')")
@@ -63,27 +54,17 @@ public class PaymentController {
                     Optional<Integer> pageSize,
             @RequestParam(value = "sort-by", required = false)
                     Optional<String> sortBy,
-            @RequestParam(value = "min-amount", required = false)
-                    Optional<Double> minAmount,
-            @RequestParam(value = "max-amount", required = false)
-                    Optional<Double> maxAmount,
-            @RequestParam(value = "from-date", required = false)
-                    Optional<String> fromDate,
-            @RequestParam(value = "to-date", required = false)
-                    Optional<String> toDate
+            @RequestBody Optional<PaymentFilter> filter
     ) {
 
-        Sort sort = paramUtil.getSort(sortBy);
-        Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
+        Sort sort = RequestParamUtil.getSort(sortBy);
+        Pageable pageable =
+                RequestParamUtil.getPageable(pageNumber, pageSize, sort);
 
         Page<PaymentDTO> dtoPage = new PageImpl<>(
-                paymentService.findAllPayments(
-                                minAmount.orElse(null),
-                                maxAmount.orElse(null),
-                                dateUtil.convertStringToDate(fromDate.orElse(null)),
-                                dateUtil.convertStringToDate(toDate.orElse(null)),
-                                pageable
-                        )
+                paymentService
+                        .findAllPayments(filter.orElse(new PaymentFilter()),
+                                pageable)
                         .map(mapper::convertToDTO)
                         .getContent()
         );
@@ -109,17 +90,16 @@ public class PaymentController {
     @PostMapping(consumes = "application/json")
     public SuccessResponse<PaymentDTO> createNewPayment(
             @RequestBody PaymentForm formData
-    ) throws InvocationTargetException, IllegalAccessException {
-        Payment payment = new Payment();
-        notNullUtil.copyProperties(payment, formData);
+    ) {
+        Payment payment = mapper.convertToEntity(formData);
 
         User accountant = userService
                 .findUserById(formData.getAccountantId());
+        payment.setAccountant(accountant);
+
         ClaimRequest claimRequest = requestService
                 .findRequestById(formData.getRequestId());
-
         payment.setClaimRequest(claimRequest);
-        payment.setAccountant(accountant);
 
         PaymentDTO dto =
                 mapper.convertToDTO(paymentService.savePayment(payment));
@@ -137,7 +117,7 @@ public class PaymentController {
             @RequestBody PaymentForm formData
     ) throws InvocationTargetException, IllegalAccessException {
         Payment payment = paymentService.findPaymentById(id);
-        notNullUtil.copyProperties(payment, formData);
+        NullAwareBeanUtil.getInstance().copyProperties(payment, formData);
 
         if (formData.getAccountantId() != null) {
             User accountant = userService

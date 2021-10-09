@@ -5,28 +5,29 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.ClaimRequestDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.ContractDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.CustomerDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.PaymentDTO;
-import vn.alpaca.alpacajavatraininglast2021.object.entity.ClaimRequest;
-import vn.alpaca.alpacajavatraininglast2021.object.entity.Customer;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.ClaimRequestMapper;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.ContractMapper;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.CustomerMapper;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.PaymentMapper;
-import vn.alpaca.alpacajavatraininglast2021.service.*;
-import vn.alpaca.alpacajavatraininglast2021.util.DateUtil;
-import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
-import vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.request.claimrequest.ClaimRequestForm;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
+import vn.alpaca.alpacajavatraininglast2021.object.request.claimrequest.ClaimRequestFilter;
+import vn.alpaca.alpacajavatraininglast2021.object.request.claimrequest.ClaimRequestForm;
+import vn.alpaca.alpacajavatraininglast2021.object.request.contract.ContractFilter;
+import vn.alpaca.alpacajavatraininglast2021.object.request.payment.PaymentFilter;
+import vn.alpaca.alpacajavatraininglast2021.object.response.SuccessResponse;
+import vn.alpaca.alpacajavatraininglast2021.service.ClaimRequestService;
+import vn.alpaca.alpacajavatraininglast2021.service.ContractService;
+import vn.alpaca.alpacajavatraininglast2021.service.CustomerService;
+import vn.alpaca.alpacajavatraininglast2021.service.PaymentService;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil.getPageable;
+import static vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil.getSort;
 
 @RestController
 @RequestMapping("/api/customer/{idCardNumber}")
@@ -36,41 +37,29 @@ public class CustomerFeatureController {
     private final ContractService contractService;
     private final ClaimRequestService requestService;
     private final PaymentService paymentService;
-    private final FileService fileService;
     private final CustomerMapper customerMapper;
     private final ContractMapper contractMapper;
-    private final ClaimRequestMapper requestMapper;
     private final PaymentMapper paymentMapper;
-    private final NullAwareBeanUtil notNullUtil;
-    private final DateUtil dateUtil;
-    private final RequestParamUtil paramUtil;
+    private final ClaimRequestMapper requestMapper;
 
     public CustomerFeatureController(
             CustomerService customerService,
             ContractService contractService,
             ClaimRequestService requestService,
             PaymentService paymentService,
-            FileService fileService,
             CustomerMapper customerMapper,
             ContractMapper contractMapper,
-            ClaimRequestMapper requestMapper,
             PaymentMapper paymentMapper,
-            NullAwareBeanUtil notNullUtil,
-            DateUtil dateUtil,
-            RequestParamUtil paramUtil
-    ) {
+
+            ClaimRequestMapper requestMapper) {
         this.customerService = customerService;
         this.contractService = contractService;
         this.requestService = requestService;
         this.paymentService = paymentService;
-        this.fileService = fileService;
         this.customerMapper = customerMapper;
         this.contractMapper = contractMapper;
-        this.requestMapper = requestMapper;
         this.paymentMapper = paymentMapper;
-        this.notNullUtil = notNullUtil;
-        this.dateUtil = dateUtil;
-        this.paramUtil = paramUtil;
+        this.requestMapper = requestMapper;
     }
 
     @GetMapping("/info")
@@ -93,34 +82,16 @@ public class CustomerFeatureController {
                     Optional<Integer> pageSize,
             @RequestParam(value = "sort-by", required = false)
                     Optional<String> sortBy,
-            @RequestParam(value = "contract-code", required = false)
-                    Optional<String> contractCode,
-            @RequestParam(value = "is-valid", required = false)
-                    Optional<Boolean> isValid,
-            @RequestParam(value = "max-amount", required = false)
-                    Optional<Double> maximumAmount,
-            @RequestParam(value = "remain-amount", required = false)
-                    Optional<Double> remainingAmount,
-            @RequestParam(value = "active", required = false)
-                    Optional<Boolean> active,
-            @RequestParam(value = "hospital-id", required = false)
-                    Optional<Integer> hospitalId,
-            @RequestParam(value = "accident-id", required = false)
-                    Optional<Integer> accidentId
+            @RequestBody ContractFilter filter
+
     ) {
-        Sort sort = paramUtil.getSort(sortBy);
-        Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
+        Sort sort = getSort(sortBy);
+        Pageable pageable = getPageable(pageNumber, pageSize, sort);
 
         Page<ContractDTO> dtoPage = new PageImpl<>(
                 contractService.findContractsByCustomerIdCardNumber(
                                 idCardNumber,
-                                contractCode.orElse(null),
-                                isValid.orElse(null),
-                                maximumAmount.orElse(null),
-                                remainingAmount.orElse(null),
-                                active.orElse(null),
-                                hospitalId.orElse(null),
-                                accidentId.orElse(null),
+                                filter,
                                 pageable
                         )
                         .map(contractMapper::convertToDTO)
@@ -140,22 +111,15 @@ public class CustomerFeatureController {
                     Optional<Integer> pageSize,
             @RequestParam(value = "sort-by", required = false)
                     Optional<String> sortBy,
-            @RequestParam(value = "title", required = false)
-                    Optional<String> title,
-            @RequestParam(value = "description", required = false)
-                    Optional<String> description,
-            @RequestParam(value = "status", required = false)
-                    Optional<String> status
+            @RequestBody ClaimRequestFilter filter
     ) {
-        Sort sort = paramUtil.getSort(sortBy);
-        Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
+        Sort sort = getSort(sortBy);
+        Pageable pageable = getPageable(pageNumber, pageSize, sort);
 
         Page<ClaimRequestDTO> dtoPage = new PageImpl<>(
                 requestService.findRequestsByCustomerIdCardNumber(
                                 idCardNumber,
-                                title.orElse(null),
-                                description.orElse(null),
-                                status.orElse(null),
+                                filter,
                                 pageable
                         )
                         .map(requestMapper::covertToDTO)
@@ -175,27 +139,17 @@ public class CustomerFeatureController {
                     Optional<Integer> pageSize,
             @RequestParam(value = "sort-by", required = false)
                     Optional<String> sortBy,
-            @RequestParam(value = "min-amount", required = false)
-                    Optional<Double> minAmount,
-            @RequestParam(value = "max-amount", required = false)
-                    Optional<Double> maxAmount,
-            @RequestParam(value = "from-date", required = false)
-                    Optional<String> fromDate,
-            @RequestParam(value = "to-date", required = false)
-                    Optional<String> toDate
+            @RequestBody PaymentFilter filter
     ) {
-        Sort sort = paramUtil.getSort(sortBy);
-        Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
+        Sort sort = getSort(sortBy);
+        Pageable pageable = getPageable(pageNumber, pageSize, sort);
 
         Page<PaymentDTO> dtoPage = new PageImpl<>(
                 paymentService
                         .findPaymentsByRequestIdAndCustomerIdCard(
                                 requestId,
                                 idCardNumber,
-                                minAmount.orElse(null),
-                                maxAmount.orElse(null),
-                                dateUtil.convertStringToDate(fromDate.orElse(null)),
-                                dateUtil.convertStringToDate(toDate.orElse(null)),
+                                filter,
                                 pageable
                         )
                         .map(paymentMapper::convertToDTO)
@@ -211,23 +165,12 @@ public class CustomerFeatureController {
     )
     public SuccessResponse<ClaimRequestDTO> createNewClaimRequest(
             @ModelAttribute("formData") ClaimRequestForm formData,
-            @PathVariable String idCardNumber)
-            throws InvocationTargetException, IllegalAccessException {
-        ClaimRequest request = new ClaimRequest();
-        notNullUtil.copyProperties(request, formData);
+            @PathVariable String idCardNumber
+    ) {
 
-        if (!ObjectUtils.isEmpty(formData.getReceiptPhotoFiles())) {
-            request.setReceiptPhotos(formData.getReceiptPhotoFiles().stream()
-                    .map(fileService::saveFile)
-                    .filter(s -> !ObjectUtils.isEmpty(s))
-                    .collect(Collectors.toList()));
-        }
-        Customer customer = customerService
-                .findCustomerByIdCardNumber(idCardNumber);
-        request.setCustomer(customer);
-
-        ClaimRequestDTO dto =
-                requestMapper.covertToDTO(requestService.saveRequest(request));
+        ClaimRequestDTO dto = requestMapper
+                .covertToDTO(
+                        requestService.saveRequest(idCardNumber, formData));
 
         return new SuccessResponse<>(dto);
     }

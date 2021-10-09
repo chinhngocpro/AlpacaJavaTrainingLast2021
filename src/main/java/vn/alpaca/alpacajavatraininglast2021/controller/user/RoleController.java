@@ -1,20 +1,19 @@
 package vn.alpaca.alpacajavatraininglast2021.controller.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.alpacajavatraininglast2021.object.dto.RoleDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Role;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.RoleMapper;
+import vn.alpaca.alpacajavatraininglast2021.object.request.role.RoleForm;
+import vn.alpaca.alpacajavatraininglast2021.object.response.SuccessResponse;
 import vn.alpaca.alpacajavatraininglast2021.service.RoleService;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.request.user.RoleForm;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
 import java.util.Optional;
+
+import static vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil.getPageable;
+import static vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil.getSort;
 
 @RestController
 @RequestMapping(
@@ -23,20 +22,27 @@ import java.util.Optional;
 )
 public class RoleController {
 
-    @Autowired
-    RoleService roleService;
+    private final RoleService roleService;
+    private final RoleMapper roleMapper;
 
-    @Autowired
-    RoleMapper roleMapper;
+    public RoleController(RoleService roleService,
+                          RoleMapper roleMapper) {
+        this.roleService = roleService;
+        this.roleMapper = roleMapper;
+    }
 
     @PreAuthorize("hasAuthority('SYSTEM_ROLE_READ')")
     @GetMapping
-    public SuccessResponse<Page<RoleDTO>> getAllRoles(@RequestParam("page") Optional<Integer> pageNumber, @RequestParam("size") Optional<Integer> pageSize) {
-        Pageable pageable = Pageable.unpaged();
-
-        if (pageNumber.isPresent()) {
-            pageable = PageRequest.of(pageNumber.get(), pageSize.orElse(5));
-        }
+    public SuccessResponse<Page<RoleDTO>> getAllRoles(
+            @RequestParam(value = "page", required = false)
+                    Optional<Integer> pageNumber,
+            @RequestParam(value = "size", required = false)
+                    Optional<Integer> pageSize,
+            @RequestParam(value = "sort-by", required = false)
+                    Optional<String> sortBy
+    ) {
+        Sort sort = getSort(sortBy);
+        Pageable pageable = getPageable(pageNumber, pageSize, sort);
 
         Page<RoleDTO> dtoPage = new PageImpl<>(
                 roleService.findAllRoles(pageable)
@@ -65,7 +71,8 @@ public class RoleController {
 
     @PreAuthorize("hasAuthority('SYSTEM_ROLE_UPDATE')")
     @PutMapping(value = "/{id}", consumes = "application/json")
-    public SuccessResponse<RoleDTO> updateRole(@PathVariable("id") int id, @RequestBody RoleForm form) {
+    public SuccessResponse<RoleDTO> updateRole(@PathVariable("id") int id,
+                                               @RequestBody RoleForm form) {
         Role role = roleService.updateRole(id, form);
         RoleDTO dto = roleMapper.convertToDTO(role);
         return new SuccessResponse<>(dto);

@@ -31,7 +31,6 @@ public class Role implements Serializable {
     )
     private int id;
 
-    @NotBlank
     private String name;
 
     @OneToMany(mappedBy = "role")

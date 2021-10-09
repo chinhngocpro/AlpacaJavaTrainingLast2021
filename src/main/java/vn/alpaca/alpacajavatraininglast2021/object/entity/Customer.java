@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
-import vn.alpaca.alpacajavatraininglast2021.util.validation.ValidEmail;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -52,7 +51,6 @@ public class Customer implements Serializable {
     private List<String> phoneNumbers;
 
     @NotBlank
-    @ValidEmail
     private String email;
 
     @Temporal(TemporalType.DATE)

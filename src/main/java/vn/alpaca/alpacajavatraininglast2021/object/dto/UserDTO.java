@@ -16,6 +16,8 @@ public class UserDTO {
 
     private String username;
 
+    private String role;
+
     private String fullName;
 
     private boolean gender;
@@ -29,7 +31,5 @@ public class UserDTO {
     private Date dateOfBirth;
 
     private String address;
-
-    private RoleDTO role;
 
 }

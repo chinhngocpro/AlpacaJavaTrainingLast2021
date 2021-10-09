@@ -7,10 +7,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Component
 public class RequestParamUtil {
 
-    public Sort getSort(Optional<String> sortBy) {
+    public static Sort getSort(Optional<String> sortBy) {
         Sort sort = Sort.unsorted();
 
         if (sortBy.isPresent()) {
@@ -30,7 +29,7 @@ public class RequestParamUtil {
         return sort;
     }
 
-    public Pageable getPageable(
+    public static Pageable getPageable(
             Optional<Integer> pageNumber,
             Optional<Integer> pageSize,
             Sort sort

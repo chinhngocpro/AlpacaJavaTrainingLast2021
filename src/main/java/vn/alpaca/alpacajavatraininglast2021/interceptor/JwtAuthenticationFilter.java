@@ -2,6 +2,7 @@ package vn.alpaca.alpacajavatraininglast2021.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
@@ -15,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -40,8 +42,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 User user = userService.findUserById(id);
 
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(user, null,
-                                user.getAuthorities());
+                        new UsernamePasswordAuthenticationToken(
+                                user, null,
+                                user.getRole().getAuthorities().stream()
+                                        .map(authority -> new SimpleGrantedAuthority(
+                                                authority.getPermissionName()))
+                                        .collect(Collectors.toSet())
+                        );
                 authentication.setDetails(
                         new WebAuthenticationDetailsSource()
                                 .buildDetails(request));

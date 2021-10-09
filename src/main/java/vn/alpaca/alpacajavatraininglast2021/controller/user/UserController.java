@@ -10,14 +10,15 @@ import vn.alpaca.alpacajavatraininglast2021.object.dto.UserDTO;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Role;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.User;
 import vn.alpaca.alpacajavatraininglast2021.object.mapper.UserMapper;
+import vn.alpaca.alpacajavatraininglast2021.object.request.user.UserFilter;
+import vn.alpaca.alpacajavatraininglast2021.object.request.user.UserForm;
+import vn.alpaca.alpacajavatraininglast2021.object.response.SuccessResponse;
 import vn.alpaca.alpacajavatraininglast2021.service.RoleService;
 import vn.alpaca.alpacajavatraininglast2021.service.UserService;
-import vn.alpaca.alpacajavatraininglast2021.util.DateUtil;
 import vn.alpaca.alpacajavatraininglast2021.util.NullAwareBeanUtil;
 import vn.alpaca.alpacajavatraininglast2021.util.RequestParamUtil;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.request.user.UserForm;
-import vn.alpaca.alpacajavatraininglast2021.wrapper.response.SuccessResponse;
 
+import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
@@ -31,26 +32,17 @@ public class UserController {
     private final UserService userService;
     private final RoleService roleService;
     private final UserMapper mapper;
-    private final NullAwareBeanUtil notNullUtil;
-    private final DateUtil dateUtil;
-    private final RequestParamUtil paramUtil;
 
     public UserController(UserService userService,
                           RoleService roleService,
-                          UserMapper mapper,
-                          NullAwareBeanUtil notNullUtil,
-                          DateUtil dateUtil,
-                          RequestParamUtil paramUtil) {
+                          UserMapper mapper) {
         this.userService = userService;
         this.roleService = roleService;
         this.mapper = mapper;
-        this.notNullUtil = notNullUtil;
-        this.dateUtil = dateUtil;
-        this.paramUtil = paramUtil;
     }
 
     @PreAuthorize("hasAuthority('USER_READ')")
-    @GetMapping
+    @GetMapping(consumes = "application/json")
     public SuccessResponse<Page<UserDTO>> getAllUsers(
             @RequestParam(value = "page", required = false)
                     Optional<Integer> pageNumber,
@@ -58,44 +50,15 @@ public class UserController {
                     Optional<Integer> pageSize,
             @RequestParam(value = "sort-by", required = false)
                     Optional<String> sortBy,
-            @RequestParam(value = "username", required = false)
-                    Optional<String> username,
-            @RequestParam(value = "full-name", required = false)
-                    Optional<String> fullName,
-            @RequestParam(value = "gender", required = false)
-                    Optional<Boolean> isMale,
-            @RequestParam(value = "id-card", required = false)
-                    Optional<String> idCardNumber,
-            @RequestParam(value = "email", required = false)
-                    Optional<String> email,
-            @RequestParam(value = "dob-from", required = false)
-                    Optional<String> dobFrom,
-            @RequestParam(value = "dob-to", required = false)
-                    Optional<String> dobTo,
-            @RequestParam(value = "address", required = false)
-                    Optional<String> address,
-            @RequestParam(value = "active", required = false)
-                    Optional<Boolean> active,
-            @RequestParam(value = "role-name", required = false)
-                    Optional<String> roleName
+            @RequestBody Optional<UserFilter> filter
     ) {
-        Sort sort = paramUtil.getSort(sortBy);
-        Pageable pageable = paramUtil.getPageable(pageNumber, pageSize, sort);
+        Sort sort = RequestParamUtil.getSort(sortBy);
+        Pageable pageable =
+                RequestParamUtil.getPageable(pageNumber, pageSize, sort);
 
         Page<UserDTO> dtoPage = new PageImpl<>(
-                userService.findAllUsers(
-                                username.orElse(null),
-                                fullName.orElse(null),
-                                isMale.orElse(null),
-                                idCardNumber.orElse(null),
-                                email.orElse(null),
-                                dateUtil.convertStringToDate(dobFrom.orElse(null)),
-                                dateUtil.convertStringToDate(dobTo.orElse(null)),
-                                address.orElse(null),
-                                active.orElse(null),
-                                roleName.orElse(null),
-                                pageable
-                        )
+                userService
+                        .findAllUsers(filter.orElse(new UserFilter()), pageable)
                         .map(mapper::convertToDTO)
                         .getContent()
         );
@@ -108,7 +71,6 @@ public class UserController {
     public SuccessResponse<UserDTO> getUserById(
             @PathVariable("userId") int id
     ) {
-        System.out.println(userService.findUserById(id));
         UserDTO dto = mapper.convertToDTO(userService.findUserById(id));
 
         return new SuccessResponse<>(dto);
@@ -117,10 +79,10 @@ public class UserController {
     @PreAuthorize("hasAuthority('USER_CREATE')")
     @PostMapping(consumes = "application/json")
     public SuccessResponse<UserDTO> createNewUser(
-            @RequestBody UserForm formData
-    ) throws InvocationTargetException, IllegalAccessException {
-        User user = new User();
-        notNullUtil.copyProperties(user, formData);
+            @Valid @RequestBody UserForm formData
+    ) {
+
+        User user = mapper.convertToEntity(formData);
 
         if (formData.getRoleId() != null) {
             Role userRole = roleService.findRoleById(formData.getRoleId());
@@ -140,17 +102,18 @@ public class UserController {
     )
     public SuccessResponse<UserDTO> updateUser(
             @PathVariable("userId") int id,
-            @RequestBody UserForm formData
+            @RequestBody @Valid UserForm formData
     ) throws InvocationTargetException, IllegalAccessException {
-        User user = userService.findUserById(id);
-        notNullUtil.copyProperties(user, formData);
+        User target = userService.findUserById(id);
+        NullAwareBeanUtil.getInstance()
+                .copyProperties(target, formData);
 
         if (formData.getRoleId() != null) {
             Role userRole = roleService.findRoleById(formData.getRoleId());
-            user.setRole(userRole);
+            target.setRole(userRole);
         }
 
-        User savedUser = userService.saveUser(user);
+        User savedUser = userService.saveUser(target);
         UserDTO dto = mapper.convertToDTO(savedUser);
 
         return new SuccessResponse<>(dto);

@@ -2,70 +2,68 @@ package vn.alpaca.alpacajavatraininglast2021.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import vn.alpaca.alpacajavatraininglast2021.exception.ResourceNotFoundException;
 import vn.alpaca.alpacajavatraininglast2021.object.entity.Payment;
+import vn.alpaca.alpacajavatraininglast2021.object.exception.AccessDeniedException;
+import vn.alpaca.alpacajavatraininglast2021.object.exception.ResourceNotFoundException;
+import vn.alpaca.alpacajavatraininglast2021.object.request.payment.PaymentFilter;
+import vn.alpaca.alpacajavatraininglast2021.repository.CustomerRepository;
 import vn.alpaca.alpacajavatraininglast2021.repository.PaymentRepository;
-import vn.alpaca.alpacajavatraininglast2021.specification.PaymentSpecification;
 
-import java.util.Date;
+import static vn.alpaca.alpacajavatraininglast2021.specification.PaymentSpecification.getPaymentSpecification;
 
 @Service
 public class PaymentService {
 
-    private final PaymentRepository repository;
-    private final PaymentSpecification spec;
+    private final PaymentRepository paymentRepository;
+    private final CustomerRepository customerRepository;
 
     public PaymentService(PaymentRepository repository,
-                          PaymentSpecification spec) {
-        this.repository = repository;
-        this.spec = spec;
+                          CustomerRepository customerRepository) {
+        this.paymentRepository = repository;
+        this.customerRepository = customerRepository;
     }
 
-
     public Page<Payment> findAllPayments(
-            Double minAmount,
-            Double maxAmount,
-            Date fromDate,
-            Date toDate,
+            PaymentFilter filter,
             Pageable pageable
     ) {
-        Specification<Payment> conditions = Specification
-                .where(spec.hasAmountBetween(minAmount, maxAmount))
-                .and(spec.hasDateBetween(fromDate, toDate));
-
-        return repository.findAll(conditions, pageable);
+        return paymentRepository.findAll(
+                getPaymentSpecification(filter),
+                pageable
+        );
     }
 
 
     public Payment findPaymentById(int id) {
-        return repository.findById(id)
-                .orElseThrow(ResourceNotFoundException::new);
-        // TODO: implement exception message
+        return paymentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Payment id not found."
+                ));
     }
 
     public Page<Payment> findPaymentsByRequestIdAndCustomerIdCard(
             int requestId,
             String idCardNumber,
-            Double minAmount,
-            Double maxAmount,
-            Date fromDate,
-            Date toDate,
+            PaymentFilter filter,
             Pageable pageable
     ) {
-        Specification<Payment> conditions = Specification
-                .where(spec.hasAmountBetween(minAmount, maxAmount))
-                .and(spec.hasDateBetween(fromDate, toDate));
+        customerRepository.findByIdCardNumber(idCardNumber)
+                .orElseThrow(() -> new AccessDeniedException(
+                        "Customer identity does not exist."
+                ));
 
-        return repository.findAllByRequestIdAndCustomerIdCard(
+        return paymentRepository.findAllByRequestIdAndCustomerIdCard(
                 requestId,
                 idCardNumber,
+                getPaymentSpecification(filter),
                 pageable
         );
     }
 
     public Payment savePayment(Payment payment) {
-        return repository.save(payment);
+        return paymentRepository.save(payment);
     }
+
+
 }
