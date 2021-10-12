@@ -7,3 +7,10 @@ server:
 spring:
   application:
     name: gateway-server
+zuul:
+  ignored-services: '*'
+  routes:
+    assets-service:
+      path: '/assets/**'
+      service-id: 'assets-service'
+  sensitive-headers: 'Authorization'
