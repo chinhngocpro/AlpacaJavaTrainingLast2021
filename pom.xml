@@ -15,6 +15,17 @@
     <name>AlpacaJavaTrainingLast2021_Phase2_Microservices</name>
     <description>AlpacaJavaTrainingLast2021_Phase2_Microservices</description>
     <packaging>pom</packaging>
+
+    <modules>
+        <module>common</module>
+        <module>gateway</module>
+        <module>user-service</module>
+        <module>assets-service</module>
+        <module>claim-request-service</module>
+        <module>cloud-config-server</module>
+        <module>service-registry</module>
+    </modules>
+
     <properties>
         <java.version>1.8</java.version>
         <spring-cloud.version>2020.0.4</spring-cloud.version>
