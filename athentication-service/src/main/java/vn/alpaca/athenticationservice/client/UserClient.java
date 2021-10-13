@@ -4,6 +4,7 @@ import feign.Headers;
 import feign.Param;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import vn.alpaca.athenticationservice.object.User;
 import vn.alpaca.response.wrapper.SuccessResponse;
@@ -18,6 +19,6 @@ public interface UserClient {
     SuccessResponse<User> findByUserName(@RequestParam("val") String username);
 
     @GetMapping(path = "/users/{id}")
-    SuccessResponse<User> findById(@Param("id") int id);
+    SuccessResponse<User> findById(@PathVariable("id") int id);
 
 }

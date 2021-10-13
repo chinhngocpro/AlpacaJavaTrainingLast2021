@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import vn.alpaca.athenticationservice.client.UserClient;
 import vn.alpaca.athenticationservice.object.User;
 import vn.alpaca.athenticationservice.object.request.LoginForm;
 import vn.alpaca.athenticationservice.service.JwtTokenService;
@@ -24,9 +23,6 @@ public class AuthController {
 
     @Autowired
     AuthenticationManager authenticationManager;
-
-    @Autowired
-    UserClient client;
 
     @PostMapping(
             value = "/login",
@@ -46,7 +42,8 @@ public class AuthController {
     @GetMapping(
             value = "/verify-token"
     )
-    public SuccessResponse<User> verify() {
-        return new SuccessResponse<>((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    public SuccessResponse<Integer> verify() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return new SuccessResponse<>(user.getId());
     }
 }
