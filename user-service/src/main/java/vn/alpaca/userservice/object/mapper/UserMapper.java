@@ -4,7 +4,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import vn.alpaca.userservice.object.entity.User;
-import vn.alpaca.userservice.object.wrapper.response.UserDTO;
+import vn.alpaca.userservice.object.dto.UserDTO;
+import vn.alpaca.userservice.object.request.UserForm;
 
 @Mapper(
         componentModel = "spring",
@@ -15,4 +16,7 @@ public interface UserMapper {
 
     @Mapping(target = "role", expression = "java(user.getRole().getName())")
     UserDTO convertToDTO(User user);
+
+    User convertToEntity(UserForm userForm);
+
 }

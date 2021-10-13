@@ -12,5 +12,6 @@ eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
+    eureka-server-connect-timeout-seconds: 5
   server:
     renewal-percent-threshold: 0.85

@@ -1,13 +1,11 @@
 package vn.alpaca.userservice.object.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +16,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Role implements Serializable {
 
     @Id
@@ -35,6 +34,7 @@ public class Role implements Serializable {
     private String name;
 
     @OneToMany(mappedBy = "role")
+    @ToString.Exclude
     private List<User> users;
 
     @ManyToMany(cascade = {
@@ -45,6 +45,13 @@ public class Role implements Serializable {
     @JoinTable(name = "roles_authorities",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
+    @ToString.Exclude
     private Set<Authority> authorities;
 
+    public void addAuthority(@NonNull Authority authority) {
+        if (authorities == null) {
+            authorities = new HashSet<>();
+        }
+        authorities.add(authority);
+    }
 }

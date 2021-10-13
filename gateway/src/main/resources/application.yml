@@ -1,9 +1,16 @@
 eureka:
-  client:
-    service-url:
-      default-zone: http://localhost:8761/eureka
+    client:
+        service-url:
+            default-zone: http://localhost:8761/eureka/
 server:
-  port: 8762
+    port: 9981
 spring:
-  application:
-    name: gateway-server
+    application:
+        name: gateway-service
+    cloud:
+      gateway:
+          routes:
+              - id: user-service
+                uri: 'localhost:8400'
+                predicates:
+                    - Path=/users/**

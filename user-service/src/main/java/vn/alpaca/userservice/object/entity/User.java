@@ -19,7 +19,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class User implements Serializable {
 
     @Id
@@ -59,5 +58,6 @@ public class User implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "role_id")
+    @ToString.Exclude
     private Role role;
 }
