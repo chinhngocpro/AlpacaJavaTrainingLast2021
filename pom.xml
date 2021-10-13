@@ -17,11 +17,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>common</module>
         <module>gateway</module>
         <module>user-service</module>
         <module>assets-service</module>
-        <module>claim-request-service</module>
         <module>cloud-config-server</module>
         <module>service-registry</module>
     </modules>
