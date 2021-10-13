@@ -1,11 +1,11 @@
-package vn.alpaca.gateway.service;
+package vn.alpaca.athenticationservice.service;
 
 import io.jsonwebtoken.*;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import vn.alpaca.gateway.object.User;
+import vn.alpaca.athenticationservice.object.User;
 
 import java.util.Date;
 

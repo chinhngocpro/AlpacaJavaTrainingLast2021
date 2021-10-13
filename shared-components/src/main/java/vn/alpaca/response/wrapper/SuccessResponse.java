@@ -11,6 +11,10 @@ public class SuccessResponse<S> extends AbstractResponse {
     @JsonProperty("data")
     S data;
 
+    public SuccessResponse() {
+
+    }
+
     public SuccessResponse(S data) {
         super(200);
         this.data = data;
