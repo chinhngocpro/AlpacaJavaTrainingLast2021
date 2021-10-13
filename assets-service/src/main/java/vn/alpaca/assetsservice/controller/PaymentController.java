@@ -21,7 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/assets/payments")
+@RequestMapping(value = "/payments")
 public class PaymentController {
 
     private final PaymentService paymentService;

@@ -15,7 +15,7 @@ import vn.alpaca.util.ExtractParam;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/assets/claim-requests")
+@RequestMapping(value = "/claim-requests")
 public class ClaimRequestController {
 
     private final ClaimRequestService service;

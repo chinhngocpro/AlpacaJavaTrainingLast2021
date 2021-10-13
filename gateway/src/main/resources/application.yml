@@ -7,10 +7,14 @@ server:
 spring:
   application:
     name: gateway-server
-zuul:
-  ignored-services: '*'
-  routes:
-    assets-service:
-      path: '/assets/**'
-      service-id: 'assets-service'
-  sensitive-headers: 'Authorization'
+  cloud:
+    gateway:
+      routes:
+        - id: assets-service
+          uri: lb://assets-service/
+          predicates:
+            - Path=/assets/**
+          filters:
+            - StripPrefix=1
+  main:
+    web-application-type: reactive

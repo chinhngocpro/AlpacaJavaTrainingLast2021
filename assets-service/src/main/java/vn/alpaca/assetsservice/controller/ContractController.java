@@ -21,7 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/assets/contracts")
+@RequestMapping(value = "/contracts")
 public class ContractController {
 
     private final ContractService contractService;

@@ -19,7 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/assets/customers")
+@RequestMapping(value = "/customers")
 public class CustomerController {
 
     private final CustomerService service;

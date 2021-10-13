@@ -21,7 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/assets/analyzed-receipts")
+@RequestMapping(value = "/analyzed-receipts")
 public class AnalyzedReceiptController {
 
     private final AnalyzedReceiptService receiptService;
