@@ -3,13 +3,14 @@ package vn.alpaca.userservice.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import vn.alpaca.response.wrapper.SuccessResponse;
+import vn.alpaca.userservice.object.dto.AuthDTO;
+import vn.alpaca.userservice.object.dto.UserDTO;
 import vn.alpaca.userservice.object.entity.Role;
 import vn.alpaca.userservice.object.entity.User;
-import vn.alpaca.response.wrapper.SuccessResponse;
 import vn.alpaca.userservice.object.mapper.UserMapper;
 import vn.alpaca.userservice.object.request.UserFilter;
 import vn.alpaca.userservice.object.request.UserForm;
-import vn.alpaca.userservice.object.dto.UserDTO;
 import vn.alpaca.userservice.service.RoleService;
 import vn.alpaca.userservice.service.UserService;
 import vn.alpaca.util.NullAware;
@@ -55,7 +56,7 @@ public class UserController {
         Page<UserDTO> dtoPage = userService.findAllUsers(
                 filter.orElse(new UserFilter()),
                 pageable
-        ).map(userMapper::convertToDTO);
+        ).map(userMapper::convertToUserDTO);
 
         return new SuccessResponse<>(dtoPage);
     }
@@ -65,17 +66,17 @@ public class UserController {
             @PathVariable("userId") int id
     ) {
         UserDTO dto = userMapper
-                .convertToDTO(userService.findUserById(id));
+                .convertToUserDTO(userService.findUserById(id));
 
         return new SuccessResponse<>(dto);
     }
 
     @GetMapping("/search/username")
-    public SuccessResponse<UserDTO> getUserByUsername(
+    public SuccessResponse<AuthDTO> getUserByUsername(
             @RequestParam("val") String username
     ) {
-        UserDTO dto = userMapper
-                .convertToDTO(userService.findUserByUsername(username));
+        AuthDTO dto = userMapper
+                .convertToAuthDTO(userService.findUserByUsername(username));
 
         return new SuccessResponse<>(dto);
     }
@@ -92,7 +93,7 @@ public class UserController {
         }
 
         User savedUser = userService.saveUser(user);
-        UserDTO dto = userMapper.convertToDTO(savedUser);
+        UserDTO dto = userMapper.convertToUserDTO(savedUser);
 
         return new SuccessResponse<>(dto);
     }
@@ -112,7 +113,7 @@ public class UserController {
         }
 
         User savedUser = userService.saveUser(target);
-        UserDTO dto = userMapper.convertToDTO(savedUser);
+        UserDTO dto = userMapper.convertToUserDTO(savedUser);
 
         return new SuccessResponse<>(dto);
     }
