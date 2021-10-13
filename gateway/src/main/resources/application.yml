@@ -10,10 +10,22 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: assets-service
-          uri: lb://assets-service/
+        - id: crud-service
+          uri: lb://crud-service/
           predicates:
-            - Path=/assets/**
+            - Path=/crud/**
+          filters:
+            - StripPrefix=1
+        - id: user-service
+          uri: lb://user-service/
+          predicates:
+            - Path=/admin/**
+          filters:
+            - StripPrefix=1
+        - id: send-claim-request-service
+          uri: lb://send-claim-request-service/
+          predicates:
+            - Path=/claim-request/**
           filters:
             - StripPrefix=1
   main:

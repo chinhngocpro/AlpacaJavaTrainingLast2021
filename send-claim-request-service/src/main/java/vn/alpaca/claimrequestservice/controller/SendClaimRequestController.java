@@ -11,7 +11,7 @@ import vn.alpaca.claimrequestservice.service.ClaimRequestService;
 import vn.alpaca.response.wrapper.SuccessResponse;
 
 @RestController
-@RequestMapping("/make-claim-requests") // convention naming?
+@RequestMapping("/")
 public class SendClaimRequestController {
 
     private final ClaimRequestService service;

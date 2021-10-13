@@ -6,7 +6,7 @@ server:
   port: 8300
 spring:
   application:
-    name: claim-request-service
+    name: send-claim-request-service
   datasource:
     url: jdbc:postgresql://localhost:5432/alpaca_pj_01
     username: alpaca

@@ -3,14 +3,11 @@ eureka:
     service-url:
       default-zone: http://localhost:8761/eureka
 server:
-  port: 8400
+  port: 8200
 spring:
   application:
-    name: user-service
+    name: crud-service
   datasource:
     url: jdbc:postgresql://localhost:5432/alpaca_pj_01
     username: alpaca
     password: alpaca@@@
-
-
-

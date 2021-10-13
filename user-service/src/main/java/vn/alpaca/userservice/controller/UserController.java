@@ -70,6 +70,16 @@ public class UserController {
         return new SuccessResponse<>(dto);
     }
 
+    @GetMapping("/search/username")
+    public SuccessResponse<UserDTO> getUserByUsername(
+            @RequestParam("val") String username
+    ) {
+        UserDTO dto = userMapper
+                .convertToDTO(userService.findUserByUsername(username));
+
+        return new SuccessResponse<>(dto);
+    }
+
     @PostMapping
     public SuccessResponse<UserDTO> createNewUser(
             @Valid @RequestBody UserForm formData

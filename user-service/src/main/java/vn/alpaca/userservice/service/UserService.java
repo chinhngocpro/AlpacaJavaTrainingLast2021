@@ -38,6 +38,13 @@ public class UserService {
                 ));
     }
 
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Username not found"
+                ));
+    }
+
     public User saveUser(User user) {
         boolean usernameExist = userRepository.existsByUsername(user.getUsername());
         boolean emailExist = userRepository.existsByEmail(user.getEmail());

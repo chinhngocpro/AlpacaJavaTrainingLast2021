@@ -8,15 +8,14 @@
         <artifactId>Training_Phase2_Microservices</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>user-service</artifactId>
+    <artifactId>crud-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>user-service</name>
-    <description>user-service</description>
+    <name>crud-service</name>
+    <description>crud-service</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>
     <dependencies>
-
         <dependency>
             <groupId>vn.alpaca</groupId>
             <artifactId>shared-components</artifactId>
@@ -26,10 +25,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
         <dependency>
@@ -41,10 +36,7 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
-
-
     </dependencies>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -59,7 +51,6 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -91,7 +82,6 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 
