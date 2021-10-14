@@ -22,6 +22,7 @@ spring:
             - Path=/admin/**
           filters:
             - StripPrefix=1
+            - JwtAuthenticationFilter
         - id: send-claim-request-service
           uri: lb://send-claim-request-service/
           predicates:
@@ -30,3 +31,8 @@ spring:
             - StripPrefix=1
   main:
     web-application-type: reactive
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
