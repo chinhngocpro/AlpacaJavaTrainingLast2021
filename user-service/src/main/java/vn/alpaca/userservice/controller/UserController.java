@@ -13,14 +13,12 @@ import vn.alpaca.userservice.object.request.UserFilter;
 import vn.alpaca.userservice.object.request.UserForm;
 import vn.alpaca.userservice.service.RoleService;
 import vn.alpaca.userservice.service.UserService;
+import vn.alpaca.util.ExtractParam;
 import vn.alpaca.util.NullAware;
 
 import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
-
-import static vn.alpaca.util.ExtractParam.getPageable;
-import static vn.alpaca.util.ExtractParam.getSort;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -48,10 +46,10 @@ public class UserController {
                     Optional<String> sortBy,
             @RequestBody Optional<UserFilter> filter
     ) {
-        Pageable pageable = getPageable(
+        Pageable pageable = ExtractParam.getPageable(
                 pageNumber,
                 pageSize,
-                getSort(sortBy)
+                ExtractParam.getSort(sortBy)
         );
         Page<UserDTO> dtoPage = userService.findAllUsers(
                 filter.orElse(new UserFilter()),

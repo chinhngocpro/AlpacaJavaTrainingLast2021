@@ -5,9 +5,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import vn.alpaca.response.exception.ResourceNotFoundException;
 import vn.alpaca.userservice.object.entity.User;
 import vn.alpaca.userservice.object.entity.User_;
-import vn.alpaca.response.exception.ResourceNotFoundException;
 import vn.alpaca.userservice.object.request.UserFilter;
 import vn.alpaca.userservice.repository.UserRepository;
 

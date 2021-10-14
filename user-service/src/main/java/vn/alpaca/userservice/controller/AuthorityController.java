@@ -10,11 +10,9 @@ import vn.alpaca.userservice.object.dto.AuthorityDTO;
 import vn.alpaca.userservice.object.entity.Authority;
 import vn.alpaca.userservice.object.mapper.AuthorityMapper;
 import vn.alpaca.userservice.service.AuthorityService;
+import vn.alpaca.util.ExtractParam;
 
 import java.util.Optional;
-
-import static vn.alpaca.util.ExtractParam.getPageable;
-import static vn.alpaca.util.ExtractParam.getSort;
 
 @RestController
 @RequestMapping(value = "/authorities")
@@ -29,8 +27,7 @@ public class AuthorityController {
         this.authorityService = authorityService;
         this.mapper = mapper;
     }
-
-
+    
     @GetMapping
     public SuccessResponse<Page<AuthorityDTO>> getAuthorities(
             @RequestParam(value = "page", required = false)
@@ -40,8 +37,9 @@ public class AuthorityController {
             @RequestParam(value = "sort-by", required = false)
                     Optional<String> sortBy
     ) {
-        Sort sort = getSort(sortBy);
-        Pageable pageable = getPageable(pageNumber, pageSize, sort);
+        Sort sort = ExtractParam.getSort(sortBy);
+        Pageable pageable =
+                ExtractParam.getPageable(pageNumber, pageSize, sort);
 
         Page<AuthorityDTO> dtoPage = new PageImpl<>(
                 authorityService.findAll(pageable)

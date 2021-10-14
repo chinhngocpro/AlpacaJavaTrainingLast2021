@@ -1,0 +1,38 @@
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka
+server:
+  port: 8762
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://user-service/
+          predicates:
+            - Path=/admin/**
+          filters:
+            - StripPrefix=1
+            - JwtAuthenticationFilter
+        - id: send-claim-request-service
+          uri: lb://send-claim-request-service/
+          predicates:
+            - Path=/**
+        - id: handle-claim-request-service
+          uri: lb://handle-claim-request-service/
+          predicates:
+            - Path=/**
+        - id: customer-service
+          uri: lb://customer-service/
+          predicates:
+            - Path=/customers/**
+        - id: contract-service
+          uri: lb://contract-service/
+          predicates:
+            - Path=/contracts/**
+
+  main:
+    web-application-type: reactive

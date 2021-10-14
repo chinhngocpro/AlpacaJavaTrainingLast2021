@@ -1,17 +1,18 @@
 package vn.alpaca.userservice.controller;
 
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-import vn.alpaca.userservice.object.entity.Role;
 import vn.alpaca.response.wrapper.SuccessResponse;
+import vn.alpaca.userservice.object.dto.RoleDTO;
+import vn.alpaca.userservice.object.entity.Role;
 import vn.alpaca.userservice.object.mapper.RoleMapper;
 import vn.alpaca.userservice.object.request.RoleForm;
-import vn.alpaca.userservice.object.dto.RoleDTO;
 import vn.alpaca.userservice.service.RoleService;
+import vn.alpaca.util.ExtractParam;
 
 import java.util.Optional;
-import static vn.alpaca.util.ExtractParam.getPageable;
-import static vn.alpaca.util.ExtractParam.getSort;
 
 
 @RestController
@@ -36,8 +37,10 @@ public class RoleController {
             @RequestParam(value = "sort-by", required = false)
                     Optional<String> sortBy
     ) {
-        Sort sort = getSort(sortBy);
-        Pageable pageable = getPageable(pageNumber, pageSize, sort);
+        Pageable pageable = ExtractParam.getPageable(
+                pageNumber, pageSize,
+                ExtractParam.getSort(sortBy)
+        );
 
         Page<RoleDTO> dtoPage = new PageImpl<>(
                 roleService.findAllRoles(pageable)
