@@ -12,7 +12,8 @@ import vn.alpaca.response.wrapper.SuccessResponse;
 @Headers({
         "Accept: application/json; charset=utf-8",
         "Content-Type: application/json" })
-@FeignClient(name = "user-service", url = "http://localhost:8400/")
+//@FeignClient(name = "user-service", url = "http://localhost:8400/")
+@FeignClient(value = "user-service")
 public interface UserClient {
 
     @GetMapping(path = "/users/search/username")
