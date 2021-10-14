@@ -14,7 +14,7 @@ import vn.alpaca.util.ExtractParam;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/customers")
+@RequestMapping(value = "/")
 public class CustomerController {
 
     private final CustomerService service;
