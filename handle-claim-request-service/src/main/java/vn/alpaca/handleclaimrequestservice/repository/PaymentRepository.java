@@ -16,7 +16,6 @@ public interface PaymentRepository extends
             "SELECT payment " +
                     "FROM Payment payment " +
                     "JOIN payment.claimRequest request " +
-                    "JOIN request.customerId " +
                     "WHERE request.id = ?1 AND request.customerId = ?2"
     )
     Page<Payment> findAllByRequestIdAndCustomerId(

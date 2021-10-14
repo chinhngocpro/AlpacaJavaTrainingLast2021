@@ -14,7 +14,7 @@ import vn.alpaca.util.ExtractParam;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/claim-requests")
+@RequestMapping("/payments")
 public class PaymentController {
 
     private final PaymentService service;

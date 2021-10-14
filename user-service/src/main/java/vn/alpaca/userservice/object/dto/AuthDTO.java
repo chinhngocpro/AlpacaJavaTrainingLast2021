@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class AuthDTO {
+    private Integer id;
     private String username;
     private String password;
     private boolean active;

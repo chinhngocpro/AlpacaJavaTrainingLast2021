@@ -16,6 +16,14 @@
     <description>AlpacaJavaTrainingLast2021_Phase2_Microservices</description>
     <packaging>pom</packaging>
 
+<!--    <modules>-->
+<!--        <module>gateway</module>-->
+<!--        <module>user-service</module>-->
+<!--        <module>assets-service</module>-->
+<!--        <module>cloud-config-server</module>-->
+<!--        <module>service-registry</module>-->
+<!--    </modules>-->
+
     <properties>
         <java.version>1.8</java.version>
         <spring-cloud.version>2020.0.4</spring-cloud.version>
@@ -24,7 +32,6 @@
         <org.hibernate.version>5.5.7.Final</org.hibernate.version>
     </properties>
     <dependencies>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -33,6 +40,19 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>3.0.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
@@ -60,6 +80,11 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-envers</artifactId>
+            <version>${org.hibernate.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>io.springfox</groupId>
@@ -71,12 +96,6 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>3.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-envers</artifactId>
-            <version>${org.hibernate.version}</version>
         </dependency>
 
         <dependency>
