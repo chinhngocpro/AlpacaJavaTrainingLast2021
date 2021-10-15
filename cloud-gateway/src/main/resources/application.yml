@@ -9,7 +9,17 @@ spring:
     name: api-gateway
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
       routes:
+        - id: authentication-service
+          uri: lb://authentication-service/
+          predicates:
+              - Path=/auth/**
+          filters:
+              - StripPrefix=1
         - id: user-service
           uri: lb://user-service/
           predicates:
@@ -50,6 +60,11 @@ spring:
 
   main:
     web-application-type: reactive
+  sleuth:
+    reactor:
+      instrumentation-type: decorate_on_each
+  zipkin:
+    base-url: http://localhost:9411
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration

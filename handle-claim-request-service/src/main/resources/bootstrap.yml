@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: handle-claim-request-service
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config-server
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh
