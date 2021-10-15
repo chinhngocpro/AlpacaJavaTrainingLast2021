@@ -6,7 +6,6 @@ import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.multipart.MultipartFile;
 import vn.alpaca.sendclaimrequestservice.client.CustomerFeignClient;
 import vn.alpaca.sendclaimrequestservice.object.entity.ClaimRequest;
 import vn.alpaca.sendclaimrequestservice.object.mapper.ClaimRequestMapper;
@@ -54,7 +53,8 @@ public class ClaimRequestService {
         eventPublisher.onFailure(System.out::println);
     }
 
-    @CircuitBreaker(name = "sendRequest", fallbackMethod = "fallbackSendRequest")
+    @CircuitBreaker(name = "sendRequest",
+            fallbackMethod = "fallbackSendRequest")
     @RateLimiter(name = "sendRequest")
     @Retry(name = "sendRequest")
     public ClaimRequestDTO sendRequest(ClaimRequestForm formData) {
