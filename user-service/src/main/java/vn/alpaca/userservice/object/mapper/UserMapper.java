@@ -16,8 +16,10 @@ import vn.alpaca.userservice.object.request.UserForm;
 public interface UserMapper {
 
     @Mapping(target = "role", expression = "java(user.getRole().getName())")
+    @Mapping(target = "roleId", expression = "java(user.getRole().getId())")
     UserDTO convertToUserDTO(User user);
 
+    @Mapping(target = "roleId", expression = "java(user.getRole().getId())")
     AuthDTO convertToAuthDTO(User user);
 
     User convertToEntity(UserForm userForm);

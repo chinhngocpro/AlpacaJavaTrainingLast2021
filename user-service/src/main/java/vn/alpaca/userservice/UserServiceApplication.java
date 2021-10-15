@@ -5,8 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@SpringBootApplication
-@EnableFeignClients("vn.alpaca.userservice.client")
+@SpringBootApplication(scanBasePackages = {"vn.alpaca", "config.web"})
+@EnableFeignClients(basePackages = "vn.alpaca")
 public class UserServiceApplication {
 
     public static void main(String[] args) {

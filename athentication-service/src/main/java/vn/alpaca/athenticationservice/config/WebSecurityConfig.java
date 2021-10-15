@@ -12,15 +12,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import vn.alpaca.athenticationservice.interceptor.JwtAuthenticationFilter;
-import vn.alpaca.athenticationservice.service.UserService;
+import vn.alpaca.commonsecurity.interceptor.JwtAuthenticationFilter;
+import vn.alpaca.commonsecurity.service.SecurityUserDetailService;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserService userService;
+    private final SecurityUserDetailService userService;
 
-    public WebSecurityConfig(@Lazy UserService userService) {
+    public WebSecurityConfig(@Lazy SecurityUserDetailService userService) {
         this.userService = userService;
     }
 

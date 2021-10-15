@@ -3,6 +3,7 @@ package vn.alpaca.contractservice.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.contractservice.object.entity.Contract;
 import vn.alpaca.contractservice.object.wrapper.request.ContractFilter;
@@ -25,6 +26,7 @@ public class ContractController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('CONTRACT_READ')")
     public SuccessResponse<Page<ContractResponse>> getAllContracts(
             @RequestParam(value = "page", required = false)
                     Optional<Integer> pageNumber,

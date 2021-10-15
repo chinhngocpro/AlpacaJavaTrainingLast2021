@@ -1,4 +1,4 @@
-package vn.alpaca.athenticationservice.object;
+package vn.alpaca.commonsecurity.object;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,23 +12,34 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter @Setter
-public class User implements UserDetails {
-
+public class SecurityUserDetail implements UserDetails {
     Integer id;
 
     String username;
 
     String password;
 
-    private List<String> permissions;
+    Integer roleId;
 
-    private boolean active = true;
+    List<String> permissions;
+
+    Boolean active;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (permissions == null)
             return Collections.emptyList();
         return permissions.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 
     @Override

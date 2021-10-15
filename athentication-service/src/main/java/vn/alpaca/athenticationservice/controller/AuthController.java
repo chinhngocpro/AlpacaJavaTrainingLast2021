@@ -2,6 +2,7 @@ package vn.alpaca.athenticationservice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -10,9 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import vn.alpaca.athenticationservice.object.User;
 import vn.alpaca.athenticationservice.object.request.LoginForm;
-import vn.alpaca.athenticationservice.service.JwtTokenService;
+import vn.alpaca.commonsecurity.object.SecurityUserDetail;
+import vn.alpaca.commonsecurity.service.JwtTokenService;
 import vn.alpaca.response.wrapper.SuccessResponse;
 
 @RestController
@@ -34,7 +35,7 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = tokenService.generateToken((User) authentication.getPrincipal());
+        String jwt = tokenService.generateToken((SecurityUserDetail) authentication.getPrincipal());
 
         return new SuccessResponse<>(jwt);
     }
@@ -43,7 +44,7 @@ public class AuthController {
             value = "/verify-token"
     )
     public SuccessResponse<Integer> verify() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SecurityUserDetail user = (SecurityUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return new SuccessResponse<>(user.getId());
     }
 }
