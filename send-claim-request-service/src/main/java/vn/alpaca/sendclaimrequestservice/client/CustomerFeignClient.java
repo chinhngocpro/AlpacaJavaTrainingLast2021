@@ -8,6 +8,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import vn.alpaca.response.exception.StashErrorDecoder;
 import vn.alpaca.response.wrapper.SuccessResponse;
 import vn.alpaca.sendclaimrequestservice.object.wrapper.response.CustomerResponse;
 
@@ -26,6 +27,6 @@ class CustomerServiceLoadBalanceConfig {
     @LoadBalanced
     @Bean
     public Feign.Builder feignBuilder() {
-        return Feign.builder();
+        return Feign.builder().errorDecoder(new StashErrorDecoder());
     }
 }
