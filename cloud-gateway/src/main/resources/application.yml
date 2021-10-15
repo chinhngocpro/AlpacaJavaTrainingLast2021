@@ -29,18 +29,21 @@ spring:
             - Path=/handle-claim-request/**
           filters:
             - StripPrefix=1
+            - JwtAuthenticationFilter
         - id: customer-service
           uri: lb://customer-service/
           predicates:
             - Path=/customers/**
           filters:
             - StripPrefix=1
+            - JwtAuthenticationFilter
         - id: contract-service
           uri: lb://contract-service/
           predicates:
             - Path=/contracts/**
           filters:
             - StripPrefix=1
+            - JwtAuthenticationFilter
 
   main:
     web-application-type: reactive

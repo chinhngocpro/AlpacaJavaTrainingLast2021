@@ -23,6 +23,12 @@
         </dependency>
 
         <dependency>
+            <groupId>vn.alpaca</groupId>
+            <artifactId>common-security</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.vladmihalcea</groupId>
             <artifactId>hibernate-types-52</artifactId>
             <version>2.12.1</version>
