@@ -20,21 +20,27 @@ spring:
         - id: send-claim-request-service
           uri: lb://send-claim-request-service/
           predicates:
-            - Path=/**
+            - Path=/send-claim-request/**
+          filters:
+            - StripPrefix=1
         - id: handle-claim-request-service
           uri: lb://handle-claim-request-service/
           predicates:
-            - Path=/**
+            - Path=/handle-claim-request/**
+          filters:
+            - StripPrefix=1
         - id: customer-service
           uri: lb://customer-service/
           predicates:
             - Path=/customers/**
+          filters:
+            - StripPrefix=1
         - id: contract-service
           uri: lb://contract-service/
           predicates:
             - Path=/contracts/**
           filters:
-            - JwtAuthenticationFilter
+            - StripPrefix=1
 
   main:
     web-application-type: reactive

@@ -11,6 +11,10 @@ spring:
     url: jdbc:postgresql://localhost:5432/alpaca_pj_01
     username: alpaca
     password: alpaca@@@
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL94Dialect
+    hibernate:
+      ddl-auto: update
 
 
 

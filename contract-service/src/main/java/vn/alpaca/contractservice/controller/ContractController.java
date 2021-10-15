@@ -16,7 +16,7 @@ import vn.alpaca.util.ExtractParam;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/contracts")
+@RequestMapping("/")
 public class ContractController {
 
     private final ContractService service;
