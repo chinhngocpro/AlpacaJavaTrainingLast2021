@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import vn.alpaca.constant.CustomHttpHeader;
@@ -45,6 +46,16 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     public GatewayFilter apply(JwtAuthenticationFilter.Config config) {
 
         return ((exchange, chain) -> {
+            if (config != null && config.getIgnoredPaths() != null) {
+                AntPathMatcher matcher = new AntPathMatcher();
+
+                for (String pattern : config.getIgnoredPaths()) {
+                    if (matcher.match(pattern, exchange.getRequest().getPath().toString())) {
+                        return chain.filter(exchange);
+                    }
+                }
+            }
+
             try {
                 ServerHttpRequest request = exchange.getRequest();
 
