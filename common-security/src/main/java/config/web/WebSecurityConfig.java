@@ -1,7 +1,7 @@
-package vn.alpaca.athenticationservice.config;
+package config.web;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -12,17 +12,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import vn.alpaca.commonsecurity.interceptor.JwtAuthenticationFilter;
+import vn.alpaca.commonsecurity.interceptor.UserAuthorizationFilter;
 import vn.alpaca.commonsecurity.service.SecurityUserDetailService;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final SecurityUserDetailService userService;
-
-    public WebSecurityConfig(@Lazy SecurityUserDetailService userService) {
-        this.userService = userService;
-    }
+    @Autowired
+    SecurityUserDetailService userDetailService;
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Override
@@ -32,8 +29,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
+    public UserAuthorizationFilter userAuthorizationFilter() {
+        return new UserAuthorizationFilter();
     }
 
     @Bean
@@ -44,7 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
             throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userDetailService).passwordEncoder(passwordEncoder());
     }
 
     @Override
@@ -59,14 +56,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .formLogin().disable()
                 .authorizeRequests()
-                    .antMatchers(
-                            "/login"
-                    )
-                        .permitAll()
                     .anyRequest()
                         .authenticated();
 
-        http.addFilterBefore(jwtAuthenticationFilter(),
-                UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(userAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

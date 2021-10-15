@@ -1,11 +1,11 @@
-package vn.alpaca.athenticationservice.service;
+package vn.alpaca.commonsecurity.service;
 
 import io.jsonwebtoken.*;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import vn.alpaca.athenticationservice.object.User;
+import vn.alpaca.commonsecurity.object.SecurityUserDetail;
 
 import java.util.Date;
 
@@ -18,7 +18,7 @@ public class JwtTokenService {
     @Value( "${alpaca.security.jwt.expiration:84000000}" )
     private Long jwtExpiration;
 
-    public String generateToken(@NonNull User user) {
+    public String generateToken(@NonNull SecurityUserDetail user) {
 
         return Jwts.builder()
                 .setId(Integer.toString(user.getId()))

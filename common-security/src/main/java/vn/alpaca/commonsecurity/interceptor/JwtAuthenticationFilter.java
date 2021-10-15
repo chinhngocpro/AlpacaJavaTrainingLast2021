@@ -1,22 +1,20 @@
-package vn.alpaca.athenticationservice.interceptor;
+package vn.alpaca.commonsecurity.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import vn.alpaca.athenticationservice.object.User;
-import vn.alpaca.athenticationservice.service.JwtTokenService;
-import vn.alpaca.athenticationservice.service.UserService;
+import vn.alpaca.commonsecurity.object.SecurityUserDetail;
+import vn.alpaca.commonsecurity.service.JwtTokenService;
+import vn.alpaca.commonsecurity.service.SecurityUserDetailService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -24,7 +22,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtTokenService tokenProvider;
 
     @Autowired
-    private UserService userService;
+    private SecurityUserDetailService userService;
 
     private static final String AUTHENTICATION_SCHEME = "Bearer ";
 
@@ -36,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (tokenProvider.validateToken(jwt)) {
                 int id = tokenProvider.extractUserIdFromToken(jwt);
 
-                User user = userService.findUserById(id);
+                SecurityUserDetail user = userService.findUserById(id);
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 

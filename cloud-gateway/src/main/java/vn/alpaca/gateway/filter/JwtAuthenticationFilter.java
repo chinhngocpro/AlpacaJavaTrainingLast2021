@@ -2,6 +2,7 @@ package vn.alpaca.gateway.filter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -32,22 +33,30 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory {
     @Override
     public GatewayFilter apply(Object config) {
         return ((exchange, chain) -> {
-            ServerHttpRequest request = exchange.getRequest();
+            try {
+                ServerHttpRequest request = exchange.getRequest();
 
-            Integer userId = authService.validateToken(request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
+                Integer userId = authService.validateToken(request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
 
-            if (userId == null) {
+                if (userId == null) {
+                    ErrorResponse errorResponse = new ErrorResponse(401, "Invalid token");
+                    return writeErrorResponse(errorResponse,exchange.getResponse(), HttpStatus.UNAUTHORIZED);
+                }
+
+                request = request.mutate().header(CustomHttpHeader.X_AUTHORIZED_USER, userId.toString()).build();
+
+                return chain.filter(exchange.mutate().request(request).build());
+            } catch (FeignException.Forbidden | FeignException.Unauthorized e) {
                 ErrorResponse errorResponse = new ErrorResponse(401, "Invalid token");
-                return writeErrorResponse(errorResponse,exchange.getResponse());
+                return writeErrorResponse(errorResponse,exchange.getResponse(), HttpStatus.UNAUTHORIZED);
+            } catch (Exception e) {
+                ErrorResponse errorResponse = new ErrorResponse(500, "Server Error");
+                return writeErrorResponse(errorResponse,exchange.getResponse(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-
-            request = request.mutate().header(CustomHttpHeader.X_AUTHORIZED_USER, userId.toString()).build();
-
-            return chain.filter(exchange.mutate().request(request).build());
         });
     }
 
-    protected Mono<Void> writeErrorResponse(ErrorResponse errorResponse, ServerHttpResponse response) {
+    protected Mono<Void> writeErrorResponse(ErrorResponse errorResponse, ServerHttpResponse response, HttpStatus status) {
         String text = "";
         try {
             text = mapper.writeValueAsString(errorResponse);
@@ -55,7 +64,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory {
 //            e.printStackTrace();
         }
 
-        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        response.setStatusCode(status);
         response.getHeaders().set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
         byte[] bytes = text.getBytes(StandardCharsets.UTF_8);

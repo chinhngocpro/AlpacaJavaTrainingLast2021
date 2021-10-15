@@ -33,6 +33,8 @@ spring:
           uri: lb://contract-service/
           predicates:
             - Path=/contracts/**
+          filters:
+            - JwtAuthenticationFilter
 
   main:
     web-application-type: reactive

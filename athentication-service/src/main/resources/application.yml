@@ -16,3 +16,8 @@ feign:
   autoconfiguration:
     jackson:
       enabled: true
+alpaca:
+  security:
+    jwt:
+      secret: alpaca@@@alpaca@@@alpaca@@@alpaca@@@
+      expiration: 84000000
