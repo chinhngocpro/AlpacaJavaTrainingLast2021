@@ -35,6 +35,11 @@
             <artifactId>commons-beanutils</artifactId>
             <version>1.9.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-envers</artifactId>
+            <version>${org.hibernate.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
