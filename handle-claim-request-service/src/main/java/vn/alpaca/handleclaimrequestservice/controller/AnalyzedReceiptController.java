@@ -2,6 +2,7 @@ package vn.alpaca.handleclaimrequestservice.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.handleclaimrequestservice.object.wrapper.request.analyzedreceipt.AnalyzedReceiptFilter;
 import vn.alpaca.handleclaimrequestservice.object.wrapper.request.analyzedreceipt.AnalyzedReceiptRequest;
@@ -23,6 +24,7 @@ public class AnalyzedReceiptController {
         this.service = service;
     }
 
+    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_READ')")
     @GetMapping
     public SuccessResponse<Page<AnalyzedReceiptResponse>> getAllReceipts(
             @RequestParam(value = "page", required = false)
@@ -46,6 +48,7 @@ public class AnalyzedReceiptController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_READ')")
     @GetMapping(value = "/{receiptId}")
     public SuccessResponse<AnalyzedReceiptResponse> getReceiptById(
             @PathVariable("receiptId") int id
@@ -55,6 +58,7 @@ public class AnalyzedReceiptController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_CREATE')")
     @PostMapping(consumes = "application/json")
     public SuccessResponse<AnalyzedReceiptResponse> createNewReceipt(
             @RequestBody AnalyzedReceiptRequest requestData
@@ -66,6 +70,7 @@ public class AnalyzedReceiptController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
     @PutMapping(
             value = "/{receiptId}",
             consumes = "application/json"
@@ -81,6 +86,7 @@ public class AnalyzedReceiptController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
     @PatchMapping(value = "/{receiptId}/validate")
     public SuccessResponse<Boolean> validateReceipt(
             @PathVariable("receiptId") int id
@@ -90,6 +96,7 @@ public class AnalyzedReceiptController {
         return new SuccessResponse<>(true);
     }
 
+    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
     @PatchMapping(value = "/{receiptId}/invalidate")
     public SuccessResponse<Boolean> invalidateReceipt(
             @PathVariable("receiptId") int id
