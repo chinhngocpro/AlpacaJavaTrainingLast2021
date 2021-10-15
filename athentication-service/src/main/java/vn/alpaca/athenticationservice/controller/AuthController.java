@@ -2,7 +2,6 @@ package vn.alpaca.athenticationservice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,11 +30,16 @@ public class AuthController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public SuccessResponse<String> login(@RequestBody LoginForm form) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(form.getUsername(), form.getPassword()));
+
+        System.out.println(Thread.currentThread().getId());
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(form.getUsername(),
+                        form.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = tokenService.generateToken((SecurityUserDetail) authentication.getPrincipal());
+        String jwt = tokenService.generateToken(
+                (SecurityUserDetail) authentication.getPrincipal());
 
         return new SuccessResponse<>(jwt);
     }
@@ -44,7 +48,9 @@ public class AuthController {
             value = "/verify-token"
     )
     public SuccessResponse<Integer> verify() {
-        SecurityUserDetail user = (SecurityUserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SecurityUserDetail user =
+                (SecurityUserDetail) SecurityContextHolder.getContext()
+                        .getAuthentication().getPrincipal();
         return new SuccessResponse<>(user.getId());
     }
 }
