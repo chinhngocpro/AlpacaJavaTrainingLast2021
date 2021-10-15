@@ -16,7 +16,10 @@ spring:
             - Path=/admin/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
+            - name: JwtAuthenticationFilter
+              args:
+                ignoredPaths:
+                  - aa
         - id: send-claim-request-service
           uri: lb://send-claim-request-service/
           predicates:

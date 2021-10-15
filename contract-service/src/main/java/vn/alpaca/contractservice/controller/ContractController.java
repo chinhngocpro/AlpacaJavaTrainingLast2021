@@ -75,6 +75,7 @@ public class ContractController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('CONTRACT_READ')")
     @GetMapping("/{contractId}")
     public SuccessResponse<ContractResponse> getContractById(
             @PathVariable("contractId") int id
@@ -84,6 +85,7 @@ public class ContractController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('CONTRACT_CREATE')")
     @PostMapping
     public SuccessResponse<ContractResponse> createNewContract(
             @RequestBody ContractRequest requestData
@@ -93,6 +95,7 @@ public class ContractController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('CONTRACT_UPDATE')")
     @PutMapping(value = "/{contractId}")
     public SuccessResponse<ContractResponse> updateContract(
             @PathVariable("contractId") int id,
@@ -104,6 +107,7 @@ public class ContractController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('CONTRACT_DELETE')")
     @PatchMapping(value = "/{contractId}/activate")
     public SuccessResponse<Boolean> activateContract(
             @PathVariable("contractId") int id
@@ -113,6 +117,7 @@ public class ContractController {
         return new SuccessResponse<>(true);
     }
 
+    @PreAuthorize("hasAuthority('CONTRACT_DELETE')")
     @PatchMapping(value = "/{contractId}/deactivate")
     public SuccessResponse<Boolean> deactivateContract(
             @PathVariable("contractId") int id

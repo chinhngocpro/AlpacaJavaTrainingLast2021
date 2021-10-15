@@ -2,6 +2,7 @@ package vn.alpaca.handleclaimrequestservice.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.handleclaimrequestservice.object.wrapper.request.claimrequest.ClaimRequestFilter;
 import vn.alpaca.handleclaimrequestservice.object.wrapper.request.claimrequest.CustomerClaimRequestFilter;
@@ -22,6 +23,7 @@ public class ClaimRequestController {
         this.service = service;
     }
 
+    @PreAuthorize("hasAuthority('CLAIM_REQUEST_READ')")
     @GetMapping
     public SuccessResponse<Page<ClaimRequestResponse>> getAllClaimRequest(
             @RequestParam(value = "page", required = false)
@@ -45,6 +47,7 @@ public class ClaimRequestController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('CLAIM_REQUEST_READ')")
     @GetMapping(value = "/{requestId}")
     public SuccessResponse<ClaimRequestResponse> getClaimRequestById(
             @PathVariable("requestId") int id
@@ -78,6 +81,7 @@ public class ClaimRequestController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
     @PatchMapping(value = "/{requestId}/close")
     public SuccessResponse<Boolean> closeClaimRequest(
             @PathVariable("requestId") int id
@@ -87,6 +91,7 @@ public class ClaimRequestController {
         return new SuccessResponse<>(true);
     }
 
+    @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
     @PatchMapping(value = "/{requestId}/process")
     public SuccessResponse<Boolean> processClaimRequest(
             @PathVariable("requestId") int id
@@ -96,6 +101,7 @@ public class ClaimRequestController {
         return new SuccessResponse<>(true);
     }
 
+    @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
     @PatchMapping(value = "/{requestId}/reopen")
     public SuccessResponse<Boolean> reopenClaimRequest(
             @PathVariable("requestId") int id

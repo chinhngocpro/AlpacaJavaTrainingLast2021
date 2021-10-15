@@ -2,6 +2,7 @@ package vn.alpaca.handleclaimrequestservice.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.handleclaimrequestservice.object.wrapper.request.payment.CustomerPaymentFilter;
 import vn.alpaca.handleclaimrequestservice.object.wrapper.request.payment.PaymentFilter;
@@ -23,6 +24,7 @@ public class PaymentController {
         this.service = service;
     }
 
+    @PreAuthorize("hasAuthority('PAYMENT_READ')")
     @GetMapping
     public SuccessResponse<Page<PaymentResponse>> getAllPayments(
             @RequestParam(value = "page", required = false)
@@ -71,6 +73,7 @@ public class PaymentController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('PAYMENT_READ')")
     @GetMapping(value = "/{paymentId}")
     public SuccessResponse<PaymentResponse> getPaymentById(
             @PathVariable("paymentId") int id
@@ -80,6 +83,7 @@ public class PaymentController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('PAYMENT_CREATE')")
     @PostMapping
     public SuccessResponse<PaymentResponse> createNewPayment(
             @RequestBody PaymentRequest requestData
@@ -89,6 +93,7 @@ public class PaymentController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('PAYMENT_UPDATE')")
     @PutMapping(value = "/{paymentId}")
     public SuccessResponse<PaymentResponse> updatePayment(
             @PathVariable("paymentId") int id,

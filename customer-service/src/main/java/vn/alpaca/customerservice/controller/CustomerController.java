@@ -3,6 +3,7 @@ package vn.alpaca.customerservice.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.customerservice.object.wrapper.request.CustomerFilter;
 import vn.alpaca.customerservice.object.wrapper.request.CustomerRequest;
@@ -23,6 +24,7 @@ public class CustomerController {
         this.service = service;
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
     @GetMapping
     public SuccessResponse<Page<CustomerResponse>> getAllCustomers(
             @RequestParam(value = "page", required = false)
@@ -44,6 +46,7 @@ public class CustomerController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
     @GetMapping("/{customerId}")
     public SuccessResponse<CustomerResponse> getCustomerById(
             @PathVariable("customerId") int id
@@ -63,6 +66,7 @@ public class CustomerController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER_CREATE')")
     @PostMapping
     public SuccessResponse<CustomerResponse> createNewCustomer(
             @RequestBody CustomerRequest formData
@@ -72,6 +76,7 @@ public class CustomerController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER_UPDATE')")
     @PutMapping(value = "/{customerId}")
     public SuccessResponse<CustomerResponse> updateCustomer(
             @PathVariable("customerId") int id,
@@ -83,6 +88,7 @@ public class CustomerController {
         return new SuccessResponse<>(responseData);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER_DELETE')")
     @PatchMapping(value = "/{customerId}/activate")
     public SuccessResponse<Boolean> activateCustomer(
             @PathVariable("customerId") int id
@@ -92,6 +98,7 @@ public class CustomerController {
         return new SuccessResponse<>(true);
     }
 
+    @PreAuthorize("hasAuthority('CUSTOMER_DELETE')")
     @PatchMapping(value = "/{customerId}/deactivate")
     public SuccessResponse<Boolean> deactivateCustomer(
             @PathVariable("customerId") int id

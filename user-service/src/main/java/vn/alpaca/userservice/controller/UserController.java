@@ -2,6 +2,7 @@ package vn.alpaca.userservice.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.response.wrapper.SuccessResponse;
 import vn.alpaca.userservice.object.dto.AuthDTO;
@@ -36,6 +37,7 @@ public class UserController {
         this.userMapper = userMapper;
     }
 
+    @PreAuthorize("hasAuthority('USER_READ')")
     @GetMapping
     public SuccessResponse<Page<UserDTO>> getAllUsers(
             @RequestParam(value = "page", required = false)
@@ -59,6 +61,7 @@ public class UserController {
         return new SuccessResponse<>(dtoPage);
     }
 
+    @PreAuthorize("hasAuthority('USER_READ')")
     @GetMapping("/{userId}")
     public SuccessResponse<UserDTO> getUserById(
             @PathVariable("userId") int id
@@ -69,6 +72,7 @@ public class UserController {
         return new SuccessResponse<>(dto);
     }
 
+    @PreAuthorize("hasAuthority('USER_READ')")
     @GetMapping("/search/username")
     public SuccessResponse<AuthDTO> getUserByUsername(
             @RequestParam("val") String username
@@ -79,6 +83,7 @@ public class UserController {
         return new SuccessResponse<>(dto);
     }
 
+    @PreAuthorize("hasAuthority('USER_CREATE')")
     @PostMapping
     public SuccessResponse<UserDTO> createNewUser(
             @Valid @RequestBody UserForm formData
@@ -96,6 +101,7 @@ public class UserController {
         return new SuccessResponse<>(dto);
     }
 
+    @PreAuthorize("hasAuthority('USER_UPDATE')")
     @PutMapping(value = "/{userId}")
     public SuccessResponse<UserDTO> updateUser(
             @PathVariable("userId") int id,
@@ -116,6 +122,7 @@ public class UserController {
         return new SuccessResponse<>(dto);
     }
 
+    @PreAuthorize("hasAuthority('USER_DELETE')")
     @PatchMapping(value = "/{userId}/activate")
     public SuccessResponse<Boolean> activateUser(
             @PathVariable("userId") int id
@@ -125,6 +132,7 @@ public class UserController {
         return new SuccessResponse<>(true);
     }
 
+    @PreAuthorize("hasAuthority('USER_DELETE')")
     @PatchMapping(value = "/{userId}/deactivate")
     public SuccessResponse<Boolean> deactivateUser(
             @PathVariable("userId") int id

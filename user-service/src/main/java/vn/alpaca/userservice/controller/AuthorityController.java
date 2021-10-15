@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.response.wrapper.SuccessResponse;
 import vn.alpaca.userservice.object.dto.AuthorityDTO;
@@ -27,7 +28,8 @@ public class AuthorityController {
         this.authorityService = authorityService;
         this.mapper = mapper;
     }
-    
+
+    @PreAuthorize("hasAuthority('AUTHORITY_READ')")
     @GetMapping
     public SuccessResponse<Page<AuthorityDTO>> getAuthorities(
             @RequestParam(value = "page", required = false)
@@ -50,6 +52,7 @@ public class AuthorityController {
         return new SuccessResponse<>(dtoPage);
     }
 
+    @PreAuthorize("hasAuthority('AUTHORITY_READ')")
     @GetMapping("/{id}")
     public SuccessResponse<AuthorityDTO> getAuthority(
             @PathVariable("id") int id) {
