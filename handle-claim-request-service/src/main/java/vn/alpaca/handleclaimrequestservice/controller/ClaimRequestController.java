@@ -1,5 +1,6 @@
 package vn.alpaca.handleclaimrequestservice.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,13 +16,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/claim-requests")
+@RequiredArgsConstructor
 public class ClaimRequestController {
 
     private final ClaimRequestService service;
-
-    public ClaimRequestController(ClaimRequestService service) {
-        this.service = service;
-    }
 
     @PreAuthorize("hasAuthority('CLAIM_REQUEST_READ')")
     @GetMapping

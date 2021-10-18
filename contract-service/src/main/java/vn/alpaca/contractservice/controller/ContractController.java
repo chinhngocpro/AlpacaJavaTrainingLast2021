@@ -1,5 +1,6 @@
 package vn.alpaca.contractservice.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,13 +18,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/")
+@RequiredArgsConstructor
 public class ContractController {
 
     private final ContractService service;
-
-    public ContractController(ContractService service) {
-        this.service = service;
-    }
 
     @GetMapping
     @PreAuthorize("hasAuthority('CONTRACT_READ')")

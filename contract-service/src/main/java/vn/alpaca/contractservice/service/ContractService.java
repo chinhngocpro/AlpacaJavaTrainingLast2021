@@ -1,5 +1,6 @@
 package vn.alpaca.contractservice.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,19 +25,12 @@ import java.util.Optional;
 import static vn.alpaca.contractservice.service.ContractSpecification.getContractSpecification;
 
 @Service
+@RequiredArgsConstructor
 public class ContractService {
 
     private final ContractRepository repository;
     private final ContractMapper mapper;
-
-    @Autowired
-    CustomerFeignClient customerFeignClient;
-
-    public ContractService(ContractRepository repository,
-                           ContractMapper mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
-    }
+    private final CustomerFeignClient customerFeignClient;
 
     public Page<ContractResponse> findAllContracts(
             ContractFilter filter,

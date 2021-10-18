@@ -1,5 +1,6 @@
 package vn.alpaca.userservice.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,16 +13,11 @@ import vn.alpaca.userservice.repository.RoleRepository;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class RoleService {
 
     private final RoleRepository roleRepository;
     private final AuthorityRepository authorityRepository;
-
-    public RoleService(RoleRepository roleRepository,
-                       AuthorityRepository authorityRepository) {
-        this.roleRepository = roleRepository;
-        this.authorityRepository = authorityRepository;
-    }
 
     public Page<Role> findAllRoles(Pageable pageable) {
         return roleRepository.findAll(pageable);

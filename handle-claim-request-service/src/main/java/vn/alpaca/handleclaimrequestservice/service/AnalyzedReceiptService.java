@@ -1,5 +1,6 @@
 package vn.alpaca.handleclaimrequestservice.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,20 +22,13 @@ import java.util.Optional;
 import static vn.alpaca.handleclaimrequestservice.service.AnalyzedReceiptSpecification.getAnalyzedReceiptSpecification;
 
 @Service
+@RequiredArgsConstructor
 public class AnalyzedReceiptService {
 
     private final AnalyzedReceiptRepository repository;
     private final AnalyzerReceiptMapper mapper;
 
     private final ClaimRequestRepository requestRepository;
-
-    public AnalyzedReceiptService(AnalyzedReceiptRepository repository,
-                                  AnalyzerReceiptMapper mapper,
-                                  ClaimRequestRepository requestRepository) {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.requestRepository = requestRepository;
-    }
 
     public Page<AnalyzedReceiptResponse> findAllReceipts(
             AnalyzedReceiptFilter filter,

@@ -1,5 +1,6 @@
 package vn.alpaca.userservice.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -18,16 +19,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/roles")
+@RequiredArgsConstructor
 public class RoleController {
 
     private final RoleService roleService;
     private final RoleMapper roleMapper;
-
-    public RoleController(RoleService roleService,
-                          RoleMapper roleMapper) {
-        this.roleService = roleService;
-        this.roleMapper = roleMapper;
-    }
 
     @PreAuthorize("hasAuthority('SYSTEM_ROLE_READ')")
     @GetMapping

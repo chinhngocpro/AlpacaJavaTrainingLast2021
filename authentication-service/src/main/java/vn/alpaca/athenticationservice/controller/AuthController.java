@@ -1,5 +1,6 @@
 package vn.alpaca.athenticationservice.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,13 +17,12 @@ import vn.alpaca.commonsecurity.service.JwtTokenService;
 import vn.alpaca.response.wrapper.SuccessResponse;
 
 @RestController
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    JwtTokenService tokenService;
+    private final JwtTokenService tokenService;
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping(
             value = "/login",

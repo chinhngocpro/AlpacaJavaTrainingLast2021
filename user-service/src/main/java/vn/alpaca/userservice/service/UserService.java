@@ -1,5 +1,6 @@
 package vn.alpaca.userservice.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,13 +17,10 @@ import javax.persistence.EntityExistsException;
 import java.util.Date;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public Page<User> findAllUsers(UserFilter filter, Pageable pageable) {
         Specification<User> spec =

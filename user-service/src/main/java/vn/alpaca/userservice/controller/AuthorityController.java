@@ -1,5 +1,6 @@
 package vn.alpaca.userservice.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -17,17 +18,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/authorities")
+@RequiredArgsConstructor
 public class AuthorityController {
 
     private final AuthorityService authorityService;
-
     private final AuthorityMapper mapper;
-
-    public AuthorityController(AuthorityService authorityService,
-                               AuthorityMapper mapper) {
-        this.authorityService = authorityService;
-        this.mapper = mapper;
-    }
 
     @PreAuthorize("hasAuthority('AUTHORITY_READ')")
     @GetMapping

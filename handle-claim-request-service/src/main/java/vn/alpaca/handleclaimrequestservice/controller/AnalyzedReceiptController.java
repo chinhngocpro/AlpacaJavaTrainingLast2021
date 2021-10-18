@@ -1,5 +1,6 @@
 package vn.alpaca.handleclaimrequestservice.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,14 +16,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/analyzed-receipts")
+@RequiredArgsConstructor
 public class AnalyzedReceiptController {
 
     private final AnalyzedReceiptService service;
-
-    public AnalyzedReceiptController(
-            AnalyzedReceiptService service) {
-        this.service = service;
-    }
 
     @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_READ')")
     @GetMapping

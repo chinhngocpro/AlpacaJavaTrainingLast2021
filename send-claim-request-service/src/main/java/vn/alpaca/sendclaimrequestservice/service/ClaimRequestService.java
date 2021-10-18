@@ -4,6 +4,7 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import vn.alpaca.sendclaimrequestservice.client.CustomerFeignClient;
@@ -18,6 +19,7 @@ import java.time.Duration;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ClaimRequestService {
 
     private final ClaimRequestRepository repository;
@@ -28,19 +30,6 @@ public class ClaimRequestService {
     private final SaveImageService imageService;
 
     private final RateLimiterRegistry registry;
-
-    public ClaimRequestService(
-            ClaimRequestRepository repository,
-            ClaimRequestMapper mapper,
-            CustomerFeignClient customerClient,
-            SaveImageService imageService,
-            RateLimiterRegistry registry) {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.customerClient = customerClient;
-        this.imageService = imageService;
-        this.registry = registry;
-    }
 
     @PostConstruct
     public void init() {

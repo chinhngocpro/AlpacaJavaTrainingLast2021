@@ -1,5 +1,6 @@
 package vn.alpaca.handleclaimrequestservice.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,21 +22,13 @@ import static vn.alpaca.handleclaimrequestservice.service.ClaimRequestSpecificat
 
 
 @Service
+@RequiredArgsConstructor
 public class ClaimRequestService {
 
     private final ClaimRequestRepository repository;
     private final ClaimRequestMapper mapper;
 
     private final CustomerFeignClient customerClient;
-
-    public ClaimRequestService(
-            ClaimRequestRepository repository,
-            ClaimRequestMapper mapper,
-            CustomerFeignClient customerClient) {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.customerClient = customerClient;
-    }
 
     public Page<ClaimRequestResponse> findAllRequests(
             ClaimRequestFilter filter,

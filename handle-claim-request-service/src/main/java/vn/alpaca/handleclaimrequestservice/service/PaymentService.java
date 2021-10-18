@@ -1,5 +1,6 @@
 package vn.alpaca.handleclaimrequestservice.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,6 +25,7 @@ import java.util.Optional;
 import static vn.alpaca.handleclaimrequestservice.service.PaymentSpecification.getPaymentSpecification;
 
 @Service
+@RequiredArgsConstructor
 public class PaymentService {
 
     private final PaymentRepository repository;
@@ -32,16 +34,6 @@ public class PaymentService {
     private final ClaimRequestRepository requestRepository;
 
     private final CustomerFeignClient customerClient;
-
-    public PaymentService(PaymentRepository repository,
-                          PaymentMapper mapper,
-                          ClaimRequestRepository requestRepository,
-                          CustomerFeignClient customerClient) {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.requestRepository = requestRepository;
-        this.customerClient = customerClient;
-    }
 
     public Page<PaymentResponse> findAllPayments(
             PaymentFilter filter,

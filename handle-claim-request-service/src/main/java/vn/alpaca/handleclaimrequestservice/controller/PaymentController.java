@@ -1,5 +1,6 @@
 package vn.alpaca.handleclaimrequestservice.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,13 +17,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/payments")
+@RequiredArgsConstructor
 public class PaymentController {
 
     private final PaymentService service;
-
-    public PaymentController(PaymentService service) {
-        this.service = service;
-    }
 
     @PreAuthorize("hasAuthority('PAYMENT_READ')")
     @GetMapping

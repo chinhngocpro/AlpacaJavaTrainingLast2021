@@ -1,5 +1,6 @@
 package vn.alpaca.customerservice.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,16 +23,11 @@ import java.util.Optional;
 import static vn.alpaca.customerservice.service.CustomerSpecification.getCustomerSpecification;
 
 @Service
+@RequiredArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository repository;
     private final CustomerMapper mapper;
-
-    public CustomerService(CustomerRepository repository,
-                           CustomerMapper mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
-    }
 
     public Page<CustomerResponse> findAllCustomers(
             CustomerFilter filter,

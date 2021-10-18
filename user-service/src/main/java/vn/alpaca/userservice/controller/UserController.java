@@ -1,5 +1,6 @@
 package vn.alpaca.userservice.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,19 +24,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final RoleService roleService;
     private final UserMapper userMapper;
-
-    public UserController(UserService userService,
-                          RoleService roleService,
-                          UserMapper userMapper) {
-        this.userService = userService;
-        this.roleService = roleService;
-        this.userMapper = userMapper;
-    }
 
     @PreAuthorize("hasAuthority('USER_READ')")
     @GetMapping

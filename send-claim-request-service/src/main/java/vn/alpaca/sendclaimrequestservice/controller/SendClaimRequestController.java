@@ -1,5 +1,6 @@
 package vn.alpaca.sendclaimrequestservice.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,13 +13,10 @@ import vn.alpaca.response.wrapper.SuccessResponse;
 
 @RestController
 @RequestMapping("/send-request")
+@RequiredArgsConstructor
 public class SendClaimRequestController {
 
     private final ClaimRequestService service;
-
-    public SendClaimRequestController(ClaimRequestService service) {
-        this.service = service;
-    }
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public SuccessResponse<ClaimRequestDTO> createNewClaimRequest(
