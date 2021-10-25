@@ -9,7 +9,7 @@ import vn.alpaca.customerservice.object.wrapper.request.CustomerFilter;
 import vn.alpaca.customerservice.object.wrapper.request.CustomerRequest;
 import vn.alpaca.customerservice.object.wrapper.response.CustomerResponse;
 import vn.alpaca.customerservice.service.CustomerService;
-import vn.alpaca.response.wrapper.SuccessResponse;
+import vn.alpaca.dto.wrapper.SuccessResponse;
 import vn.alpaca.util.ExtractParam;
 
 import java.util.Optional;

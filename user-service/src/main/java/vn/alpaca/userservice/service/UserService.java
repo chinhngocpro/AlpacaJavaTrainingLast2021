@@ -6,67 +6,117 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import vn.alpaca.response.exception.ResourceNotFoundException;
+import vn.alpaca.dto.request.UserFilter;
+import vn.alpaca.dto.request.UserReq;
+import vn.alpaca.dto.response.UserRes;
+import vn.alpaca.exception.ResourceNotFoundException;
+import vn.alpaca.userservice.object.entity.Role;
 import vn.alpaca.userservice.object.entity.User;
 import vn.alpaca.userservice.object.entity.User_;
-import vn.alpaca.userservice.object.request.UserFilter;
+import vn.alpaca.userservice.object.mapper.UserMapper;
+import vn.alpaca.userservice.repository.RoleRepository;
 import vn.alpaca.userservice.repository.UserRepository;
+import vn.alpaca.util.NullAware;
 
 import javax.persistence.EntityExistsException;
-
 import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UserRepository repository;
+    private final UserMapper mapper;
 
-    public Page<User> findAllUsers(UserFilter filter, Pageable pageable) {
-        Specification<User> spec =
-                UserSpecification.getUserSpecification(filter);
+    private final RoleRepository roleRepo;
 
-        return userRepository.findAll(spec, pageable);
-    }
-
-    public User findUserById(int id) {
-        return userRepository.findById(id)
+    private User preHandleGetObject(int userId) {
+        return repository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "User id not found"
                 ));
     }
 
+    private void preHandleSaveObject(User user) {
+        boolean usernameExist =
+                repository.existsByUsername(user.getUsername());
+        boolean emailExist = repository.existsByEmail(user.getEmail());
+
+        if (usernameExist) {
+            throw new EntityExistsException("Username already exists");
+        } else if (emailExist) {
+            throw new EntityExistsException("Email already exists");
+        }
+    }
+
+    public Page<UserRes> findAllUsers(UserFilter filter, Pageable pageable) {
+        Specification<User> spec =
+                UserSpecification.getUserSpecification(filter);
+
+        return repository.findAll(spec, pageable)
+                .map(mapper::convertToResModel);
+    }
+
+    public UserRes findUserById(int id) {
+        return mapper.convertToResModel(
+                preHandleGetObject(id)
+        );
+    }
+
     public User findUserByUsername(String username) {
-        return userRepository.findByUsername(username)
+        return repository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Username not found"
                 ));
     }
 
-    public User saveUser(User user) {
-        boolean usernameExist = userRepository.existsByUsername(user.getUsername());
-        boolean emailExist = userRepository.existsByEmail(user.getEmail());
+    public UserRes createUser(UserReq req) {
+        User user = mapper.convertToEntity(req);
+        preHandleSaveObject(user);
 
-        if (usernameExist){
-            throw new EntityExistsException("Username already exists");
-        } else if (emailExist) {
-            throw new EntityExistsException("Email already exists");
-        } else {
-//            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            return userRepository.save(user);
+        if (req.getRoleId() != null) {
+            Role role = roleRepo.findById(req.getRoleId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Role not found"
+                    ));
+            user.setRole(role);
         }
+
+
+        return mapper.convertToResModel(repository.save(user));
+    }
+
+    public UserRes updateUser(int userId, UserReq req) {
+        User user = preHandleGetObject(userId);
+        preHandleSaveObject(user);
+
+        try {
+            NullAware.getInstance().copyProperties(user, req);
+        } catch (Exception e) {
+            throw new IllegalArgumentException();
+        }
+
+        if (req.getRoleId() != null) {
+            Role role = roleRepo.findById(req.getRoleId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Role not found"
+                    ));
+            user.setRole(role);
+        }
+
+        return mapper.convertToResModel(repository.save(user));
     }
 
     public void activateUser(int userId) {
-        User user = findUserById(userId);
+        User user = preHandleGetObject(userId);
         user.setActive(true);
-        userRepository.save(user);
+        repository.save(user);
     }
 
     public void deactivateUser(int userId) {
-        User user = findUserById(userId);
+        User user = preHandleGetObject(userId);
         user.setActive(false);
-        userRepository.save(user);
+        repository.save(user);
     }
 }
 

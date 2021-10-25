@@ -14,7 +14,7 @@ import vn.alpaca.handleclaimrequestservice.object.wrapper.request.analyzedreceip
 import vn.alpaca.handleclaimrequestservice.object.wrapper.response.AnalyzedReceiptResponse;
 import vn.alpaca.handleclaimrequestservice.repository.AnalyzedReceiptRepository;
 import vn.alpaca.handleclaimrequestservice.repository.ClaimRequestRepository;
-import vn.alpaca.response.exception.ResourceNotFoundException;
+import vn.alpaca.exception.ResourceNotFoundException;
 import vn.alpaca.util.NullAware;
 
 import java.util.Optional;

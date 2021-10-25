@@ -12,8 +12,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import vn.alpaca.commonsecurity.interceptor.UserAuthorizationFilter;
-import vn.alpaca.commonsecurity.service.SecurityUserDetailService;
+import vn.alpaca.common.security.interceptor.UserAuthorizationFilter;
+import vn.alpaca.common.security.service.SecurityUserDetailService;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -41,7 +41,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
             throws Exception {
-        auth.userDetailsService(userDetailService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userDetailService)
+                .passwordEncoder(passwordEncoder());
     }
 
     @Override
@@ -56,9 +57,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .formLogin().disable()
                 .authorizeRequests()
-                    .anyRequest()
-                        .authenticated();
+                .anyRequest()
+                .authenticated();
 
-        http.addFilterBefore(userAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(userAuthorizationFilter(),
+                UsernamePasswordAuthenticationFilter.class);
     }
 }

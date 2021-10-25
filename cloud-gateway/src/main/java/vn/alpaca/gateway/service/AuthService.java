@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.alpaca.gateway.client.AuthenticationClient;
-import vn.alpaca.response.wrapper.SuccessResponse;
+import vn.alpaca.dto.wrapper.SuccessResponse;
 
 @Service
 public class AuthService {

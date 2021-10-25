@@ -1,7 +1,6 @@
 package vn.alpaca.contractservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -15,7 +14,7 @@ import vn.alpaca.contractservice.object.wrapper.request.ContractFilter;
 import vn.alpaca.contractservice.object.wrapper.request.ContractRequest;
 import vn.alpaca.contractservice.object.wrapper.response.ContractResponse;
 import vn.alpaca.contractservice.repository.ContractRepository;
-import vn.alpaca.response.exception.ResourceNotFoundException;
+import vn.alpaca.exception.ResourceNotFoundException;
 import vn.alpaca.util.NullAware;
 
 import javax.persistence.EntityExistsException;
@@ -81,6 +80,7 @@ public class ContractService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Not found contract id: " + id
                 ));
+        
         try {
             NullAware.getInstance().copyProperties(contract, requestData);
         } catch (Exception e) {

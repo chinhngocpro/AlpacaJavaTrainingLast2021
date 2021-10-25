@@ -13,8 +13,8 @@ import vn.alpaca.customerservice.object.wrapper.request.CustomerFilter;
 import vn.alpaca.customerservice.object.wrapper.request.CustomerRequest;
 import vn.alpaca.customerservice.object.wrapper.response.CustomerResponse;
 import vn.alpaca.customerservice.repository.CustomerRepository;
-import vn.alpaca.response.exception.AccessDeniedException;
-import vn.alpaca.response.exception.ResourceNotFoundException;
+import vn.alpaca.exception.AccessDeniedException;
+import vn.alpaca.exception.ResourceNotFoundException;
 import vn.alpaca.util.NullAware;
 
 import java.util.Date;

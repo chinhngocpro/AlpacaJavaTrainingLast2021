@@ -10,7 +10,7 @@ import vn.alpaca.handleclaimrequestservice.object.wrapper.request.payment.Paymen
 import vn.alpaca.handleclaimrequestservice.object.wrapper.request.payment.PaymentRequest;
 import vn.alpaca.handleclaimrequestservice.object.wrapper.response.PaymentResponse;
 import vn.alpaca.handleclaimrequestservice.service.PaymentService;
-import vn.alpaca.response.wrapper.SuccessResponse;
+import vn.alpaca.dto.wrapper.SuccessResponse;
 import vn.alpaca.util.ExtractParam;
 
 import java.util.Optional;

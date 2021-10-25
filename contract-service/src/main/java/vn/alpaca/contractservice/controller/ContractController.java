@@ -6,12 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import vn.alpaca.contractservice.object.entity.Contract;
 import vn.alpaca.contractservice.object.wrapper.request.ContractFilter;
 import vn.alpaca.contractservice.object.wrapper.request.ContractRequest;
 import vn.alpaca.contractservice.object.wrapper.response.ContractResponse;
 import vn.alpaca.contractservice.service.ContractService;
-import vn.alpaca.response.wrapper.SuccessResponse;
+import vn.alpaca.dto.wrapper.SuccessResponse;
 import vn.alpaca.util.ExtractParam;
 
 import java.util.Optional;

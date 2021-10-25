@@ -16,7 +16,7 @@ import vn.alpaca.handleclaimrequestservice.object.wrapper.request.payment.Paymen
 import vn.alpaca.handleclaimrequestservice.object.wrapper.response.PaymentResponse;
 import vn.alpaca.handleclaimrequestservice.repository.ClaimRequestRepository;
 import vn.alpaca.handleclaimrequestservice.repository.PaymentRepository;
-import vn.alpaca.response.exception.ResourceNotFoundException;
+import vn.alpaca.exception.ResourceNotFoundException;
 import vn.alpaca.util.NullAware;
 
 import java.util.Date;

@@ -1,16 +1,17 @@
 package vn.alpaca.userservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import vn.alpaca.response.exception.ResourceNotFoundException;
+import vn.alpaca.dto.request.RoleReq;
+import vn.alpaca.dto.response.RoleRes;
+import vn.alpaca.exception.ResourceNotFoundException;
 import vn.alpaca.userservice.object.entity.Role;
-import vn.alpaca.userservice.object.request.RoleForm;
+import vn.alpaca.userservice.object.mapper.RoleMapper;
 import vn.alpaca.userservice.repository.AuthorityRepository;
 import vn.alpaca.userservice.repository.RoleRepository;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,52 +19,59 @@ public class RoleService {
 
     private final RoleRepository roleRepository;
     private final AuthorityRepository authorityRepository;
+    private final RoleMapper roleMapper;
 
-    public Page<Role> findAllRoles(Pageable pageable) {
-        return roleRepository.findAll(pageable);
+    public List<RoleRes> findAllRoles() {
+        return roleRepository.findAll().stream()
+                .map(roleMapper::convertToResModel)
+                .collect(Collectors.toList());
     }
 
-    public Role findRoleById(int id) {
-        Optional<Role> role = roleRepository.findById(id);
+    public RoleRes findRoleById(int id) {
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "There's no role match with id: " + id
+                ));
 
-        return role.orElseThrow(() -> new ResourceNotFoundException(
-                "There's no role match with id: " + id
-        ));
+        return roleMapper.convertToResModel(role);
     }
 
-    public Role createNewRole(RoleForm form) {
+    public RoleRes createNewRole(RoleReq req) {
         Role role = new Role();
 
-//        role.setName(form.getName());
-//
-//        if (form.getAuthorityIds() != null) {
-//            form.getAuthorityIds().forEach(
-//                    authorityId -> authorityRepository
-//                            .findById(authorityId)
-//                            .ifPresent(role::addAuthority)
-//            );
-//        }
+        role.setName(req.getName());
 
-        return roleRepository.save(role);
+        if (req.getAuthorityIds() != null) {
+            req.getAuthorityIds().forEach(
+                    authorityId -> authorityRepository
+                            .findById(authorityId)
+                            .ifPresent(role::addAuthority)
+            );
+        }
+
+        return roleMapper.convertToResModel(roleRepository.save(role));
     }
 
-    public Role updateRole(int id, RoleForm form) {
-        Role role = findRoleById(id);
+    public RoleRes updateRole(int id, RoleReq req) {
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "There's no role match with id: " + id
+                ));
 
-//        if (form.getName() != null) {
-//            role.setName(form.getName());
-//        }
-//
-//        if (form.getAuthorityIds() != null) {
-//            role.getAuthorities().clear();
-//            form.getAuthorityIds().forEach(
-//                    authorityId -> authorityRepository
-//                            .findById(authorityId)
-//                            .ifPresent(role::addAuthority)
-//            );
-//        }
+        if (req.getName() != null) {
+            role.setName(req.getName());
+        }
 
-        return roleRepository.save(role);
+        if (req.getAuthorityIds() != null) {
+            role.getAuthorities().clear();
+            req.getAuthorityIds().forEach(
+                    authorityId -> authorityRepository
+                            .findById(authorityId)
+                            .ifPresent(role::addAuthority)
+            );
+        }
+
+        return roleMapper.convertToResModel(roleRepository.save(role));
     }
 
     public void deleteRole(int id) {

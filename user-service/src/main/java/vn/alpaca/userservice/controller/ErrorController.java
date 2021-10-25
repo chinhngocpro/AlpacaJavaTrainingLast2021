@@ -8,9 +8,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import vn.alpaca.response.exception.AccessDeniedException;
-import vn.alpaca.response.exception.ResourceNotFoundException;
-import vn.alpaca.response.wrapper.ErrorResponse;
+import vn.alpaca.exception.AccessDeniedException;
+import vn.alpaca.exception.ResourceNotFoundException;
+import vn.alpaca.dto.wrapper.ErrorResponse;
 
 import java.sql.SQLException;
 import java.util.HashMap;

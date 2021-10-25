@@ -14,7 +14,7 @@ import vn.alpaca.handleclaimrequestservice.object.wrapper.request.claimrequest.C
 import vn.alpaca.handleclaimrequestservice.object.wrapper.request.claimrequest.CustomerClaimRequestFilter;
 import vn.alpaca.handleclaimrequestservice.object.wrapper.response.ClaimRequestResponse;
 import vn.alpaca.handleclaimrequestservice.repository.ClaimRequestRepository;
-import vn.alpaca.response.exception.ResourceNotFoundException;
+import vn.alpaca.exception.ResourceNotFoundException;
 
 import java.util.Optional;
 

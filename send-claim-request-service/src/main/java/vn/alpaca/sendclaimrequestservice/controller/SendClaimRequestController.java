@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.alpaca.sendclaimrequestservice.object.wrapper.response.ClaimRequestDTO;
 import vn.alpaca.sendclaimrequestservice.object.wrapper.request.ClaimRequestForm;
 import vn.alpaca.sendclaimrequestservice.service.ClaimRequestService;
-import vn.alpaca.response.wrapper.SuccessResponse;
+import vn.alpaca.dto.wrapper.SuccessResponse;
 
 @RestController
 @RequestMapping("/send-request")

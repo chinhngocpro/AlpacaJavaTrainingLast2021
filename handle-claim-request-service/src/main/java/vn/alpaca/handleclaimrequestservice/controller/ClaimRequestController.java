@@ -9,7 +9,7 @@ import vn.alpaca.handleclaimrequestservice.object.wrapper.request.claimrequest.C
 import vn.alpaca.handleclaimrequestservice.object.wrapper.request.claimrequest.CustomerClaimRequestFilter;
 import vn.alpaca.handleclaimrequestservice.object.wrapper.response.ClaimRequestResponse;
 import vn.alpaca.handleclaimrequestservice.service.ClaimRequestService;
-import vn.alpaca.response.wrapper.SuccessResponse;
+import vn.alpaca.dto.wrapper.SuccessResponse;
 import vn.alpaca.util.ExtractParam;
 
 import java.util.Optional;

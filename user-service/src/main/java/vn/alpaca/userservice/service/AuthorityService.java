@@ -1,11 +1,10 @@
 package vn.alpaca.userservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import vn.alpaca.response.exception.ResourceNotFoundException;
+import vn.alpaca.exception.ResourceNotFoundException;
 import vn.alpaca.userservice.object.entity.Authority;
 import vn.alpaca.userservice.repository.AuthorityRepository;
 

@@ -29,8 +29,7 @@
         <spring-cloud.version>2020.0.4</spring-cloud.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.22</org.projectlombok.version>
-        <org.hibernate.version>5.5.7.Final</org.hibernate.version>
-        <sleuth-zipkin-version>3.0.4</sleuth-zipkin-version>
+        <org.hibernate.version>5.5.8.Final</org.hibernate.version>
     </properties>
     <dependencies>
         <dependency>

@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import vn.alpaca.contractservice.object.wrapper.response.CustomerResponse;
-import vn.alpaca.response.exception.StashErrorDecoder;
-import vn.alpaca.response.wrapper.SuccessResponse;
+import vn.alpaca.exception.StashErrorDecoder;
+import vn.alpaca.dto.wrapper.SuccessResponse;
 
 @FeignClient(value = "customer-service")
 public interface CustomerFeignClient {
