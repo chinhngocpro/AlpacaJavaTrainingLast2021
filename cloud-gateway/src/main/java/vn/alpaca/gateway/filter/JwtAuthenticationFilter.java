@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     public GatewayFilter apply(JwtAuthenticationFilter.Config config) {
 
         return ((exchange, chain) -> {
-            if (config != null && config.getIgnoredPaths() != null) {
+            if (config != null && config.getIgnoredPaths() != null && !config.getIgnoredPaths().isEmpty()) {
                 AntPathMatcher matcher = new AntPathMatcher();
 
                 for (String pattern : config.getIgnoredPaths()) {
