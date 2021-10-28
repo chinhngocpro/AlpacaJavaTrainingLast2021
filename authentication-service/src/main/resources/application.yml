@@ -29,3 +29,11 @@ alpaca:
     jwt:
       secret: alpaca@@@alpaca@@@alpaca@@@alpaca@@@
       expiration: 84000000
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+#    org.springframework.boot.autoconfigure: DEBUG
+debug: true

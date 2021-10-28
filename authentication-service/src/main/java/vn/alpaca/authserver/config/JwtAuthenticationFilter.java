@@ -1,4 +1,4 @@
-package vn.alpaca.common.security.interceptor;
+package vn.alpaca.authserver.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -6,9 +6,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import vn.alpaca.authserver.service.SecurityService;
 import vn.alpaca.common.security.object.AuthUser;
 import vn.alpaca.common.security.service.JwtTokenService;
-import vn.alpaca.common.security.service.SecurityUserDetailService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -22,7 +22,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtTokenService tokenProvider;
 
     @Autowired
-    private SecurityUserDetailService userService;
+    private SecurityService userService;
 
     private static final String AUTHENTICATION_SCHEME = "Bearer ";
 
@@ -33,6 +33,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             String jwt = extractTokenFromHeader(request);
+
+            System.out.println("jwt = " + jwt);
 
             if (tokenProvider.validateToken(jwt)) {
                 int id = tokenProvider.extractUserIdFromToken(jwt);
@@ -51,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .setAuthentication(authentication);
             }
         } catch (Exception e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
 
         filterChain.doFilter(request, response);

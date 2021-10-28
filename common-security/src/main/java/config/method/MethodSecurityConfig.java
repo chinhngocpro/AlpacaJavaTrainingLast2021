@@ -1,4 +1,4 @@
-package vn.alpaca.common.security.config;
+package config.method;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;

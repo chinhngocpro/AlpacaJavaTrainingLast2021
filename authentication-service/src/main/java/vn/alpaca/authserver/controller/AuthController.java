@@ -1,11 +1,14 @@
 package vn.alpaca.authserver.controller;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import vn.alpaca.authserver.service.SecurityService;
 import vn.alpaca.common.security.object.AuthPermission;
@@ -22,25 +25,25 @@ public class AuthController {
 
     private final JwtTokenService tokenService;
     private final SecurityService securityService;
-    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping(
             value = "/login",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public SuccessResponse<String> login(@RequestBody LoginReq loginReq) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginReq.getUsername(),
-                        loginReq.getPassword())
-        );
+    public SuccessResponse<String> login(@RequestBody LoginReq loginReq) throws Exception {
+        AuthUser user = securityService.loadUserByUsername(loginReq.getUsername());
+
+        if (!passwordEncoder.matches(loginReq.getPassword(), user.getPassword())) {
+            throw new Exception();
+        }
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = tokenService.generateToken(
-                (AuthUser) authentication.getPrincipal()
-        );
+        String jwt = tokenService.generateToken(user);
 
         return new SuccessResponse<>(jwt);
     }
