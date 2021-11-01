@@ -1,58 +1,33 @@
 package vn.alpaca.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import vn.alpaca.response.wrapper.SuccessResponse;
-import vn.alpaca.userservice.object.dto.AuthorityDTO;
-import vn.alpaca.userservice.object.entity.Authority;
-import vn.alpaca.userservice.object.mapper.AuthorityMapper;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import vn.alpaca.common.dto.response.AuthorityResponse;
+import vn.alpaca.common.dto.wrapper.AbstractResponse;
+import vn.alpaca.common.dto.wrapper.SuccessResponse;
+import vn.alpaca.userservice.mapper.AuthorityMapper;
 import vn.alpaca.userservice.service.AuthorityService;
-import vn.alpaca.util.ExtractParam;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@RestController
-@RequestMapping(value = "/authorities")
+@Controller
+@RequestMapping("/authorities")
 @RequiredArgsConstructor
 public class AuthorityController {
 
-    private final AuthorityService authorityService;
-    private final AuthorityMapper mapper;
+  private final AuthorityService service;
+  private final AuthorityMapper mapper;
 
-    @PreAuthorize("hasAuthority('AUTHORITY_READ')")
-    @GetMapping
-    public SuccessResponse<Page<AuthorityDTO>> getAuthorities(
-            @RequestParam(value = "page", required = false)
-                    Optional<Integer> pageNumber,
-            @RequestParam(value = "size", required = false)
-                    Optional<Integer> pageSize,
-            @RequestParam(value = "sort-by", required = false)
-                    Optional<String> sortBy
-    ) {
-        Sort sort = ExtractParam.getSort(sortBy);
-        Pageable pageable =
-                ExtractParam.getPageable(pageNumber, pageSize, sort);
+  @GetMapping
+  AbstractResponse getAllAuthorities() {
+    List<AuthorityResponse> response =
+        service.findAll().stream()
+            .map(mapper::authorityToAuthorityResponse)
+            .collect(Collectors.toList());
 
-        Page<AuthorityDTO> dtoPage = new PageImpl<>(
-                authorityService.findAll(pageable)
-                        .map(mapper::convertToDTO)
-                        .getContent()
-        );
-
-        return new SuccessResponse<>(dtoPage);
-    }
-
-    @PreAuthorize("hasAuthority('AUTHORITY_READ')")
-    @GetMapping("/{id}")
-    public SuccessResponse<AuthorityDTO> getAuthority(
-            @PathVariable("id") int id) {
-        Authority authority = authorityService.findById(id);
-        AuthorityDTO dto = mapper.convertToDTO(authority);
-        return new SuccessResponse<>(dto);
-    }
+    return new SuccessResponse<>(response);
+  }
 }

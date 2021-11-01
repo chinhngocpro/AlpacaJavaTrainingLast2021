@@ -10,21 +10,17 @@ import org.springframework.cloud.openfeign.support.SpringEncoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 @Configuration
 public class FeignCodecConfig {
-    @Bean
-    public Encoder feignFormEncoder() {
-        ObjectFactory<HttpMessageConverters> messageConverters =
-                HttpMessageConverters::new;
-        return new SpringFormEncoder(new SpringEncoder(messageConverters));
-    }
+  @Bean
+  public Encoder feignFormEncoder() {
+    ObjectFactory<HttpMessageConverters> messageConverters = HttpMessageConverters::new;
+    return new SpringFormEncoder(new SpringEncoder(messageConverters));
+  }
 
-    @Bean
-    public Decoder feignDecoder() {
-
-        ObjectFactory<HttpMessageConverters> messageConverters =
-                HttpMessageConverters::new;
-        return new SpringDecoder(messageConverters);
-    }
+  @Bean
+  public Decoder feignDecoder() {
+    ObjectFactory<HttpMessageConverters> messageConverters = HttpMessageConverters::new;
+    return new SpringDecoder(messageConverters);
+  }
 }

@@ -1,72 +1,127 @@
 package vn.alpaca.userservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import vn.alpaca.response.exception.ResourceNotFoundException;
-import vn.alpaca.userservice.object.entity.Role;
-import vn.alpaca.userservice.object.request.RoleForm;
-import vn.alpaca.userservice.repository.AuthorityRepository;
-import vn.alpaca.userservice.repository.RoleRepository;
+import org.springframework.util.ObjectUtils;
+import vn.alpaca.common.dto.request.RoleRequest;
+import vn.alpaca.common.exception.ResourceNotFoundException;
+import vn.alpaca.userservice.entity.es.RoleES;
+import vn.alpaca.userservice.entity.jpa.Role;
+import vn.alpaca.userservice.mapper.RoleMapper;
+import vn.alpaca.userservice.repository.es.RoleESRepository;
+import vn.alpaca.userservice.repository.jpa.AuthorityJpaRepository;
+import vn.alpaca.userservice.repository.jpa.RoleJpaRepository;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
+@Log4j2
 @RequiredArgsConstructor
 public class RoleService {
 
-    private final RoleRepository roleRepository;
-    private final AuthorityRepository authorityRepository;
+  private final RoleJpaRepository roleJpaRepo;
+  private final RoleESRepository roleEsRepo;
+  private final AuthorityJpaRepository authorityJpaRepo;
+  private final RoleMapper roleMapper;
 
-    public Page<Role> findAllRoles(Pageable pageable) {
-        return roleRepository.findAll(pageable);
+  @PostConstruct
+  protected void validateData() {
+    long jpaCount = roleJpaRepo.count();
+    long esCount = roleEsRepo.count();
+    if (esCount != jpaCount) {
+      log.info("ON LOAD ROLE DATA FROM JPA TO ES...");
+      roleEsRepo.deleteAll();
+      roleEsRepo.saveAll(
+          roleJpaRepo.findAll().stream() 
+              .map(roleMapper::roleToRoleES)
+              .collect(Collectors.toList()));
+    }
+  }
+
+  public List<Role> findAll() {
+    List<Role> roles;
+
+    if (roleEsRepo.count() > 0) {
+      roles =
+          StreamSupport.stream(roleEsRepo.findAll().spliterator(), false)
+              .map(roleMapper::roleESToRole)
+              .collect(Collectors.toList());
+    } else {
+      roles = roleJpaRepo.findAll();
     }
 
-    public Role findRoleById(int id) {
-        Optional<Role> role = roleRepository.findById(id);
+    return roles;
+  }
 
-        return role.orElseThrow(() -> new ResourceNotFoundException(
-                "There's no role match with id: " + id
-        ));
+  public Role findById(int id) {
+    Role role;
+
+    Optional<RoleES> roleES = roleEsRepo.findById(id);
+
+    if (roleES.isPresent()) {
+      role = roleMapper.roleESToRole(roleES.get());
+    } else {
+      role =
+          roleJpaRepo
+              .findById(id)
+              .orElseThrow(() -> new ResourceNotFoundException("Not found role with id " + id));
     }
 
-    public Role createNewRole(RoleForm form) {
-        Role role = new Role();
+    return role;
+  }
 
-//        role.setName(form.getName());
-//
-//        if (form.getAuthorityIds() != null) {
-//            form.getAuthorityIds().forEach(
-//                    authorityId -> authorityRepository
-//                            .findById(authorityId)
-//                            .ifPresent(role::addAuthority)
-//            );
-//        }
+  public Role findByRoleName(String name) {
+    Role role;
 
-        return roleRepository.save(role);
+    Optional<RoleES> roleES = roleEsRepo.findByName(name);
+
+    if (roleES.isPresent()) {
+      role = roleMapper.roleESToRole(roleES.get());
+    } else {
+      role =
+          roleJpaRepo
+              .findByName(name)
+              .orElseThrow(() -> new ResourceNotFoundException("Not found role with name " + name));
     }
 
-    public Role updateRole(int id, RoleForm form) {
-        Role role = findRoleById(id);
+    return role;
+  }
 
-//        if (form.getName() != null) {
-//            role.setName(form.getName());
-//        }
-//
-//        if (form.getAuthorityIds() != null) {
-//            role.getAuthorities().clear();
-//            form.getAuthorityIds().forEach(
-//                    authorityId -> authorityRepository
-//                            .findById(authorityId)
-//                            .ifPresent(role::addAuthority)
-//            );
-//        }
+  public Role create(RoleRequest requestData) {
+    Role role = new Role();
+    return getRole(requestData, role);
+  }
 
-        return roleRepository.save(role);
+  public Role update(int roleId, RoleRequest requestData) {
+    Role role = findById(roleId);
+    return getRole(requestData, role);
+  }
+
+  public void delete(int roleId) {
+    Role role = findById(roleId);
+    roleJpaRepo.delete(role);
+  }
+
+  private Role getRole(RoleRequest requestData, Role role) {
+    role.setName(requestData.getName());
+    if (!ObjectUtils.isEmpty(requestData.getAuthorityIds())) {
+      role.getAuthorities().clear();
+
+      try {
+        authorityJpaRepo.findAllById(requestData.getAuthorityIds()).forEach(role::addAuthority);
+      } catch (EntityNotFoundException ex) {
+        throw new ResourceNotFoundException("Authority not found");
+      } catch (Exception e) {
+        log.error(e);
+      }
     }
 
-    public void deleteRole(int id) {
-        roleRepository.deleteById(id);
-    }
+    return roleJpaRepo.save(role);
+  }
 }

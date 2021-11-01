@@ -15,28 +15,28 @@ spring:
           lower-case-service-id: true
       routes:
         - id: authentication-service
-          uri: lb://authentication-service/
+          uri: lb://auth-server/
           predicates:
-              - Path=/auth/**
+            - Path=/auth-server/**
           filters:
-              - StripPrefix=1
+            - StripPrefix=1
         - id: user-service
           uri: lb://user-service/
           predicates:
-            - Path=/admin/**
+            - Path=/user-service/**
           filters:
             - StripPrefix=1
             - JwtAuthenticationFilter
         - id: send-claim-request-service
           uri: lb://send-claim-request-service/
           predicates:
-            - Path=/send-claim-request/**
+            - Path=/send-claim-request-service/**
           filters:
             - StripPrefix=1
         - id: handle-claim-request-service
           uri: lb://handle-claim-request-service/
           predicates:
-            - Path=/handle-claim-request/**
+            - Path=/handle-claim-request-service/**
           filters:
             - StripPrefix=1
             - name: JwtAuthenticationFilter
@@ -47,7 +47,7 @@ spring:
         - id: customer-service
           uri: lb://customer-service/
           predicates:
-            - Path=/customers/**
+            - Path=/customer-service/**
           filters:
             - StripPrefix=1
             - name: JwtAuthenticationFilter
@@ -57,7 +57,7 @@ spring:
         - id: contract-service
           uri: lb://contract-service/
           predicates:
-            - Path=/contracts/**
+            - Path=/contract-service/**
           filters:
             - StripPrefix=1
             - name: JwtAuthenticationFilter
@@ -67,11 +67,6 @@ spring:
 
   main:
     web-application-type: reactive
-  sleuth:
-    reactor:
-      instrumentation-type: decorate_on_each
-  zipkin:
-    base-url: http://localhost:9411
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration

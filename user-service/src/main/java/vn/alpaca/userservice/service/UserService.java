@@ -1,159 +1,221 @@
 package vn.alpaca.userservice.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.elasticsearch.core.*;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import vn.alpaca.response.exception.ResourceNotFoundException;
-import vn.alpaca.userservice.object.entity.User;
-import vn.alpaca.userservice.object.entity.User_;
-import vn.alpaca.userservice.object.request.UserFilter;
-import vn.alpaca.userservice.repository.UserRepository;
+import vn.alpaca.common.dto.request.UserFilter;
+import vn.alpaca.common.dto.request.UserRequest;
+import vn.alpaca.common.exception.ResourceNotFoundException;
+import vn.alpaca.userservice.entity.es.UserES;
+import vn.alpaca.userservice.entity.jpa.Role;
+import vn.alpaca.userservice.entity.jpa.User;
+import vn.alpaca.userservice.mapper.UserMapper;
+import vn.alpaca.userservice.repository.es.UserESRepository;
+import vn.alpaca.userservice.repository.jpa.RoleJpaRepository;
+import vn.alpaca.userservice.repository.jpa.UserJpaRepository;
+import vn.alpaca.userservice.repository.jpa.spec.UserSpec;
 
-import javax.persistence.EntityExistsException;
+import javax.annotation.PostConstruct;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-import java.util.Date;
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 @Service
+@Log4j2
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+  private final UserJpaRepository userJpaRepo;
+  private final RoleJpaRepository roleJpaRepo;
+  private final UserESRepository userEsRepo;
+  private final UserMapper userMapper;
 
-    public Page<User> findAllUsers(UserFilter filter, Pageable pageable) {
-        Specification<User> spec =
-                UserSpecification.getUserSpecification(filter);
+  private final PasswordEncoder passwordEncoder;
 
-        return userRepository.findAll(spec, pageable);
+  private final ElasticsearchRestTemplate restTemplate;
+  private final IndexCoordinates index = IndexCoordinates.of("users");
+
+  @PostConstruct
+  protected void validateData() {
+    long jpaCount = userJpaRepo.count();
+    long esCount = userEsRepo.count();
+    if (esCount != jpaCount) {
+      log.info("ON LOAD USER DATA FROM JPA TO ES...");
+      userEsRepo.deleteAll();
+      userEsRepo.saveAll(
+          userJpaRepo.findAll().stream()
+              .map(userMapper::userToUserES)
+              .collect(Collectors.toList()));
+    }
+  }
+
+  public Page<User> findAll(UserFilter filter) {
+    Page<User> users;
+
+    BoolQueryBuilder query = QueryBuilders.boolQuery();
+
+    if (!ObjectUtils.isEmpty(filter.getUsername())) {
+      query.should(wildcardQuery("username", "*" + filter.getUsername() + "*"));
+    }
+    if (!ObjectUtils.isEmpty(filter.getFullName())) {
+      query.should(matchQuery("full_name", filter.getFullName()));
+    }
+    if (!ObjectUtils.isEmpty(filter.getIdCardNumber())) {
+      query.should(termQuery("id_card_number", filter.getIdCardNumber()));
+    }
+    if (!ObjectUtils.isEmpty(filter.getPhoneNumber())) {
+      query.should(termQuery("phone_numbers", filter.getPhoneNumber()));
+    }
+    if (!ObjectUtils.isEmpty(filter.getAddress())) {
+      query.should(matchQuery("address", filter.getAddress()));
+    }
+    if (!ObjectUtils.isEmpty(filter.getFrom()) && !ObjectUtils.isEmpty(filter.getTo())) {
+      query.should(
+          rangeQuery("date_of_birth")
+              .format("date_option_time")
+              .gte(filter.getFrom())
+              .lte(filter.getTo()));
+    } else if (!ObjectUtils.isEmpty(filter.getFrom()) && ObjectUtils.isEmpty(filter.getTo())) {
+      query.should(rangeQuery("date_of_birth").format("date_option_time").gte(filter.getFrom()));
+    } else if (ObjectUtils.isEmpty(filter.getFrom()) && !ObjectUtils.isEmpty(filter.getTo())) {
+      query.should(rangeQuery("date_of_birth").format("date_option_time").lte(filter.getTo()));
+    }
+    if (!ObjectUtils.isEmpty(filter.getGender())) {
+      query.should(matchQuery("gender", filter.getGender()));
+    }
+    if (!ObjectUtils.isEmpty(filter.getActive())) {
+      query.should(matchQuery("active", filter.getActive()));
     }
 
-    public User findUserById(int id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "User id not found"
-                ));
+    NativeSearchQuery searchQuery =
+        new NativeSearchQueryBuilder()
+            .withQuery(query)
+            .withPageable(filter.getPagination().getPageAndSort())
+            .build();
+    SearchHits<UserES> hits = restTemplate.search(searchQuery, UserES.class, index);
+
+    if (hits.hasSearchHits()) {
+      SearchPage<UserES> page =
+          SearchHitSupport.searchPageFor(hits, filter.getPagination().getPageAndSort());
+      users =
+          new PageImpl<>(
+              page.getContent().stream()
+                  .map(SearchHit::getContent)
+                  .map(userMapper::userESToUser)
+                  .collect(Collectors.toList()),
+              page.getPageable(),
+              page.getTotalElements());
+      log.info("FOUND: " + users);
+    } else {
+      Specification<User> specification = UserSpec.getUserSpec(filter);
+      users = userJpaRepo.findAll(specification, filter.getPagination().getPageAndSort());
+      log.info("USE DB: " + users);
     }
 
-    public User findUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Username not found"
-                ));
+    return users;
+  }
+
+  public User findById(int id) {
+    User user;
+
+    Optional<UserES> optional = userEsRepo.findById(id);
+    if (optional.isPresent()) {
+      user = userMapper.userESToUser(optional.get());
+    } else {
+      user =
+          userJpaRepo
+              .findById(id)
+              .orElseThrow(() -> new ResourceNotFoundException("Not found user with id " + id));
     }
 
-    public User saveUser(User user) {
-        boolean usernameExist = userRepository.existsByUsername(user.getUsername());
-        boolean emailExist = userRepository.existsByEmail(user.getEmail());
+    return user;
+  }
 
-        if (usernameExist){
-            throw new EntityExistsException("Username already exists");
-        } else if (emailExist) {
-            throw new EntityExistsException("Email already exists");
-        } else {
-//            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            return userRepository.save(user);
-        }
+  public User findByUsername(String username) {
+    User user;
+
+    Optional<UserES> optional = userEsRepo.findByUsername(username);
+    if (optional.isPresent()) {
+      user = userMapper.userESToUser(optional.get());
+    } else {
+      user =
+          userJpaRepo
+              .findByUsername(username)
+              .orElseThrow(
+                  () -> new ResourceNotFoundException("Not found user with username " + username));
     }
 
-    public void activateUser(int userId) {
-        User user = findUserById(userId);
-        user.setActive(true);
-        userRepository.save(user);
-    }
+    return user;
+  }
 
-    public void deactivateUser(int userId) {
-        User user = findUserById(userId);
-        user.setActive(false);
-        userRepository.save(user);
-    }
-}
+  public User create(UserRequest requestData) {
+    User user = userMapper.userRequestToUser(requestData);
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-final class UserSpecification {
-    public static Specification<User> getUserSpecification(UserFilter filter) {
-        return Specification
-                .where(hasUsername(filter.getUsername()))
-                .and(hasNameContaining(filter.getFullName()))
-                .and(isMale(filter.getGender()))
-                .and(hasIdCardNumber(filter.getIdCardNumber()))
-                .and(hasEmailContaining(filter.getEmail()))
-                .and(hasDobBetween(filter.getFrom(), filter.getTo()))
-                .and(hasAddressContaining(filter.getAddress()))
-                .and(isActive(filter.getActive()));
-    }
+    Role role =
+        roleJpaRepo
+            .findById(requestData.getRoleId())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Not found role with id " + requestData.getRoleId()));
+    user.setRole(role);
 
-    private static Specification<User> hasUsername(String username) {
-        return (root, query, builder) ->
-                ObjectUtils.isEmpty(username) ?
-                        builder.conjunction() :
-                        builder.equal(
-                                root.get(User_.USERNAME),
-                                username
-                        );
-    }
+    userJpaRepo.save(user);
 
-    private static Specification<User> hasNameContaining(String fullName) {
-        return (root, query, builder) ->
-                ObjectUtils.isEmpty(fullName) ?
-                        builder.conjunction() :
-                        builder.like(
-                                root.get(User_.FULL_NAME),
-                                "%" + fullName + "%"
-                        );
-    }
+    return user;
+  }
 
-    private static Specification<User> isMale(Boolean isMale) {
-        return (root, query, builder) ->
-                ObjectUtils.isEmpty(isMale) ?
-                        builder.conjunction() :
-                        builder.equal(root.get(User_.GENDER), isMale);
-    }
+  public User update(int userId, UserRequest requestData) {
+    User user = findById(userId);
 
-    private static Specification<User> hasIdCardNumber(String idCardNumber) {
-        return (root, query, builder) ->
-                ObjectUtils.isEmpty(idCardNumber) ?
-                        builder.conjunction() :
-                        builder.equal(
-                                root.get(User_.ID_CARD_NUMBER),
-                                idCardNumber
-                        );
-    }
+    userMapper.updateUser(user, requestData);
 
-    private static Specification<User> hasEmailContaining(String email) {
-        return (root, query, builder) ->
-                ObjectUtils.isEmpty(email) ?
-                        builder.conjunction() :
-                        builder.like(root.get(User_.EMAIL), email);
-    }
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-    private static Specification<User> hasDobBetween(Date from, Date to) {
-        return (root, query, builder) ->
-                ObjectUtils.isEmpty(from) && ObjectUtils.isEmpty(to) ?
-                        builder.conjunction() :
-                        ObjectUtils.isEmpty(from) ?
-                                builder.lessThanOrEqualTo(
-                                        root.get(User_.DATE_OF_BIRTH), to) :
-                                ObjectUtils.isEmpty(to) ?
-                                        builder.greaterThanOrEqualTo(
-                                                root.get(User_.DATE_OF_BIRTH),
-                                                from) :
-                                        builder.between(
-                                                root.get(User_.DATE_OF_BIRTH),
-                                                from, to);
-    }
+    Role role =
+        roleJpaRepo
+            .findById(requestData.getRoleId())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Not found role with id " + requestData.getRoleId()));
+    user.setRole(role);
 
-    private static Specification<User> hasAddressContaining(String address) {
-        return (root, query, builder) ->
-                ObjectUtils.isEmpty(address) ?
-                        builder.conjunction() :
-                        builder.like(root.get(User_.ADDRESS), address);
-    }
+    userJpaRepo.save(user);
 
-    private static Specification<User> isActive(Boolean active) {
-        return (root, query, builder) ->
-                ObjectUtils.isEmpty(active) ?
-                        builder.conjunction() :
-                        builder.equal(root.get(User_.ACTIVE), active);
-    }
+    return user;
+  }
+
+  public void activate(int userId) {
+    User user = findById(userId);
+    user.setActive(true);
+    userJpaRepo.save(user);
+  }
+
+  public void deactivate(int userId) {
+    User user = findById(userId);
+    user.setActive(false);
+    userJpaRepo.save(user);
+  }
+
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    return findByUsername(username);
+  }
 }

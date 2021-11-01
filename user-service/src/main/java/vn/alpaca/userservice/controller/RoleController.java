@@ -1,83 +1,74 @@
 package vn.alpaca.userservice.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import vn.alpaca.response.wrapper.SuccessResponse;
-import vn.alpaca.userservice.object.dto.RoleDTO;
-import vn.alpaca.userservice.object.entity.Role;
-import vn.alpaca.userservice.object.mapper.RoleMapper;
-import vn.alpaca.userservice.object.request.RoleForm;
+import vn.alpaca.common.dto.request.RoleRequest;
+import vn.alpaca.common.dto.response.RoleResponse;
+import vn.alpaca.common.dto.wrapper.AbstractResponse;
+import vn.alpaca.common.dto.wrapper.SuccessResponse;
+import vn.alpaca.userservice.mapper.RoleMapper;
 import vn.alpaca.userservice.service.RoleService;
-import vn.alpaca.util.ExtractParam;
 
-import java.util.Optional;
-
+import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/roles")
+@RequestMapping("/roles")
 @RequiredArgsConstructor
 public class RoleController {
 
-    private final RoleService roleService;
-    private final RoleMapper roleMapper;
+  private final RoleService service;
+  private final RoleMapper mapper;
 
-    @PreAuthorize("hasAuthority('SYSTEM_ROLE_READ')")
-    @GetMapping
-    public SuccessResponse<Page<RoleDTO>> getAllRoles(
-            @RequestParam(value = "page", required = false)
-                    Optional<Integer> pageNumber,
-            @RequestParam(value = "size", required = false)
-                    Optional<Integer> pageSize,
-            @RequestParam(value = "sort-by", required = false)
-                    Optional<String> sortBy
-    ) {
-        Pageable pageable = ExtractParam.getPageable(
-                pageNumber, pageSize,
-                ExtractParam.getSort(sortBy)
-        );
+  @PreAuthorize("hasAuthority('ROLE_READ')")
+  @GetMapping
+  AbstractResponse getAllRoles() {
+    List<RoleResponse> data =
+        service.findAll().stream().map(mapper::roleToRoleResponse).collect(Collectors.toList());
 
-        Page<RoleDTO> dtoPage = new PageImpl<>(
-                roleService.findAllRoles(pageable)
-                        .map(roleMapper::convertToDTO)
-                        .getContent()
-        );
+    return new SuccessResponse<>(data);
+  }
 
-        return new SuccessResponse<>(dtoPage);
-    }
+  @PreAuthorize("hasAuthority('ROLE_READ')")
+  @GetMapping("/{roleId}")
+  AbstractResponse getRoleById(@PathVariable int roleId) {
+    RoleResponse data = mapper.roleToRoleResponse(service.findById(roleId));
 
-    @PreAuthorize("hasAuthority('SYSTEM_ROLE_READ')")
-    @GetMapping("/{id}")
-    public SuccessResponse<RoleDTO> getRole(@PathVariable("id") int id) {
-        Role role = roleService.findRoleById(id);
-        RoleDTO dto = roleMapper.convertToDTO(role);
-        return new SuccessResponse<>(dto);
-    }
+    return new SuccessResponse<>(data);
+  }
 
-    @PreAuthorize("hasAuthority('SYSTEM_ROLE_CREATE')")
-    @PostMapping
-    public SuccessResponse<RoleDTO> createRole(@RequestBody RoleForm form) {
-        Role role = roleService.createNewRole(form);
-        RoleDTO dto = roleMapper.convertToDTO(role);
-        return new SuccessResponse<>(dto);
-    }
+  @PreAuthorize("hasAuthority('ROLE_READ')")
+  @GetMapping("_search/name/{roleName}")
+  AbstractResponse getRoleByName(@PathVariable String roleName) {
+    RoleResponse data = mapper.roleToRoleResponse(service.findByRoleName(roleName));
 
-    @PreAuthorize("hasAuthority('SYSTEM_ROLE_UPDATE')")
-    @PutMapping(value = "/{id}")
-    public SuccessResponse<RoleDTO> updateRole(@PathVariable("id") int id,
-                                               @RequestBody RoleForm form) {
-        Role role = roleService.updateRole(id, form);
-        RoleDTO dto = roleMapper.convertToDTO(role);
-        return new SuccessResponse<>(dto);
-    }
+    return new SuccessResponse<>(data);
+  }
 
-    @PreAuthorize("hasAuthority('SYSTEM_ROLE_DELETE')")
-    @DeleteMapping("/{id}")
-    public SuccessResponse<Void> deleteRole(@PathVariable("id") int id) {
-        roleService.deleteRole(id);
-        return new SuccessResponse<>(null);
-    }
+  @PreAuthorize("hasAuthority('ROLE_CREATE')")
+  @PostMapping
+  AbstractResponse createRole(@RequestBody @Valid RoleRequest requestData) {
+    RoleResponse data = mapper.roleToRoleResponse(service.create(requestData));
+
+    return new SuccessResponse<>(HttpStatus.CREATED.value(), data);
+  }
+
+  @PreAuthorize("hasAuthority('ROLE_UPDATE')")
+  @PutMapping("/{roleId}")
+  AbstractResponse updateRole(
+      @PathVariable int roleId, @RequestBody @Valid RoleRequest requestData) {
+    RoleResponse data = mapper.roleToRoleResponse(service.update(roleId, requestData));
+
+    return new SuccessResponse<>(data);
+  }
+
+  @PreAuthorize("hasAuthority('ROLE_DELETE')")
+  @DeleteMapping("/{roleId}")
+  AbstractResponse deleteRole(@PathVariable int roleId) {
+    service.delete(roleId);
+    return new SuccessResponse<>(null);
+  }
 }

@@ -3,6 +3,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <modules>
+        <module>common</module>
+        <module>security</module>
+    </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -15,14 +19,6 @@
     <name>AlpacaJavaTrainingLast2021_Phase2_Microservices</name>
     <description>AlpacaJavaTrainingLast2021_Phase2_Microservices</description>
     <packaging>pom</packaging>
-
-<!--    <modules>-->
-<!--        <module>gateway</module>-->
-<!--        <module>user-service</module>-->
-<!--        <module>assets-service</module>-->
-<!--        <module>cloud-config-server</module>-->
-<!--        <module>service-registry</module>-->
-<!--    </modules>-->
 
     <properties>
         <java.version>1.8</java.version>
@@ -54,18 +50,6 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
             <version>${org.projectlombok.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${org.mapstruct.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>${org.hibernate.version}</version>
-            <scope>provided</scope>
         </dependency>
 
 <!--        <dependency>-->

@@ -1,28 +1,21 @@
 package vn.alpaca.userservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import vn.alpaca.response.exception.ResourceNotFoundException;
-import vn.alpaca.userservice.object.entity.Authority;
-import vn.alpaca.userservice.repository.AuthorityRepository;
+import vn.alpaca.userservice.entity.jpa.Authority;
+import vn.alpaca.userservice.repository.jpa.AuthorityJpaRepository;
+
+import java.util.List;
 
 @Service
+@Log4j2
 @RequiredArgsConstructor
 public class AuthorityService {
 
-    private final AuthorityRepository authorityRepository;
-    
-    public Page<Authority> findAll(Pageable pageable) {
-        return authorityRepository.findAll(pageable);
-    }
+  private final AuthorityJpaRepository authorityJpaRepo;
 
-    public Authority findById(int id) {
-        return authorityRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "There's no authority match with id " + id
-                ));
-    }
+  public List<Authority> findAll() {
+    return authorityJpaRepo.findAll();
+  }
 }
