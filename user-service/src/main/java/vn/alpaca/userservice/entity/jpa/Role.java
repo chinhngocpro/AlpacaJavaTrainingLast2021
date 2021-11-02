@@ -18,8 +18,7 @@ import java.util.Set;
 public class Role implements Serializable {
 
   @Id
-  @SequenceGenerator(name = "roles_id_seq", sequenceName = "roles_id_seq")
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "roles_id_seq")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private int id;
 
   private String name;

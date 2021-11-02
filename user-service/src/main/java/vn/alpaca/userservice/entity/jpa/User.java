@@ -26,16 +26,7 @@ import java.util.stream.Collectors;
 public class User implements Serializable, UserDetails {
 
     @Id
-    @SequenceGenerator(
-            name = "users_id_seq",
-            sequenceName = "users_id_seq",
-            schema = "user_management",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "users_id_seq"
-    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     private String username;

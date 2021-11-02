@@ -21,15 +21,7 @@ import java.util.List;
 public class Contract implements Serializable {
 
     @Id
-    @SequenceGenerator(
-            name = "contracts_id_seq",
-            sequenceName = "contracts_id_seq",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "contracts_id_seq"
-    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     @Pattern(regexp = "^[a-zA-Z]{3}[0-9]{9}$")

@@ -20,15 +20,7 @@ import java.util.List;
 public class ClaimRequest implements Serializable {
 
     @Id
-    @SequenceGenerator(
-            name = "claim_requests_id_seq",
-            sequenceName = "claim_requests_id_seq",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "claim_requests_id_seq"
-    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     private String title;

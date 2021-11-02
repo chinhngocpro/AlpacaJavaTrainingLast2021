@@ -15,14 +15,7 @@ import java.io.Serializable;
 public class Authority implements Serializable {
 
     @Id
-    @SequenceGenerator(
-            name = "authorities_id_seq",
-            sequenceName = "roles_id_seq"
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "authorities_id_seq"
-    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     private String permissionName;
