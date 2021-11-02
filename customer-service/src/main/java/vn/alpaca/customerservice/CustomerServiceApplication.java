@@ -5,13 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@SpringBootApplication(scanBasePackages = {"vn.alpaca", "config.method"})
-@EnableEurekaClient
+@SpringBootApplication(scanBasePackages = {"vn.alpaca", "web.security"})
 @EnableFeignClients(basePackages = "vn.alpaca")
 public class CustomerServiceApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(CustomerServiceApplication.class, args);
-    }
-
+  public static void main(String[] args) {
+    SpringApplication.run(CustomerServiceApplication.class, args);
+  }
 }

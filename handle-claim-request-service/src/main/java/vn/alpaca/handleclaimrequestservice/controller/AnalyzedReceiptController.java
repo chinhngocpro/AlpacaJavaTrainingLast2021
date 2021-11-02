@@ -2,16 +2,18 @@ package vn.alpaca.handleclaimrequestservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import vn.alpaca.handleclaimrequestservice.object.wrapper.request.analyzedreceipt.AnalyzedReceiptFilter;
-import vn.alpaca.handleclaimrequestservice.object.wrapper.request.analyzedreceipt.AnalyzedReceiptRequest;
-import vn.alpaca.handleclaimrequestservice.object.wrapper.response.AnalyzedReceiptResponse;
+import vn.alpaca.common.dto.request.AnalyzedReceiptFilter;
+import vn.alpaca.common.dto.request.AnalyzedReceiptRequest;
+import vn.alpaca.common.dto.response.AnalyzedReceiptResponse;
+import vn.alpaca.common.dto.wrapper.AbstractResponse;
+import vn.alpaca.common.dto.wrapper.SuccessResponse;
+import vn.alpaca.handleclaimrequestservice.entity.AnalyzedReceipt;
+import vn.alpaca.handleclaimrequestservice.mapper.AnalyzedReceiptMapper;
 import vn.alpaca.handleclaimrequestservice.service.AnalyzedReceiptService;
-import vn.alpaca.response.wrapper.SuccessResponse;
-import vn.alpaca.util.ExtractParam;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -20,74 +22,49 @@ import java.util.Optional;
 public class AnalyzedReceiptController {
 
     private final AnalyzedReceiptService service;
+    private final AnalyzedReceiptMapper mapper;
 
     @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_READ')")
     @GetMapping
-    public SuccessResponse<Page<AnalyzedReceiptResponse>> getAllReceipts(
-            @RequestParam(value = "page", required = false)
-                    Optional<Integer> pageNumber,
-            @RequestParam(value = "limit", required = false)
-                    Optional<Integer> pageSize,
-            @RequestParam(value = "sort-by", required = false)
-                    Optional<String> sortBy,
-            @RequestBody Optional<AnalyzedReceiptFilter> filter
-    ) {
-        Pageable pageable = ExtractParam.getPageable(
-                pageNumber, pageSize,
-                ExtractParam.getSort(sortBy)
-        );
+    AbstractResponse getAllReceipts(@RequestBody Optional<AnalyzedReceiptFilter> filter) {
+        Page<AnalyzedReceipt> analyzedReceipts = service.findAllReceipts(
+                filter.orElse(new AnalyzedReceiptFilter()));
+        Page<AnalyzedReceiptResponse> response = analyzedReceipts.map(mapper::convertToResponseModel);
 
-        Page<AnalyzedReceiptResponse> responseData = service.findAllReceipts(
-                filter.orElse(new AnalyzedReceiptFilter()),
-                pageable
-        );
-
-        return new SuccessResponse<>(responseData);
+        return new SuccessResponse<>(response);
     }
 
     @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_READ')")
     @GetMapping(value = "/{receiptId}")
-    public SuccessResponse<AnalyzedReceiptResponse> getReceiptById(
-            @PathVariable("receiptId") int id
-    ) {
-        AnalyzedReceiptResponse responseData = service.findReceiptById(id);
+    AbstractResponse getReceiptById(@PathVariable("receiptId") int id) {
+        AnalyzedReceipt receipt = service.findReceiptById(id);
+        AnalyzedReceiptResponse response = mapper.convertToResponseModel(receipt);
 
-        return new SuccessResponse<>(responseData);
+        return new SuccessResponse<>(response);
     }
 
     @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_CREATE')")
     @PostMapping(consumes = "application/json")
-    public SuccessResponse<AnalyzedReceiptResponse> createNewReceipt(
-            @RequestBody AnalyzedReceiptRequest requestData
-    ) {
+    AbstractResponse createNewReceipt(@RequestBody @Valid AnalyzedReceiptRequest requestData) {
+        AnalyzedReceipt analyzedReceipt = service.createReceipt(requestData);
+        AnalyzedReceiptResponse response = mapper.convertToResponseModel(analyzedReceipt);
 
-        AnalyzedReceiptResponse responseData =
-                service.createReceipt(requestData);
-
-        return new SuccessResponse<>(responseData);
+        return new SuccessResponse<>(response);
     }
 
     @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
-    @PutMapping(
-            value = "/{receiptId}",
-            consumes = "application/json"
-    )
-    public SuccessResponse<AnalyzedReceiptResponse> updateReceipt(
-            @PathVariable("receiptId") int id,
-            @RequestBody AnalyzedReceiptRequest requestData
-    ) {
+    @PutMapping(value = "/{receiptId}", consumes = "application/json")
+    AbstractResponse updateReceipt(@PathVariable("receiptId") int id,
+                                   @RequestBody @Valid AnalyzedReceiptRequest requestData) {
+        AnalyzedReceipt analyzedReceipt = service.updateReceipt(id, requestData);
+        AnalyzedReceiptResponse response = mapper.convertToResponseModel(analyzedReceipt);
 
-        AnalyzedReceiptResponse responseData =
-                service.updateReceipt(id, requestData);
-
-        return new SuccessResponse<>(responseData);
+        return new SuccessResponse<>(response);
     }
 
     @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
     @PatchMapping(value = "/{receiptId}/validate")
-    public SuccessResponse<Boolean> validateReceipt(
-            @PathVariable("receiptId") int id
-    ) {
+    AbstractResponse validateReceipt(@PathVariable("receiptId") int id) {
         service.validateReceipt(id);
 
         return new SuccessResponse<>(true);
@@ -95,9 +72,7 @@ public class AnalyzedReceiptController {
 
     @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
     @PatchMapping(value = "/{receiptId}/invalidate")
-    public SuccessResponse<Boolean> invalidateReceipt(
-            @PathVariable("receiptId") int id
-    ) {
+    AbstractResponse invalidateReceipt(@PathVariable("receiptId") int id) {
         service.invalidateReceipt(id);
 
         return new SuccessResponse<>(true);

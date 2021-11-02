@@ -1,98 +1,82 @@
 package vn.alpaca.customerservice.controller;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import vn.alpaca.customerservice.object.wrapper.request.CustomerFilter;
-import vn.alpaca.customerservice.object.wrapper.request.CustomerRequest;
-import vn.alpaca.customerservice.object.wrapper.response.CustomerResponse;
+import vn.alpaca.common.dto.request.CustomerFilter;
+import vn.alpaca.common.dto.request.CustomerRequest;
+import vn.alpaca.common.dto.response.CustomerResponse;
+import vn.alpaca.common.dto.wrapper.AbstractResponse;
+import vn.alpaca.common.dto.wrapper.SuccessResponse;
+import vn.alpaca.customerservice.entity.Customer;
+import vn.alpaca.customerservice.mapper.CustomerMapper;
 import vn.alpaca.customerservice.service.CustomerService;
-import vn.alpaca.response.wrapper.SuccessResponse;
-import vn.alpaca.util.ExtractParam;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/")
+@RequestMapping(value = "/customers")
 public class CustomerController {
 
     private final CustomerService service;
+    private final CustomerMapper mapper;
 
-    public CustomerController(CustomerService service) {
+    public CustomerController(CustomerService service, CustomerMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER_READ')")
     @GetMapping
-    public SuccessResponse<Page<CustomerResponse>> getAllCustomers(
-            @RequestParam(value = "page", required = false)
-                    Optional<Integer> pageNumber,
-            @RequestParam(value = "size", required = false)
-                    Optional<Integer> pageSize,
-            @RequestParam(value = "sort-by", required = false)
-                    Optional<String> sortBy,
-            @RequestBody Optional<CustomerFilter> filter
-    ) {
-        Sort sort = ExtractParam.getSort(sortBy);
-        Pageable pageable =
-                ExtractParam.getPageable(pageNumber, pageSize, sort);
+    AbstractResponse getAllCustomers(@RequestBody Optional<CustomerFilter> filter) {
+        Page<CustomerResponse> response =
+                service
+                        .findAllCustomers(filter.orElse(new CustomerFilter()))
+                        .map(mapper::customerToCustomerResponse);
 
-        Page<CustomerResponse> responseData = service
-                .findAllCustomers(filter.orElse(new CustomerFilter()),
-                        pageable);
-
-        return new SuccessResponse<>(responseData);
+        return new SuccessResponse<>(response);
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER_READ')")
     @GetMapping("/{customerId}")
-    public SuccessResponse<CustomerResponse> getCustomerById(
-            @PathVariable("customerId") int id
-    ) {
-        CustomerResponse responseData = service.findCustomerById(id);
+    AbstractResponse getCustomerById(@PathVariable int customerId) {
+        Customer customer = service.findCustomerById(customerId);
+        CustomerResponse response = mapper.customerToCustomerResponse(customer);
 
-        return new SuccessResponse<>(responseData);
+        return new SuccessResponse<>(response);
     }
 
-    @GetMapping("/search/id-card/{idCardNumber}")
-    public SuccessResponse<CustomerResponse> getCustomerByIdCardNumber(
-            @PathVariable String idCardNumber
-    ) {
-        CustomerResponse responseData = service
-                .findCustomerByIdCardNumber(idCardNumber);
+    @GetMapping("/_search/id-card/{idCardNumber}")
+    AbstractResponse getCustomerByIdCardNumber(@PathVariable String idCardNumber) {
+        Customer customer = service.findCustomerByIdCardNumber(idCardNumber);
+        CustomerResponse response = mapper.customerToCustomerResponse(customer);
 
-        return new SuccessResponse<>(responseData);
+        return new SuccessResponse<>(response);
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER_CREATE')")
     @PostMapping
-    public SuccessResponse<CustomerResponse> createNewCustomer(
-            @RequestBody CustomerRequest formData
-    ) {
-        CustomerResponse responseData = service.createCustomer(formData);
+    AbstractResponse createNewCustomer(@RequestBody @Valid CustomerRequest formData) {
+        Customer customer = service.createCustomer(formData);
+        CustomerResponse response = mapper.customerToCustomerResponse(customer);
 
-        return new SuccessResponse<>(responseData);
+        return new SuccessResponse<>(response);
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER_UPDATE')")
     @PutMapping(value = "/{customerId}")
-    public SuccessResponse<CustomerResponse> updateCustomer(
-            @PathVariable("customerId") int id,
-            @RequestBody CustomerRequest formData
-    ) {
+    AbstractResponse updateCustomer(
+            @PathVariable("customerId") int id, @RequestBody @Valid CustomerRequest formData) {
+        Customer customer = service.updateCustomer(id, formData);
+        CustomerResponse response = mapper.customerToCustomerResponse(customer);
 
-        CustomerResponse responseData = service.updateCustomer(id, formData);
-
-        return new SuccessResponse<>(responseData);
+        return new SuccessResponse<>(response);
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER_DELETE')")
     @PatchMapping(value = "/{customerId}/activate")
-    public SuccessResponse<Boolean> activateCustomer(
-            @PathVariable("customerId") int id
-    ) {
+    AbstractResponse activateCustomer(@PathVariable("customerId") int id) {
         service.activateCustomer(id);
 
         return new SuccessResponse<>(true);
@@ -100,9 +84,7 @@ public class CustomerController {
 
     @PreAuthorize("hasAuthority('CUSTOMER_DELETE')")
     @PatchMapping(value = "/{customerId}/deactivate")
-    public SuccessResponse<Boolean> deactivateCustomer(
-            @PathVariable("customerId") int id
-    ) {
+    AbstractResponse deactivateCustomer(@PathVariable("customerId") int id) {
         service.deactivateCustomer(id);
 
         return new SuccessResponse<>(true);

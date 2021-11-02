@@ -8,9 +8,9 @@
         <artifactId>Training_Phase2_Microservices</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
+
     <artifactId>send-claim-request-service</artifactId>
-    <name>send-claim-request-service</name>
-    <description>send-claim-request-service</description>
+
     <properties>
         <java.version>1.8</java.version>
     </properties>
@@ -29,8 +29,15 @@
     <dependencies>
         <dependency>
             <groupId>vn.alpaca</groupId>
-            <artifactId>common-core</artifactId>
-            <version>1</version>
+            <artifactId>common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>vn.alpaca</groupId>
+            <artifactId>security</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -45,15 +52,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-config-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
         </dependency>
 
     </dependencies>
@@ -77,11 +75,6 @@
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok-mapstruct-binding</artifactId>
                             <version>0.2.0</version>
-                        </path>
-                        <path>
-                            <groupId>org.hibernate</groupId>
-                            <artifactId>hibernate-jpamodelgen</artifactId>
-                            <version>${org.hibernate.version}</version>
                         </path>
                         <path>
                             <groupId>org.mapstruct</groupId>
