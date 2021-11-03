@@ -42,8 +42,7 @@ public class UserController {
     return new SuccessResponse<>(response);
   }
 
-  @PreAuthorize("hasAuthority('USER_READ')")
-  @GetMapping("/_search/auth/{username}")
+  @GetMapping("/_auth/{username}")
   AbstractResponse getUserByUsername(@PathVariable String username) {
     AuthenticationInfo response = mapper.userToAuthenInfo(service.findByUsername(username));
 
