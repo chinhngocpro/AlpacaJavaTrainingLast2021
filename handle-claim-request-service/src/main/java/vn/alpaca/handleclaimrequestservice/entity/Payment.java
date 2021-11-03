@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "payments")
+@Table(name = "payments", schema = "claim_request_management")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,17 +15,17 @@ import java.util.Date;
 @ToString
 public class Payment implements Serializable {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE)
-  private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private int id;
 
-  private double amount;
+    private double amount;
 
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date paymentDate = new Date();
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date paymentDate = new Date();
 
-  @OneToOne
-  @JoinColumn(name = "request_id")
-  @ToString.Exclude
-  private ClaimRequest claimRequest;
+    @OneToOne
+    @JoinColumn(name = "request_id")
+    @ToString.Exclude
+    private ClaimRequest claimRequest;
 }

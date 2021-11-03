@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "customers")
+@Table(name = "customers", schema = "customer_management")
 @TypeDef(name = "list-array", typeClass = ListArrayType.class)
 @Getter
 @Setter

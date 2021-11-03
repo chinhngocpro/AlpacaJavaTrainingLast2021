@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "claim_requests")
+@Table(name = "claim_requests", schema = "claim_request_management")
 @Getter
 @Setter
 @NoArgsConstructor

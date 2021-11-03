@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "analyzed_receipts")
+@Table(name = "analyzed_receipts", schema = "claim_request_management")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,22 +14,22 @@ import java.io.Serializable;
 @ToString
 public class AnalyzedReceipt implements Serializable {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE)
-  private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private int id;
 
-  private boolean isValid = true;
+    private boolean isValid = true;
 
-  private String title;
+    private String title;
 
-  private double amount;
+    private double amount;
 
-  private int hospitalId;
+    private int hospitalId;
 
-  private int accidentId;
+    private int accidentId;
 
-  @OneToOne
-  @JoinColumn(name = "request_id", referencedColumnName = "id")
-  @ToString.Exclude
-  private ClaimRequest claimRequest;
+    @OneToOne
+    @JoinColumn(name = "request_id", referencedColumnName = "id")
+    @ToString.Exclude
+    private ClaimRequest claimRequest;
 }
