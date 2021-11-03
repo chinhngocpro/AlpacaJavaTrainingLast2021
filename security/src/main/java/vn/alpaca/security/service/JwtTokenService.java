@@ -54,6 +54,11 @@ public class JwtTokenService {
 
   private RMapCache<String, AuthUser> tokenMap;
 
+  @PostConstruct
+  public void init() {
+    tokenMap = redissonClient.getMapCache(CACHE_NAME);
+  }
+
   public String generateToken(@NonNull AuthUser user) {
     Map<String, Object> payload = new HashMap<>();
     payload.put("id", user.getId());
@@ -96,11 +101,6 @@ public class JwtTokenService {
       log.error("VALIDATE TOKEN FAILED: " + ex.getMessage());
       return false;
     }
-  }
-
-  @PostConstruct
-  public void init() {
-    tokenMap = redissonClient.getMapCache(CACHE_NAME);
   }
 
   public RefreshToken createRefreshToken(AuthUser user) {

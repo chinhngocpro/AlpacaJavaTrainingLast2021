@@ -27,6 +27,7 @@ public class AuthenticationController {
 
   @PostMapping("/login")
   AbstractResponse getToken(@RequestBody AuthenticationRequest authRequest) {
+    System.out.println(authRequest);
     Authentication authentication =
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
@@ -37,8 +38,11 @@ public class AuthenticationController {
     AuthUser user = (AuthUser) authentication.getPrincipal();
 
     String accessToken = tokenService.generateToken(user);
+    System.out.println(accessToken);
     String refreshToken = tokenService.createRefreshToken(user).getToken();
+    System.out.println(refreshToken);
     UserResponse userInfo = mapper.authUserToUserResponse(user);
+    System.out.println(userInfo);
 
     TokenResponse response = new TokenResponse(accessToken, refreshToken, userInfo);
 

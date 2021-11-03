@@ -11,6 +11,7 @@ import vn.alpaca.common.dto.response.AuthenticationInfo;
 import vn.alpaca.common.dto.response.UserResponse;
 import vn.alpaca.common.dto.wrapper.AbstractResponse;
 import vn.alpaca.common.dto.wrapper.SuccessResponse;
+import vn.alpaca.security.model.AuthUser;
 import vn.alpaca.userservice.mapper.UserMapper;
 import vn.alpaca.userservice.service.UserService;
 
@@ -44,7 +45,7 @@ public class UserController {
 
   @GetMapping("/_auth/{username}")
   AbstractResponse getUserByUsername(@PathVariable String username) {
-    AuthenticationInfo response = mapper.userToAuthenInfo(service.findByUsername(username));
+    AuthUser response = mapper.userToAuthUser(service.findByUsername(username));
 
     return new SuccessResponse<>(response);
   }
