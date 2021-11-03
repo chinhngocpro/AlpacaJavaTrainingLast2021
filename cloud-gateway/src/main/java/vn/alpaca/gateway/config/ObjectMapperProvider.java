@@ -13,32 +13,32 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {
 
-  private final ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
-  public ObjectMapperProvider() {
-    mapper = createObjectMapper();
-  }
+    public ObjectMapperProvider() {
+        mapper = createObjectMapper();
+    }
 
-  @Override
-  public ObjectMapper getContext(Class<?> type) {
-    return mapper;
-  }
+    @Override
+    public ObjectMapper getContext(Class<?> type) {
+        return mapper;
+    }
 
-  private static ObjectMapper createObjectMapper() {
+    private static ObjectMapper createObjectMapper() {
 
-    ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
 
-    mapper.registerModule(new Jdk8Module());
-    mapper.registerModule(new JavaTimeModule());
-    mapper.registerModule(new ParameterNamesModule());
+        mapper.registerModule(new Jdk8Module());
+        mapper.registerModule(new JavaTimeModule());
+        mapper.registerModule(new ParameterNamesModule());
 
-    mapper.enable(SerializationFeature.INDENT_OUTPUT);
-    mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-    mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-    mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
 
-    return mapper;
-  }
+        return mapper;
+    }
 }

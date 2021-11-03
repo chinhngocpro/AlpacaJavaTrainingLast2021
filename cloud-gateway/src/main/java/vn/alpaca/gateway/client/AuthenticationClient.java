@@ -11,6 +11,6 @@ import vn.alpaca.common.dto.wrapper.SuccessResponse;
 @FeignClient(value = "authentication-service")
 public interface AuthenticationClient {
 
-  @GetMapping("/verify-token")
-  SuccessResponse<Integer> verifyToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String token);
+    @GetMapping("/verify-token")
+    SuccessResponse<Integer> verifyToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String token);
 }

@@ -26,7 +26,6 @@ spring:
             - Path=/user-service/**
           filters:
             - StripPrefix=1
-            - JwtAuthenticationFilter
         - id: send-claim-request-service
           uri: lb://send-claim-request-service/
           predicates:
@@ -39,31 +38,18 @@ spring:
             - Path=/handle-claim-request-service/**
           filters:
             - StripPrefix=1
-            - name: JwtAuthenticationFilter
-              args:
-                ignoredPaths:
-                  - /payments/customer/**
-                  - /claim-requests/customer/**
         - id: customer-service
           uri: lb://customer-service/
           predicates:
             - Path=/customer-service/**
           filters:
             - StripPrefix=1
-            - name: JwtAuthenticationFilter
-              args:
-                ignoredPaths:
-                  - /search/id-card/**
         - id: contract-service
           uri: lb://contract-service/
           predicates:
             - Path=/contract-service/**
           filters:
             - StripPrefix=1
-            - name: JwtAuthenticationFilter
-              args:
-                ignoredPaths:
-                  - /search/customer-id-card/**
 
   main:
     web-application-type: reactive
