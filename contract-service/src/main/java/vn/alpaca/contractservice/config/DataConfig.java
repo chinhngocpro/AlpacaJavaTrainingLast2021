@@ -29,4 +29,5 @@ public class DataConfig extends SpringDataConfig {
     public RedissonConnectionFactory redissonConnectionFactory(RedissonClient client) {
         return super.redissonConnectionFactory(client);
     }
+
 }

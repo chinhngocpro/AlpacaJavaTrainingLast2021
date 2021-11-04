@@ -18,69 +18,67 @@ import javax.persistence.EntityExistsException;
 @RequiredArgsConstructor
 public class CustomerService {
 
-  private final CustomerRepository repository;
-  private final CustomerMapper mapper;
+    private final CustomerRepository repository;
+    private final CustomerMapper mapper;
 
-  public Page<Customer> findAllCustomers(CustomerFilter filter) {
-    return repository.findAll(
-        CustomerSpec.getSpecification(filter), filter.getPagination().getPageAndSort());
-  }
-
-  public Customer findCustomerById(int id) {
-    Customer customer =
-        repository
-            .findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-    if (!customer.isActive()) {
-      throw new AccessDeniedException("This customer was disabled.");
-    }
-    return customer;
-  }
-
-  public Customer findCustomerByIdCardNumber(String idCardNumber) {
-    Customer customer =
-        repository
-            .findByIdCardNumber(idCardNumber)
-            .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-    if (!customer.isActive()) {
-      throw new AccessDeniedException("This customer was disabled.");
-    }
-    return customer;
-  }
-
-  public Customer createCustomer(CustomerRequest requestData) {
-    // TODO: verify email/phone number (by OTP for example)
-    Customer customer = mapper.convertToEntity(requestData);
-
-    if (repository.existsByIdCardNumber(customer.getIdCardNumber())) {
-      throw new EntityExistsException(
-          "Id card number " + requestData.getIdCardNumber() + " already exists");
+    public Page<Customer> findAllCustomers(CustomerFilter filter) {
+        return repository.findAll(CustomerSpec.getSpecification(filter),
+                                  filter.getPagination().getPageAndSort());
     }
 
-    return repository.save(customer);
-  }
-
-  public Customer updateCustomer(int id, CustomerRequest requestData) {
-    Customer customer = findCustomerById(id);
-    mapper.updateCustomer(customer, requestData);
-
-    if (repository.existsByIdCardNumber(customer.getIdCardNumber())) {
-      throw new EntityExistsException(
-          "Id card number " + requestData.getIdCardNumber() + " already exists");
+    public Customer findCustomerById(int id) {
+        Customer customer = repository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Customer not found"));
+        if (!customer.isActive()) {
+            throw new AccessDeniedException("This customer was disabled.");
+        }
+        return customer;
     }
 
-    return repository.save(customer);
-  }
+    public Customer findCustomerByIdCardNumber(String idCardNumber) {
+        Customer customer = repository.findByIdCardNumber(idCardNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Customer not found"));
+        if (!customer.isActive()) {
+            throw new AccessDeniedException("This customer was disabled.");
+        }
+        return customer;
+    }
 
-  public void activateCustomer(int customerId) {
-    Customer customer = findCustomerById(customerId);
-    customer.setActive(true);
-    repository.save(customer);
-  }
+    public Customer createCustomer(CustomerRequest requestData) {
+        // TODO: verify email/phone number (by OTP for example)
+        Customer customer = mapper.convertToEntity(requestData);
 
-  public void deactivateCustomer(int customerId) {
-    Customer customer = findCustomerById(customerId);
-    customer.setActive(false);
-    repository.save(customer);
-  }
+        if (repository.existsByIdCardNumber(customer.getIdCardNumber())) {
+            throw new EntityExistsException(
+                    "Id card number " + requestData.getIdCardNumber() + " already exists");
+        }
+
+        return repository.save(customer);
+    }
+
+    public Customer updateCustomer(int id, CustomerRequest requestData) {
+        Customer customer = findCustomerById(id);
+        mapper.updateCustomer(customer, requestData);
+
+        if (repository.existsByIdCardNumber(customer.getIdCardNumber())) {
+            throw new EntityExistsException(
+                    "Id card number " + requestData.getIdCardNumber() + " already exists");
+        }
+
+        return repository.save(customer);
+    }
+
+    public Customer activateCustomer(int customerId) {
+        Customer customer = repository.findById(customerId).orElseThrow(
+                () -> new ResourceNotFoundException("Customer not found"));
+        customer.setActive(true);
+        return repository.save(customer);
+    }
+
+    public Customer deactivateCustomer(int customerId) {
+        Customer customer = repository.findById(customerId).orElseThrow(
+                () -> new ResourceNotFoundException("Customer not found"));
+        customer.setActive(false);
+        return repository.save(customer);
+    }
 }

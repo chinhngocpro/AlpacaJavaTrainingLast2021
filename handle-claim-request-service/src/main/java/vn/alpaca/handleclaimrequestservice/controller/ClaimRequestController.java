@@ -23,16 +23,17 @@ public class ClaimRequestController {
     private final ClaimRequestService service;
     private final ClaimRequestMapper mapper;
 
-    @PreAuthorize("hasAuthority('CLAIM_REQUEST_READ')")
+//    @PreAuthorize("hasAuthority('CLAIM_REQUEST_READ')")
     @GetMapping
     AbstractResponse getAllClaimRequest(@RequestBody Optional<ClaimRequestFilter> filter) {
+        System.out.println(filter);
         Page<ClaimRequest> claimRequests = service.findAllRequests(filter.orElse(new ClaimRequestFilter()));
         Page<ClaimRequestResponse> response = claimRequests.map(mapper::convertToResponseModel);
 
         return new SuccessResponse<>(response);
     }
 
-    @PreAuthorize("hasAuthority('CLAIM_REQUEST_READ')")
+//    @PreAuthorize("hasAuthority('CLAIM_REQUEST_READ')")
     @GetMapping(value = "/{requestId}")
     AbstractResponse getClaimRequestById(@PathVariable("requestId") int id) {
         ClaimRequest claimRequest = service.findRequestById(id);
@@ -50,7 +51,7 @@ public class ClaimRequestController {
         return new SuccessResponse<>(response);
     }
 
-    @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
+//    @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
     @PatchMapping(value = "/{requestId}/close")
     AbstractResponse closeClaimRequest(@PathVariable("requestId") int id) {
         service.closeRequest(id);
@@ -58,7 +59,7 @@ public class ClaimRequestController {
         return new SuccessResponse<>(true);
     }
 
-    @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
+//    @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
     @PatchMapping(value = "/{requestId}/process")
     AbstractResponse processClaimRequest(@PathVariable("requestId") int id) {
         service.processRequest(id);
@@ -66,7 +67,7 @@ public class ClaimRequestController {
         return new SuccessResponse<>(true);
     }
 
-    @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
+//    @PreAuthorize("hasAuthority('CLAIM_REQUEST_UPDATE')")
     @PatchMapping(value = "/{requestId}/reopen")
     AbstractResponse reopenClaimRequest(@PathVariable("requestId") int id) {
         service.reopenRequest(id);

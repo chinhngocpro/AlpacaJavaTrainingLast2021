@@ -605,7 +605,7 @@ COPY claim_request_management.payments (id, amount, payment_date, accountant_id,
 --
 
 COPY customer_management.contracts (id, acceptable_accident_ids, acceptable_hospital_ids, active, contract_code, maximum_amount, remaining_amount, valid_from, valid_to, customer_id) FROM stdin;
-3	{1,2,3,4}	{1,2,3}	t	HDV123456789	5000000	1000000	1992-12-15 16:35:47.483	2030-10-30 07:49:34.471	2
+3	{1,2,3,4}	{1,2,3}	f	HDV123456789	5000000	1000000	1992-12-15 16:35:47.483	2030-10-30 07:49:34.471	2
 2	{3,4}	{1,2}	t	HDK789456123	5000000	200000	1991-12-08 18:31:21.316	2015-08-14 06:26:27.491	3
 \.
 
@@ -623,13 +623,13 @@ COPY customer_management.contracts_aud (id, rev, revtype, acceptable_accident_id
 --
 
 COPY customer_management.customers (id, active, address, date_of_birth, email, full_name, gender, id_card_number, occupation, phone_numbers) FROM stdin;
-3	t	Address placeholder	1978-12-11	email@gmail.com	Full name placeholder	t	123456789	Student	{123456789,123456789}
 10	t	Address placeholder	1978-12-11	email@gmail.com	Full name placeholder	t	123456783	Student	{123456789,123456789}
 1	f	Address placeholder	1978-12-11	email@gmail.com	Full name placeholder	t	123456786	Student	{123456789,123456789}
 4	t	Address placeholder	1978-12-11	email@gmail.com	Full name placeholder	t	123456788	Student	{123456789,123456789}
 6	t	Address placeholder	1978-12-11	email@gmail.com	Full name placeholder	t	123456785	Student	{123456789,123456789}
-2	t	Updated address placeholder	1978-12-11	updated_email@gmail.com	Updated full name placeholder	f	123456787	Student	{123456789,123456789}
 8	t	Address placeholder	1978-12-11	email@gmail.com	Full name placeholder	t	123456784	Student	{123456789,123456789}
+2	f	Updated address placeholder	1978-12-11	updated_email@gmail.com	Updated full name placeholder	f	123456787	Student	{123456789,123456789}
+3	t	Address placeholder	1978-12-11	email@gmail.com	Full name placeholder	t	123456789	Student	{123456789,123456789}
 \.
 
 
@@ -871,6 +871,22 @@ SELECT pg_catalog.setval('user_management.users_id_seq', 8, true);
 
 
 --
+-- Name: claim_requests claim_requests_pk; Type: CONSTRAINT; Schema: claim_request_management; Owner: alpaca
+--
+
+ALTER TABLE ONLY claim_request_management.claim_requests
+    ADD CONSTRAINT claim_requests_pk PRIMARY KEY (id);
+
+
+--
+-- Name: payments payments_pk; Type: CONSTRAINT; Schema: claim_request_management; Owner: alpaca
+--
+
+ALTER TABLE ONLY claim_request_management.payments
+    ADD CONSTRAINT payments_pk PRIMARY KEY (id);
+
+
+--
 -- Name: contracts_aud contracts_aud_pkey; Type: CONSTRAINT; Schema: customer_management; Owner: alpaca
 --
 
@@ -951,6 +967,20 @@ ALTER TABLE ONLY user_management.users
 
 
 --
+-- Name: claim_requests_id_uindex; Type: INDEX; Schema: claim_request_management; Owner: alpaca
+--
+
+CREATE UNIQUE INDEX claim_requests_id_uindex ON claim_request_management.claim_requests USING btree (id);
+
+
+--
+-- Name: payments_id_uindex; Type: INDEX; Schema: claim_request_management; Owner: alpaca
+--
+
+CREATE UNIQUE INDEX payments_id_uindex ON claim_request_management.payments USING btree (id);
+
+
+--
 -- Name: contracts_contract_code_uindex; Type: INDEX; Schema: customer_management; Owner: alpaca
 --
 
@@ -997,6 +1027,22 @@ CREATE UNIQUE INDEX users_id_uindex ON user_management.users USING btree (id);
 --
 
 CREATE UNIQUE INDEX users_username_uindex ON user_management.users USING btree (username);
+
+
+--
+-- Name: analyzed_receipts analyzed_receipts_claim_requests_id_fk; Type: FK CONSTRAINT; Schema: claim_request_management; Owner: alpaca
+--
+
+ALTER TABLE ONLY claim_request_management.analyzed_receipts
+    ADD CONSTRAINT analyzed_receipts_claim_requests_id_fk FOREIGN KEY (request_id) REFERENCES claim_request_management.claim_requests(id);
+
+
+--
+-- Name: payments payments_claim_requests_id_fk; Type: FK CONSTRAINT; Schema: claim_request_management; Owner: alpaca
+--
+
+ALTER TABLE ONLY claim_request_management.payments
+    ADD CONSTRAINT payments_claim_requests_id_fk FOREIGN KEY (request_id) REFERENCES claim_request_management.claim_requests(id);
 
 
 --

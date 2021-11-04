@@ -20,18 +20,25 @@ import java.util.List;
 public class ClaimRequest implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "claim_requests_id_seq",
+            sequenceName = "claim_requests_id_seq",
+            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "claim_requests_id_seq")
     private int id;
 
+    @Column(columnDefinition = "varchar(100)")
     private String title;
 
+    @Column(columnDefinition = "text")
     private String description;
 
     @Type(type = "list-array")
     @Column(columnDefinition = "text[]")
     private List<String> receiptPhotos;
 
+    @Column(columnDefinition = "varchar(20)")
     private String status = "PENDING";
 
+    @Column(columnDefinition = "varchar(100)")
     private Integer customerId;
 }

@@ -1,0 +1,13 @@
+package vn.alpaca.common.exception;
+
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
+import org.springframework.util.ErrorHandler;
+
+public final class MessageGlobalExceptionHandler implements ErrorHandler {
+    @Override
+    public void handleError(Throwable t) {
+        if (!(t.getCause() instanceof BusinessException)) {
+            throw new AmqpRejectAndDontRequeueException("Error Handler converted exception to fatal", t);
+        }
+    }
+}

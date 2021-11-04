@@ -8,14 +8,13 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import vn.alpaca.handleclaimrequestservice.entity.Payment;
 
-public interface PaymentRepository
-    extends JpaRepository<Payment, Integer>, JpaSpecificationExecutor<Payment> {
+public interface PaymentRepository extends JpaRepository<Payment, Integer>,
+        JpaSpecificationExecutor<Payment> {
 
-  @Query(
-      "SELECT payment "
-          + "FROM Payment payment "
-          + "JOIN payment.claimRequest request "
-          + "WHERE request.id = ?1 AND request.customerId = ?2")
-  Page<Payment> findAllByRequestIdAndCustomerId(
-      int requestId, int customerId, Specification<Payment> specification, Pageable pageable);
+    @Query("SELECT payment "
+            + "FROM Payment payment "
+            + "JOIN payment.claimRequest request "
+            + "WHERE request.id = ?1 AND request.customerId = ?2")
+    Page<Payment> findAllByRequestIdAndCustomerId(
+            int requestId, int customerId, Specification<Payment> specification, Pageable pageable);
 }

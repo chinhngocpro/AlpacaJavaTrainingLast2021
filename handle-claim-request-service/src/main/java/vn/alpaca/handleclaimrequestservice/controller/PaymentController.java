@@ -25,7 +25,7 @@ public class PaymentController {
     private final PaymentService service;
     private final PaymentMapper mapper;
 
-    @PreAuthorize("hasAuthority('PAYMENT_READ')")
+//    @PreAuthorize("hasAuthority('PAYMENT_READ')")
     @GetMapping
     AbstractResponse getAllPayments(@RequestBody Optional<PaymentFilter> filter) {
         Page<Payment> payments = service.findAllPayments(filter.orElse(new PaymentFilter()));
@@ -34,7 +34,7 @@ public class PaymentController {
         return new SuccessResponse<>(response);
     }
 
-    @GetMapping(value = "/customer")
+    @GetMapping(value = "_search/customer")
     AbstractResponse getPaymentByRequestIdAndIdCardNumber(@RequestBody CustomerPaymentFilter filter) {
         Page<Payment> payments = service.findPaymentsByRequestIdAndCustomerIdCard(filter);
         Page<PaymentResponse> response = payments.map(mapper::convertToResponseModel);
@@ -42,7 +42,7 @@ public class PaymentController {
         return new SuccessResponse<>(response);
     }
 
-    @PreAuthorize("hasAuthority('PAYMENT_READ')")
+//    @PreAuthorize("hasAuthority('PAYMENT_READ')")
     @GetMapping(value = "/{paymentId}")
     AbstractResponse getPaymentById(@PathVariable("paymentId") int id) {
         Payment payment = service.findPaymentById(id);
@@ -51,7 +51,7 @@ public class PaymentController {
         return new SuccessResponse<>(response);
     }
 
-    @PreAuthorize("hasAuthority('PAYMENT_CREATE')")
+//    @PreAuthorize("hasAuthority('PAYMENT_CREATE')")
     @PostMapping
     AbstractResponse createNewPayment(@RequestBody @Valid PaymentRequest requestData) {
         Payment payment = service.createPayment(requestData);
@@ -60,7 +60,7 @@ public class PaymentController {
         return new SuccessResponse<>(response);
     }
 
-    @PreAuthorize("hasAuthority('PAYMENT_UPDATE')")
+//    @PreAuthorize("hasAuthority('PAYMENT_UPDATE')")
     @PutMapping(value = "/{paymentId}")
     AbstractResponse updatePayment(@PathVariable("paymentId") int id,
                                    @RequestBody @Valid PaymentRequest requestData) {

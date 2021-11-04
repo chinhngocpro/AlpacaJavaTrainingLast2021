@@ -24,7 +24,7 @@ public class AnalyzedReceiptController {
     private final AnalyzedReceiptService service;
     private final AnalyzedReceiptMapper mapper;
 
-    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_READ')")
+//    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_READ')")
     @GetMapping
     AbstractResponse getAllReceipts(@RequestBody Optional<AnalyzedReceiptFilter> filter) {
         Page<AnalyzedReceipt> analyzedReceipts = service.findAllReceipts(
@@ -34,7 +34,7 @@ public class AnalyzedReceiptController {
         return new SuccessResponse<>(response);
     }
 
-    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_READ')")
+//    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_READ')")
     @GetMapping(value = "/{receiptId}")
     AbstractResponse getReceiptById(@PathVariable("receiptId") int id) {
         AnalyzedReceipt receipt = service.findReceiptById(id);
@@ -43,7 +43,7 @@ public class AnalyzedReceiptController {
         return new SuccessResponse<>(response);
     }
 
-    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_CREATE')")
+//    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_CREATE')")
     @PostMapping(consumes = "application/json")
     AbstractResponse createNewReceipt(@RequestBody @Valid AnalyzedReceiptRequest requestData) {
         AnalyzedReceipt analyzedReceipt = service.createReceipt(requestData);
@@ -52,7 +52,7 @@ public class AnalyzedReceiptController {
         return new SuccessResponse<>(response);
     }
 
-    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
+//    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
     @PutMapping(value = "/{receiptId}", consumes = "application/json")
     AbstractResponse updateReceipt(@PathVariable("receiptId") int id,
                                    @RequestBody @Valid AnalyzedReceiptRequest requestData) {
@@ -62,7 +62,7 @@ public class AnalyzedReceiptController {
         return new SuccessResponse<>(response);
     }
 
-    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
+//    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
     @PatchMapping(value = "/{receiptId}/validate")
     AbstractResponse validateReceipt(@PathVariable("receiptId") int id) {
         service.validateReceipt(id);
@@ -70,7 +70,7 @@ public class AnalyzedReceiptController {
         return new SuccessResponse<>(true);
     }
 
-    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
+//    @PreAuthorize("hasAuthority('ANALYZED_RECEIPT_UPDATE')")
     @PatchMapping(value = "/{receiptId}/invalidate")
     AbstractResponse invalidateReceipt(@PathVariable("receiptId") int id) {
         service.invalidateReceipt(id);

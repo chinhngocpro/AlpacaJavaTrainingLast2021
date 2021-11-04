@@ -8,7 +8,6 @@ import vn.alpaca.common.dto.request.CustomerClaimRequestFilter;
 import vn.alpaca.common.exception.ResourceNotFoundException;
 import vn.alpaca.handleclaimrequestservice.client.CustomerFeignClient;
 import vn.alpaca.handleclaimrequestservice.entity.ClaimRequest;
-import vn.alpaca.handleclaimrequestservice.mapper.ClaimRequestMapper;
 import vn.alpaca.handleclaimrequestservice.repository.ClaimRequestRepository;
 import vn.alpaca.handleclaimrequestservice.repository.spec.ClaimRequestSpec;
 
@@ -18,11 +17,11 @@ import vn.alpaca.handleclaimrequestservice.repository.spec.ClaimRequestSpec;
 public class ClaimRequestService {
 
     private final ClaimRequestRepository repository;
-    private final ClaimRequestMapper mapper;
 
     private final CustomerFeignClient customerClient;
 
     public Page<ClaimRequest> findAllRequests(ClaimRequestFilter filter) {
+        System.out.println(repository.findAll().size());
         return repository.findAll(ClaimRequestSpec.getSpecification(filter),
                                   filter.getPagination().getPageAndSort());
     }

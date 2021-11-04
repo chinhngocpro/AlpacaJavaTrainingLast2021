@@ -18,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @TypeDef(name = "list-array", typeClass = ListArrayType.class)
+@ToString
 public class Contract implements Serializable {
 
     @Id
