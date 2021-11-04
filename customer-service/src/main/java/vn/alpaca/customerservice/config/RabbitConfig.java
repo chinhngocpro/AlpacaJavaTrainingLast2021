@@ -34,7 +34,7 @@ public class RabbitConfig {
 
     @Bean
     Queue deactivateCustomerQueue() {
-        return QueueBuilder.durable(DEACTIVATE_CONTRACT_QUEUE.getQueue()).build();
+        return QueueBuilder.durable(DEACTIVATE_CUSTOMER_QUEUE.getQueue()).build();
     }
 
     @Bean
@@ -53,15 +53,15 @@ public class RabbitConfig {
     }
 
     @Bean
+    Binding deactivateCustomerDLBinding(Queue deactivateCustomerQueue, FanoutExchange deadLetterExchange) {
+        return BindingBuilder.bind(deactivateCustomerQueue).to(deadLetterExchange);
+    }
+
+    @Bean
     Binding activateCustomerBinding(Queue activateCustomerQueue, TopicExchange topicExchange) {
         return BindingBuilder.bind(activateCustomerQueue)
                              .to(topicExchange)
                              .with("customer.activate");
-    }
-
-    @Bean
-    Binding deactivateCustomerDLBinding(Queue deactivateCustomerQueue, FanoutExchange deadLetterExchange) {
-        return BindingBuilder.bind(deactivateCustomerQueue).to(deadLetterExchange);
     }
 
     @Bean

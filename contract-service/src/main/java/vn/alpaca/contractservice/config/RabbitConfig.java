@@ -19,26 +19,6 @@ import static vn.alpaca.common.constant.MessageQueues.*;
 public class RabbitConfig {
 
     @Bean
-    Queue activateCustomerDLQueue() {
-        return QueueBuilder.durable(ACTIVATE_CUSTOMER_DL_QUEUE.getQueue()).build();
-    }
-
-    @Bean
-    Queue activateCustomerQueue() {
-        return QueueBuilder.durable(ACTIVATE_CUSTOMER_QUEUE.getQueue()).build();
-    }
-
-    @Bean
-    Queue deactivateCustomerDLQueue() {
-        return QueueBuilder.durable(DEACTIVATE_CUSTOMER_DL_QUEUE.getQueue()).build();
-    }
-
-    @Bean
-    Queue deactivateCustomerQueue() {
-        return QueueBuilder.durable(DEACTIVATE_CONTRACT_QUEUE.getQueue()).build();
-    }
-
-    @Bean
     public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
             ConnectionFactory connectionFactory, SimpleRabbitListenerContainerFactoryConfigurer configurer) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();

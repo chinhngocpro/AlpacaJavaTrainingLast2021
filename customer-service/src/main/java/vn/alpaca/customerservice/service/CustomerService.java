@@ -6,11 +6,13 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import vn.alpaca.common.dto.request.CustomerFilter;
 import vn.alpaca.common.dto.request.CustomerRequest;
+import vn.alpaca.common.dto.response.CustomerResponse;
 import vn.alpaca.common.exception.ResourceNotFoundException;
 import vn.alpaca.customerservice.entity.Customer;
 import vn.alpaca.customerservice.mapper.CustomerMapper;
 import vn.alpaca.customerservice.repository.CustomerRepository;
 import vn.alpaca.customerservice.repository.spec.CustomerSpec;
+import vn.alpaca.customerservice.service.message.CustomerMessageService;
 
 import javax.persistence.EntityExistsException;
 
@@ -20,6 +22,8 @@ public class CustomerService {
 
     private final CustomerRepository repository;
     private final CustomerMapper mapper;
+
+    private final CustomerMessageService messageService;
 
     public Page<Customer> findAllCustomers(CustomerFilter filter) {
         return repository.findAll(CustomerSpec.getSpecification(filter),
@@ -68,17 +72,19 @@ public class CustomerService {
         return repository.save(customer);
     }
 
-    public Customer activateCustomer(int customerId) {
+    public void activateCustomer(int customerId) {
         Customer customer = repository.findById(customerId).orElseThrow(
                 () -> new ResourceNotFoundException("Customer not found"));
         customer.setActive(true);
-        return repository.save(customer);
+        CustomerResponse response = mapper.customerToCustomerResponse(customer);
+        messageService.onUpdateCustomerStatus("customer.activate", response);
     }
 
-    public Customer deactivateCustomer(int customerId) {
+    public void deactivateCustomer(int customerId) {
         Customer customer = repository.findById(customerId).orElseThrow(
                 () -> new ResourceNotFoundException("Customer not found"));
         customer.setActive(false);
-        return repository.save(customer);
+        CustomerResponse response = mapper.customerToCustomerResponse(customer);
+        messageService.onUpdateCustomerStatus("customer.deactivate", response);
     }
 }
